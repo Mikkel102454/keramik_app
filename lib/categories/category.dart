@@ -5,15 +5,9 @@ class Category {
   static int getCategoryCount(){
     return 5;
   }
-  static Category getCategory(int id){
-    Category category = Category();
-    category.id = id;
-    category.title = "new title";
-    return category;
-  }
 
-  int id = 0;
-  String title = "No Title";
+  int _id = 0;
+  String _title = "No Title";
 
   Widget draw(BuildContext context) {
     return InkWell(
@@ -36,5 +30,17 @@ class Category {
         ),
       ),
     );
+  }
+
+  int get id => _id;
+
+  set id(int value) {
+    _id = value;
+  }
+
+  String get title => _title;
+
+  set title(String value) {
+    _title = value;
   }
 }
