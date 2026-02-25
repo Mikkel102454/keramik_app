@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
-import 'pages/home_page.dart';
+import 'package:kemik_app/pages/loading/auth_loading_page.dart';
+import 'api/api_client.dart';
+import 'pages/HomePage.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await ApiClient.init();
+
   runApp(const MyApp());
 }
 
@@ -26,7 +32,7 @@ class MyApp extends StatelessWidget {
           primary: Colors.white,
         ),
       ),
-      home: HomePage()
+      home: const AuthCheckPage()
     );
   }
 }

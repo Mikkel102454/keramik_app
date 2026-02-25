@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../utils/web.dart';
+import 'package:kemik_app/network/account.dart';
+import 'package:kemik_app/pages/todo/login_page.dart';
+import '../../utils/web.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -46,20 +48,24 @@ class _SettingsPageState extends State<SettingsPage> {
               openWebPage("https://app.miguel.nu/account/plan/");
             },
           ),
-          const SizedBox(height: 24),
 
-          // -------- SWITCH --------
-          _sectionTitle("Options"),
+          _settingItem(
+            icon: Icons.logout,
+            title: "Logout",
+            subtitle: "Log out of your account",
+            onTap: () async {
+              await logoutRequest();
 
-          SwitchListTile(
-            title: const Text("Enable Notifications"),
-            value: notificationsEnabled,
-            onChanged: (value) {
-              setState(() {
-                notificationsEnabled = value;
-              });
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const LoginPage(),
+                ),
+                    (route) => false,
+              );
             },
           ),
+          const SizedBox(height: 24),
         ],
       ),
     );
