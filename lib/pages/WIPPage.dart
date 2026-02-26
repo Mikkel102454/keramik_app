@@ -7,7 +7,7 @@ import 'package:kemik_app/ui/widgets/CollapsableWidget.dart';
 import 'package:kemik_app/ui/widgets/SquareWidget.dart';
 
 import 'CeramicCreatePage.dart';
-import 'todo/ceramic_page.dart';
+import 'CeramicPage.dart';
 
 class WIPPage extends StatefulWidget {
   const WIPPage({
@@ -128,7 +128,7 @@ class _WIPPageState extends State<WIPPage>
               itemCount: _controller.stages.length,
 
               itemBuilder: (context, stageIndex) {
-                _buildCategory(context, stageIndex);
+                return _buildCategory(context, stageIndex);
               },
             ),
           );
@@ -168,7 +168,7 @@ class _WIPPageState extends State<WIPPage>
         title: ceramic.title,
         onTap: () =>
         {
-          PageManager.new(context).openPage(CeramicPage(ceramicId: ceramic.id))
+          PageManager.new(context).openPage(CeramicPage(ceramic: ceramic))
         },
       );
     }).toList();
@@ -179,7 +179,12 @@ class _WIPPageState extends State<WIPPage>
         children = GridLayout(crossAxisCount: 1, scrollDirection: Axis.horizontal, children: cards,);
       }
       else {
-        children = GridLayout(crossAxisCount: 3, children: cards,);
+        children = GridLayout(
+          crossAxisCount: 3,
+          children: cards,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+        );
       }
     }
     return CollapsableWidget(

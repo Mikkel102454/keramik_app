@@ -30,6 +30,14 @@ Future<List<CeramicDto>> getCeramics() async {
   return list.map((e) => CeramicDto.fromJson(e)).toList();
 }
 
+Future<CeramicDto> getCeramic(int id) async {
+  final response = await ApiClient.dio.get('/api/ceramics/$id');
+
+  checkSuccess(response);
+
+  return CeramicDto.fromJson(response.data['data']);
+}
+
 Future<void> deleteCeramic(int id) async {
   final response = await ApiClient.dio.delete('/api/ceramics/$id');
 

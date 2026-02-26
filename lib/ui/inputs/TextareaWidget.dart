@@ -1,34 +1,33 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-class NumberInputWidget extends StatefulWidget {
+class TextAreaWidget extends StatefulWidget {
   final String? label;
-  final String? suffix;
   final String? hint;
+  final int minLines;
   final String? initialValue;
 
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? delayedCallback;
   final Duration callbackDelay;
 
-  const NumberInputWidget({
+  const TextAreaWidget({
     super.key,
     this.label,
-    this.suffix,
     this.hint,
     this.initialValue,
     this.onChanged,
+    this.minLines = 1,
     this.delayedCallback,
     this.callbackDelay = const Duration(milliseconds: 500),
   });
 
   @override
-  State<NumberInputWidget> createState() => _NumberInputWidgetState();
+  State<TextAreaWidget> createState() => _TextAreaWidgetState();
 }
 
-class _NumberInputWidgetState extends State<NumberInputWidget> {
+class _TextAreaWidgetState extends State<TextAreaWidget> {
   late final TextEditingController controller;
   Timer? _timer;
 
@@ -81,22 +80,14 @@ class _NumberInputWidgetState extends State<NumberInputWidget> {
               controller: controller,
               onChanged: _onChanged,
               style: const TextStyle(color: Colors.white),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-                signed: false,
-              ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  RegExp(r'^\d*\.?\d*'),
-                ),
-              ],
+              keyboardType: TextInputType.multiline,
+              minLines: widget.minLines,
+              maxLines: null,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(14),
                 hintText: widget.hint ?? widget.label,
                 hintStyle: const TextStyle(color: Colors.white38),
                 border: InputBorder.none,
-                suffixText: widget.suffix,
-                suffixStyle: const TextStyle(color: Colors.white54),
               ),
             ),
           ),

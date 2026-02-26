@@ -20,7 +20,6 @@ class WIPController extends ChangeNotifier{
       _stages = await getStages();
       _stages.sort((a, b) => a.id.compareTo(b.id));
       _ceramics = await getCeramics();
-      notifyListeners();
     } catch (e){
       _error = e.toString();
     }

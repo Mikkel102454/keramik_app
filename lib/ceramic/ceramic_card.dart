@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:kemik_app/pages/todo/ceramic_page.dart';
+import 'package:kemik_app/pages/CeramicPage.dart';
+
+import '../classes/ceramic_dto.dart';
 
 class CeramicCard {
-  final int id;
+  final CeramicDto ceramic;
   final String title;
 
-  CeramicCard(this.id, this.title);
+  CeramicCard(this.ceramic, this.title);
 
   Widget draw(BuildContext context, VoidCallback onReturn) {
     return InkWell(
@@ -14,7 +16,7 @@ class CeramicCard {
           context,
           MaterialPageRoute(
             builder: (_) => CeramicPage(
-              ceramicId: id,
+              ceramic: ceramic,
             ),
           ),
         );

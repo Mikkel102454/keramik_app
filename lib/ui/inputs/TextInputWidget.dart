@@ -1,18 +1,26 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class TextInputWidget extends StatefulWidget {
   final String? label;
   final String? suffix;
   final String? hint;
+  final String? initialValue;
 
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? delayedCallback;
+  final Duration callbackDelay;
 
   const TextInputWidget({
     super.key,
     this.label,
     this.suffix,
     this.hint,
+    this.initialValue,
     this.onChanged,
+    this.delayedCallback,
+    this.callbackDelay = const Duration(milliseconds: 500),
   });
 
   @override
@@ -21,17 +29,30 @@ class TextInputWidget extends StatefulWidget {
 
 class _TextInputWidgetState extends State<TextInputWidget> {
   late final TextEditingController controller;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    controller = TextEditingController();
+    controller = TextEditingController(text: widget.initialValue);
   }
 
   @override
   void dispose() {
     controller.dispose();
+    _timer?.cancel();
     super.dispose();
+  }
+
+  void _onChanged(String value) {
+    widget.onChanged?.call(value);
+
+    if (widget.delayedCallback != null) {
+      _timer?.cancel();
+      _timer = Timer(widget.callbackDelay, () {
+        widget.delayedCallback!(value);
+      });
+    }
   }
 
   @override
@@ -49,9 +70,7 @@ class _TextInputWidgetState extends State<TextInputWidget> {
                 fontSize: 13,
               ),
             ),
-
           const SizedBox(height: 6),
-
           Container(
             decoration: BoxDecoration(
               color: Colors.grey[900],
@@ -59,18 +78,14 @@ class _TextInputWidgetState extends State<TextInputWidget> {
             ),
             child: TextField(
               controller: controller,
-              onChanged: widget.onChanged,
+              onChanged: _onChanged,
               style: const TextStyle(color: Colors.white),
               keyboardType: TextInputType.text,
-
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(14),
-
                 hintText: widget.hint ?? widget.label,
-
                 hintStyle: const TextStyle(color: Colors.white38),
                 border: InputBorder.none,
-
                 suffixText: widget.suffix,
                 suffixStyle: const TextStyle(color: Colors.white54),
               ),
