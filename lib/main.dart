@@ -1,38 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:kemik_app/pages/loading/auth_loading_page.dart';
-import 'api/api_client.dart';
-import 'pages/HomePage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
+import 'package:ceramic_app/config/router/app_router.dart';
+import 'package:ceramic_app/ui/app_coordinator.dart';
+
+import 'package:ceramic_app/api/api_client.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final appRouter = AppRouter();
   await ApiClient.init();
 
-  runApp(const MyApp());
+  runApp(
+    BlocProvider(
+      create: (_) => AuthenticationCubit(),
+      child: MyApp(appRouter: appRouter),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AppRouter appRouter;
 
-  // This widget is the root of your application.
+  const MyApp({required this.appRouter, super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        scaffoldBackgroundColor: Colors.black,
-
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF121212), // slightly lighter black
-          foregroundColor: Colors.white,      // text + icons
-        ),
-
-        colorScheme: ColorScheme.dark(
-          background: Colors.black,
-          primary: Colors.white,
-        ),
+    return AppCoordinator(
+      appRouter: appRouter,
+      child: MaterialApp.router(
+        title: "Keramik App",
+        routerConfig: appRouter.config(),
       ),
-      home: const AuthCheckPage()
     );
   }
 }

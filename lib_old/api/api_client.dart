@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:ceramic_app/config/constants/app_constants.dart';
+import 'package:kemik_app/config/constants.dart';
 import 'package:path_provider/path_provider.dart';
 
 class ApiClient {
@@ -18,7 +18,7 @@ class ApiClient {
 
     dio = Dio(
       BaseOptions(
-        baseUrl: AppConstants.api.apiDomain,
+        baseUrl: AppConstants.appDomain,
         headers: {
           'Content-Type': 'application/json',
         },
