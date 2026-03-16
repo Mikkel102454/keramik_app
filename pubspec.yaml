@@ -46,7 +46,7 @@ dependencies:
     sdk: flutter
   json_annotation: ^4.6.0
   intl: ^0.20.2
-
+  footer:
 dev_dependencies:
   flutter_test:
     sdk: flutter
