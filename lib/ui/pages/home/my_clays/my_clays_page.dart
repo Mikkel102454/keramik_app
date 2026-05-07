@@ -9,7 +9,6 @@ import 'package:ceramic_app/ui/widgets/SquareWidget.dart';
 import 'package:ceramic_app/ui/widgets/GridLayout.dart';
 import 'my_clays_page_controller.dart';
 
-@RoutePage()
 class MyClaysPage extends StatefulWidget {
   const MyClaysPage({
     super.key,

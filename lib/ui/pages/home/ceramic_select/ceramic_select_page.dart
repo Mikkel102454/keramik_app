@@ -9,7 +9,6 @@ import 'package:ceramic_app/ui/widgets/SquareWidget.dart';
 import 'package:ceramic_app/ui/widgets/GridLayout.dart';
 import 'ceramic_select_page_controller.dart';
 
-@RoutePage()
 class CeramicSelectPage extends StatefulWidget {
   const CeramicSelectPage({
     super.key,

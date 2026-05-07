@@ -14,7 +14,6 @@ import '../widget/RatingWidget.dart';
 import '../widget/TitleWidget.dart';
 import 'ceramic_view_page_controller.dart';
 
-@RoutePage()
 class CeramicViewPage extends StatefulWidget {
   final CeramicDto ceramic;
   final List<StageDto> stages;

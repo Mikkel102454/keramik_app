@@ -13,7 +13,6 @@ import '../widget/InlineTagsWidget.dart';
 import '../widget/RatingWidget.dart';
 import 'ceramic_create_page_controller.dart';
 
-@RoutePage()
 class CeramicCreatePage extends StatefulWidget {
   const CeramicCreatePage({
     super.key,
