@@ -8,6 +8,10 @@ import 'package:flutter/material.dart';
 
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
+import 'package:flutter/services.dart';
+
+import '../widgets/v2/dropdown_widget.dart';
+import '../widgets/v2/text_field_widget.dart';
 
 @RoutePage()
 class TestPage extends StatefulWidget {
@@ -138,6 +142,85 @@ class _TestPageState extends State<TestPage> {
               NavigationRowWidget(
                 text: "Clays",
                 navigation: const LoginPage(),
+              ),
+              const SizedBox(height: 25),
+
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // 1. Basic title field
+                  const TextFieldWidget(
+                    placeholder: "Title",
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 2. Weight field with suffix
+                  TextFieldWidget(
+                    placeholder: "0.0",
+                    initialValue: "1.0",
+                    suffix: "kg",
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d*'),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 3. Multi-line notes field
+                  const TextFieldWidget(
+                    placeholder: "Notes",
+                    minLines: 4,
+                    maxLines: 6,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 4. Password field
+                  const TextFieldWidget(
+                    placeholder: "Password",
+                    obscureText: true,
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // 5. Field with validation
+                  TextFieldWidget(
+                    placeholder: "Piece name",
+
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+
+                    validator: (text, context) {
+                      if (text == null || text.trim().isEmpty) {
+                        return "Required";
+                      }
+
+                      if (text.length < 3) {
+                        return "Must be at least 3 characters";
+                      }
+
+                      return null;
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
+              DropdownWidget(
+                placeholder: "Clay Type",
+
+                entries: [
+                  MapEntry("Stoneware", "STONEWARE"),
+                  MapEntry("Porcelain", "PORCELAIN"),
+                  MapEntry("Terracotta", "TERRACOTTA"),
+                ],
+
+                onChanged: (value) async {
+                  debugPrint(value);
+                },
               ),
             ]
           ),
