@@ -16,10 +16,15 @@ String getApiError(dynamic responseData) {
     return responseData['error']['message'];
   }
 
-  return 'Unknown server error';
+  return 'Unknown server error: $responseData';
 }
 
 void checkSuccess(dynamic response) {
+  if (response.statusCode == 401) {
+    //go to login page
+  }
+
+
   final data = response.data;
 
   if (data == null || data['success'] != true) {

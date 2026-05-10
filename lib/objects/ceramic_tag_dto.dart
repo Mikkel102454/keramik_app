@@ -1,7 +1,7 @@
 class CeramicTagDto {
   final int id;
   final int ceramicId;
-  final String tag;
+  String tag;
 
   CeramicTagDto({
     required this.id,
@@ -15,5 +15,13 @@ class CeramicTagDto {
       ceramicId: json['ceramicId'],
       tag: json['tag'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'ceramicId': ceramicId,
+      'tag': tag,
+    };
   }
 }

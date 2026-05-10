@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ceramic_app/ui/widgets/adaptive/adaptive_text_field.dart';
 import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
 
 @RoutePage()
@@ -19,9 +19,9 @@ class LoginPage extends StatelessWidget {
           listener: (context, state) {
             state.whenOrNull(
               error: (message) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(message)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(message)));
               },
             );
           },
@@ -57,22 +57,30 @@ class LoginPage extends StatelessWidget {
 
                       const SizedBox(height: 40),
 
-                      AdaptiveTextField(
-                        labelText: "Email",
+                      TextFieldWidget(
+                        placeholder: "Email",
                         keyboardType: TextInputType.emailAddress,
                         maxLines: 1,
-                        onChanged: (value) async =>
-                            context.read<AuthenticationCubit>().usernameChanged(value),
+                        onChanged: (value) async {
+                          context.read<AuthenticationCubit>().usernameChanged(
+                            value,
+                          );
+                          return true;
+                        },
                       ),
 
                       const SizedBox(height: 16),
 
-                      AdaptiveTextField(
-                        labelText: "Password",
+                      TextFieldWidget(
+                        placeholder: "Password",
                         obscureText: true,
                         maxLines: 1,
-                        onChanged: (value) async =>
-                            context.read<AuthenticationCubit>().passwordChanged(value),
+                        onChanged: (value) async {
+                          context.read<AuthenticationCubit>().passwordChanged(
+                            value,
+                          );
+                          return true;
+                        },
                       ),
 
                       const SizedBox(height: 12),
@@ -99,8 +107,8 @@ class LoginPage extends StatelessWidget {
                           onPressed: isLoading
                               ? null
                               : () {
-                            context.read<AuthenticationCubit>().login();
-                          },
+                                  context.read<AuthenticationCubit>().login();
+                                },
                           child: isLoading
                               ? const CircularProgressIndicator()
                               : const Text("Login"),

@@ -12,9 +12,12 @@ class SquareWidget extends StatelessWidget {
   final IconData? icon;
   final double? iconSize;
   final Color iconColor;
-  final VoidCallback? onTap;
+  final Future<void> Function()? onPressed;
   final double borderRadius;
   final double opacity;
+
+  final double? width;
+  final double? height;
 
   // Layout controls
   final Axis direction;
@@ -38,7 +41,10 @@ class SquareWidget extends StatelessWidget {
     this.iconColor = Colors.white,
     this.borderRadius = 8,
     this.opacity = 1,
-    this.onTap,
+    this.onPressed,
+
+    this.width,
+    this.height,
 
     this.direction = Axis.vertical,
     this.mainAxisAlignment = MainAxisAlignment.center,
@@ -90,42 +96,72 @@ class SquareWidget extends StatelessWidget {
 
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(borderRadius),
+      borderRadius:
+      BorderRadius.circular(borderRadius),
+
       child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(borderRadius),
+        onTap: onPressed,
+
+        borderRadius:
+        BorderRadius.circular(borderRadius),
+
         child: Opacity(
           opacity: opacity,
+
           child: Container(
-            width: double.infinity,
-            height: double.infinity,
+            width: width ?? double.infinity,
+            height: height ?? double.infinity,
+
             decoration: BoxDecoration(
               color: backgroundColor,
-              borderRadius: BorderRadius.circular(borderRadius),
+
+              borderRadius:
+              BorderRadius.circular(borderRadius),
+
               image: imageUri != null
                   ? DecorationImage(
-                image: NetworkImage(imageUri!),
+                image:
+                NetworkImage(imageUri!),
+
                 fit: BoxFit.cover,
               )
                   : null,
             ),
+
             alignment: Alignment.center,
+
             child: Container(
               width: double.infinity,
               height: double.infinity,
-              padding: const EdgeInsets.all(8),
+
+              padding:
+              const EdgeInsets.all(8),
+
               decoration: BoxDecoration(
                 borderRadius:
-                BorderRadius.circular(borderRadius),
+                BorderRadius.circular(
+                  borderRadius,
+                ),
+
                 color: imageUri != null
-                    ? Colors.black.withValues(alpha: 0.4)
+                    ? Colors.black.withValues(
+                  alpha: 0.4,
+                )
                     : Colors.transparent,
               ),
+
               child: Flex(
                 direction: direction,
-                mainAxisAlignment: mainAxisAlignment,
-                crossAxisAlignment: crossAxisAlignment,
-                mainAxisSize: MainAxisSize.max,
+
+                mainAxisAlignment:
+                mainAxisAlignment,
+
+                crossAxisAlignment:
+                crossAxisAlignment,
+
+                mainAxisSize:
+                MainAxisSize.max,
+
                 children: spacedChildren,
               ),
             ),

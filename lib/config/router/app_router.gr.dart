@@ -15,6 +15,12 @@ abstract class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    GlazesRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const GlazesPage(),
+      );
+    },
     HomeRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
@@ -27,10 +33,22 @@ abstract class _$AppRouter extends RootStackRouter {
         child: const LoginPage(),
       );
     },
-    SettingsRoute.name: (routeData) {
+    NotificationsRoute.name: (routeData) {
       return AutoRoutePage<dynamic>(
         routeData: routeData,
-        child: const SettingsPage(),
+        child: const NotificationsPage(),
+      );
+    },
+    ProfileRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ProfilePage(),
+      );
+    },
+    ShopRoute.name: (routeData) {
+      return AutoRoutePage<dynamic>(
+        routeData: routeData,
+        child: const ShopPage(),
       );
     },
     TestRoute.name: (routeData) {
@@ -40,6 +58,20 @@ abstract class _$AppRouter extends RootStackRouter {
       );
     },
   };
+}
+
+/// generated route for
+/// [GlazesPage]
+class GlazesRoute extends PageRouteInfo<void> {
+  const GlazesRoute({List<PageRouteInfo>? children})
+      : super(
+          GlazesRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'GlazesRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
 }
 
 /// generated route for
@@ -71,15 +103,43 @@ class LoginRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [SettingsPage]
-class SettingsRoute extends PageRouteInfo<void> {
-  const SettingsRoute({List<PageRouteInfo>? children})
+/// [NotificationsPage]
+class NotificationsRoute extends PageRouteInfo<void> {
+  const NotificationsRoute({List<PageRouteInfo>? children})
       : super(
-          SettingsRoute.name,
+          NotificationsRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'SettingsRoute';
+  static const String name = 'NotificationsRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ProfilePage]
+class ProfileRoute extends PageRouteInfo<void> {
+  const ProfileRoute({List<PageRouteInfo>? children})
+      : super(
+          ProfileRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ProfileRoute';
+
+  static const PageInfo<void> page = PageInfo<void>(name);
+}
+
+/// generated route for
+/// [ShopPage]
+class ShopRoute extends PageRouteInfo<void> {
+  const ShopRoute({List<PageRouteInfo>? children})
+      : super(
+          ShopRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'ShopRoute';
 
   static const PageInfo<void> page = PageInfo<void>(name);
 }

@@ -1,14 +1,14 @@
-class StageDto {
-  final int id;
+class ClayDto {
   final String title;
+  final int id;
 
-  StageDto({
-    required this.id,
+  ClayDto({
     required this.title,
+    required this.id,
   });
 
-  factory StageDto.fromJson(Map<String, dynamic> json) {
-    return StageDto(
+  factory ClayDto.fromJson(Map<String, dynamic> json) {
+    return ClayDto(
       id: json['id'],
       title: json['title'],
     );

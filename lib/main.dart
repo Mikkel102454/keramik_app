@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
       appRouter: appRouter,
       child: MaterialApp.router(
         title: "Keramik App",
+
         routerConfig: appRouter.config(),
       ),
     );

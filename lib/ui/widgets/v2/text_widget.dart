@@ -22,18 +22,14 @@ class TextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-
-      child: Text(
-        text,
-        style: TextStyle(
-          decoration: decoration,
-          color: color,
-          fontFamily: fontFamily,
-          fontWeight: fontWeight,
-          fontSize: fontSize,
-        ),
+    return Text(
+      text,
+      style: TextStyle(
+        decoration: decoration,
+        color: color,
+        fontFamily: fontFamily,
+        fontWeight: fontWeight,
+        fontSize: fontSize,
       ),
     );
   }

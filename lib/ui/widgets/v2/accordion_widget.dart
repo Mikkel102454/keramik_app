@@ -7,6 +7,10 @@ class AccordionWidget extends StatefulWidget {
   final Widget child;
   final bool initiallyExpanded;
 
+  /// Count bubble
+  final bool showCount;
+  final int count;
+
   const AccordionWidget({
     super.key,
     required this.title,
@@ -14,20 +18,27 @@ class AccordionWidget extends StatefulWidget {
     this.icon,
     this.onInteract,
     this.initiallyExpanded = false,
+
+    this.showCount = false,
+    this.count = 0,
   });
 
   @override
-  State<AccordionWidget> createState() => _AccordionWidgetState();
+  State<AccordionWidget> createState() =>
+      _AccordionWidgetState();
 }
 
-class _AccordionWidgetState extends State<AccordionWidget>
+class _AccordionWidgetState
+    extends State<AccordionWidget>
     with SingleTickerProviderStateMixin {
   late bool _isExpanded;
 
   @override
   void initState() {
     super.initState();
-    _isExpanded = widget.initiallyExpanded;
+
+    _isExpanded =
+        widget.initiallyExpanded;
   }
 
   void _toggleAccordion() {
@@ -44,11 +55,14 @@ class _AccordionWidgetState extends State<AccordionWidget>
       children: [
         InkWell(
           onTap: _toggleAccordion,
+
           child: Container(
-            padding: const EdgeInsets.symmetric(
+            padding:
+            const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 14,
             ),
+
             decoration: const BoxDecoration(
               border: Border(
                 top: BorderSide(
@@ -56,8 +70,26 @@ class _AccordionWidgetState extends State<AccordionWidget>
                 ),
               ),
             ),
+
             child: Row(
               children: [
+                AnimatedRotation(
+                  turns:
+                  _isExpanded ? 0.5 : 0,
+
+                  duration:
+                  const Duration(
+                    milliseconds: 200,
+                  ),
+
+                  child: const Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 18,
+                  ),
+                ),
+
+                const SizedBox(width: 10),
+
                 if (widget.icon != null) ...[
                   widget.icon!,
                   const SizedBox(width: 12),
@@ -65,36 +97,76 @@ class _AccordionWidgetState extends State<AccordionWidget>
 
                 Expanded(
                   child: Text(
-                    widget.title ?? '',
+                    widget.title,
+
                     style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight:
+                      FontWeight.w600,
                     ),
                   ),
                 ),
 
-                AnimatedRotation(
-                  turns: _isExpanded ? 0.5 : 0,
-                  duration: const Duration(milliseconds: 200),
-                  child: const Icon(Icons.keyboard_arrow_down),
-                ),
+                if (widget.showCount)
+                  Container(
+                    width: 42,
+                    height: 24,
+
+                    alignment: Alignment.center,
+
+                    decoration:
+                    const BoxDecoration(
+                      color:
+                      Color(0xFFE5E5EA),
+
+                      borderRadius:
+                      BorderRadius.all(
+                        Radius.circular(999),
+                      ),
+                    ),
+
+                    child: Text(
+                      widget.count.toString(),
+
+                      style:
+                      const TextStyle(
+                        fontSize: 15,
+                        fontWeight:
+                        FontWeight.w700,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
         ),
 
-        AnimatedCrossFade(
-          firstChild: const SizedBox.shrink(),
-          secondChild: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16),
-            child: widget.child ?? const SizedBox.shrink(),
+        if (widget.count > 0)
+          AnimatedCrossFade(
+            firstChild:
+            const SizedBox.shrink(),
+
+            secondChild: Container(
+              width: double.infinity,
+
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                bottom: 16,
+              ),
+
+              child: widget.child,
+            ),
+
+            crossFadeState: _isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+
+            duration:
+            const Duration(
+              milliseconds: 150,
+            ),
           ),
-          crossFadeState: _isExpanded
-              ? CrossFadeState.showSecond
-              : CrossFadeState.showFirst,
-          duration: const Duration(milliseconds: 150),
-        ),
       ],
     );
   }

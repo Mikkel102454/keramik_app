@@ -1,17 +1,15 @@
-import 'package:ceramic_app/ui/pages/home/ceramic_select/ceramic_select_page.dart';
-import 'package:ceramic_app/ui/pages/home/my_clays/my_clays_page.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:ceramic_app/objects/category_dto.dart';
+import 'package:ceramic_app/repositories/stage_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:ceramic_app/objects/stage_dto.dart';
+import 'package:ceramic_app/objects/ceramic_dto.dart';
+import 'package:ceramic_app/repositories/ceramic_repository.dart';
 
-class CategoryController extends ChangeNotifier{
-  List<CategoryDto> _categories = [];
+class HomePageController extends ChangeNotifier{
+  List<CeramicDto> _ceramics = [];
+  List<StageDto> _stages = [];
 
   bool _isLoading = false;
-  String? _error = null;
-
-  void createCategory(CategoryDto category){
-
-  }
+  String? _error;
 
   Future<void> load() async {
     _isLoading = true;
@@ -19,43 +17,21 @@ class CategoryController extends ChangeNotifier{
     notifyListeners();
 
     try {
-      _categories = [];
-      _categories.add(
-        CategoryDto(
-          title: "Work In Progress",
-          page: () => const CeramicSelectPage(),
-        ),
-      );
-      _categories.add(
-          CategoryDto(
-            title: "Finished Work",
-            //page: () => const WIPPage(),
-          )
-      );
-      _categories.add(
-          CategoryDto(
-            title: "My Glazes",
-            //page: () => const WIPPage(),
-          )
-      );
-      _categories.add(
-          CategoryDto(
-            title: "My Clays",
-            page: () => const MyClaysPage(),
-          )
-      );
-    } catch (e) {
+      _stages = await StageRepository.getStages();
+      _stages.sort((a, b) => a.id.compareTo(b.id));
+      _ceramics = await CeramicRepository.getCeramics();
+    } catch (e){
       _error = e.toString();
     }
 
     _isLoading = false;
     notifyListeners();
   }
+
   bool get isLoading => _isLoading;
 
-  List<CategoryDto> get categories => _categories;
+  List<CeramicDto> get ceramics => _ceramics;
+  List<StageDto> get stages => _stages;
 
   String? get error => _error;
-
-
 }

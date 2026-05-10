@@ -1,14 +1,14 @@
-class StageDto {
+class GlazeDto {
   final int id;
   final String title;
 
-  StageDto({
+  GlazeDto({
     required this.id,
     required this.title,
   });
 
-  factory StageDto.fromJson(Map<String, dynamic> json) {
-    return StageDto(
+  factory GlazeDto.fromJson(Map<String, dynamic> json) {
+    return GlazeDto(
       id: json['id'],
       title: json['title'],
     );

@@ -11,8 +11,13 @@ class TextFieldWidget extends StatefulWidget {
   final TextInputType? keyboardType;
   final bool obscureText;
 
-  final Future<void> Function(String)? onChanged;
-  final Future<void> Function(String)? onSubmitted;
+  /// return true = accept
+  /// return false = revert
+  final Future<bool> Function(String)? onChanged;
+
+  /// return true = accept
+  /// return false = revert
+  final Future<bool> Function(String)? onSubmitted;
 
   final Duration? debounceDuration;
 
@@ -46,16 +51,18 @@ class TextFieldWidget extends StatefulWidget {
   });
 
   @override
-  State<TextFieldWidget> createState() => _TextFieldWidgetState();
+  State<TextFieldWidget> createState() => TextFieldWidgetState();
 }
 
-class _TextFieldWidgetState extends State<TextFieldWidget> {
+class TextFieldWidgetState extends State<TextFieldWidget> {
   late final TextEditingController _controller;
 
   Timer? _debounce;
 
   bool hadFirstFocus = false;
   bool forcedValidation = false;
+
+  late String lastValidValue;
 
   bool get isValid =>
       widget.validator?.call(_controller.text, context) == null;
@@ -80,6 +87,12 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
     }
   }
 
+  void clear() {
+    _controller.clear();
+
+    lastValidValue = "";
+  }
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +100,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
     _controller = TextEditingController(
       text: widget.initialValue,
     );
+
+    lastValidValue = widget.initialValue ?? "";
   }
 
   @override
@@ -97,31 +112,79 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
     super.dispose();
   }
 
-  void _onChanged(String value) {
+  void _revertValue() {
+    _controller.text = lastValidValue;
+
+    _controller.selection = TextSelection.fromPosition(
+      TextPosition(
+        offset: _controller.text.length,
+      ),
+    );
+  }
+
+  Future<void> _executeChange(String value) async {
     if (widget.onChanged == null) {
+      lastValidValue = value;
       return;
     }
 
+    final success = await widget.onChanged!(value);
+
+    if (!mounted) {
+      return;
+    }
+
+    if (!success) {
+      _revertValue();
+      return;
+    }
+
+    lastValidValue = value;
+  }
+
+  void _onChanged(String value) {
     if (widget.debounceDuration != null) {
       _debounce?.cancel();
 
       _debounce = Timer(
         widget.debounceDuration!,
             () async {
-          await widget.onChanged!(value);
+          await _executeChange(value);
         },
       );
-    } else {
-      widget.onChanged!(value);
+
+      return;
     }
+
+    _executeChange(value);
   }
 
   Future<void> _handleSubmitted(String value) async {
     forcedValidation = true;
 
-    if (widget.onSubmitted != null) {
-      await widget.onSubmitted!(value);
+    if (widget.onSubmitted == null) {
+      lastValidValue = value;
+
+      setState(() {});
+
+      return;
     }
+
+    final success = await widget.onSubmitted!(value);
+
+    if (!mounted) {
+      return;
+    }
+
+    if (!success) {
+      _revertValue();
+
+      setState(() {});
+
+      return;
+    }
+
+    lastValidValue = value;
 
     setState(() {});
   }
@@ -183,8 +246,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         fillColor: const Color(0xFFF1F1F1),
 
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 18,
+          horizontal: 10,
+          vertical: 12,
         ),
 
         border: OutlineInputBorder(
