@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:ceramic_app/extensions/extensions.dart';
 import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
+import 'package:ceramic_app/objects/ceramic_image_dto.dart';
 import 'package:ceramic_app/objects/ceramic_tag_dto.dart';
 import 'package:ceramic_app/repositories/glaze_entry_repository.dart';
 import 'package:ceramic_app/repositories/tag_repository.dart';
@@ -200,6 +203,55 @@ class CeramicViewPageController extends ChangeNotifier{
     } catch (e) {
       ceramic.stageId = oldValue;
       notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> uploadImage(File file) async {
+    List<CeramicImageDto> oldImages = ceramic.images.copy();
+    try {
+      final image = await CeramicRepository.uploadCeramicImage(
+        ceramicId: ceramic.id,
+        file: file,
+      );
+
+      ceramic.images.add(image);
+      hasChanged = true;
+      notifyListeners();
+      return true;
+
+    } catch (e) {
+      ceramic.images = oldImages;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> deleteImage(CeramicImageDto image) async {
+    List<CeramicImageDto> oldImages = ceramic.images.copy();
+    try {
+      await CeramicRepository.deleteCeramicImage(
+        image: image,
+      );
+
+      ceramic.images.removeWhere((e) => e.id == image.id);
+      hasChanged = true;
+      notifyListeners();
+      return true;
+
+    } catch (e) {
+      ceramic.images = oldImages;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> deleteCeramic() async {
+    try {
+      await CeramicRepository.deleteCeramic(ceramic.id);
+      hasChanged = true;
+      return true;
+    } catch (e) {
       return false;
     }
   }

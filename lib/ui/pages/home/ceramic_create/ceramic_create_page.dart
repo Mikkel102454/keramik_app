@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:ceramic_app/objects/stage_dto.dart';
+import 'package:ceramic_app/ui/pages/home/ceramic_image_view/ceramic_image_view_page.dart';
 import 'package:ceramic_app/ui/widgets/v2/dropdown_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/glaze_input_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
@@ -11,6 +14,7 @@ import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'ceramic_create_page_controller.dart';
 
 class CeramicCreatePage extends StatefulWidget {
@@ -97,27 +101,36 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
             child: Row(
               children: [
+                for (final entry in controller.images.asMap().entries) ...[
                 SquareWidget(
-                  icon: Icons.image,
-                  iconColor: Colors.grey.shade400,
-                  iconSize: 42,
-                  width: 92,
+                width: 92,
                   height: 92,
-                  backgroundColor: Colors.grey.shade300,
+                  imageFile: entry.value,
+                  onPressed: () async {
+
+                    showDialog(
+                      context: context,
+                      barrierColor: Colors.black87,
+                      builder: (_) => CeramicImageViewPage(
+                        xFile: entry.value,
+                        onDelete: () async {
+
+                          final success =
+                          await controller.deleteImage(
+                            entry.key,
+                          );
+
+                          if (success && context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        },
+                      ),
+                    );
+                  },
                 ),
 
                 const SizedBox(width: 12),
-
-                SquareWidget(
-                  icon: Icons.image,
-                  iconColor: Colors.grey.shade400,
-                  iconSize: 42,
-                  width: 92,
-                  height: 92,
-                  backgroundColor: Colors.grey.shade300,
-                ),
-
-                const SizedBox(width: 12),
+                ],
 
                 SquareWidget(
                   icon: Icons.add,
@@ -126,6 +139,43 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
                   width: 92,
                   height: 92,
                   backgroundColor: Colors.grey.shade300,
+                  onPressed: () async {
+                    final source = await showModalBottomSheet<ImageSource>(
+                      context: context,
+                      builder: (context) {
+                        return SafeArea(
+                          child: Wrap(
+                            children: [
+                              ListTile(
+                                leading: const Icon(Icons.photo_library),
+                                title: const Text('Select from gallery'),
+                                onTap: () {
+                                  Navigator.pop(context, ImageSource.gallery);
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.camera_alt),
+                                title: const Text('Take a picture'),
+                                onTap: () {
+                                  Navigator.pop(context, ImageSource.camera);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+
+                    if (source == null) return;
+
+                    final picked = await ImagePicker().pickImage(
+                      source: source,
+                    );
+
+                    if (picked != null) {
+                      controller.uploadImage(File(picked.path));
+                    }
+                  },
                 ),
               ],
             ),

@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:ceramic_app/objects/stage_dto.dart';
+import 'package:ceramic_app/ui/pages/home/ceramic_image_view/ceramic_image_view_page.dart';
 import 'package:ceramic_app/ui/widgets/v2/dropdown_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/glaze_input_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
@@ -12,6 +15,7 @@ import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'ceramic_view_page_controller.dart';
 
@@ -65,6 +69,47 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
               Navigator.of(context).pop(_controller.hasChanged);
             },
           ),
+
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.delete),
+              color: Colors.red,
+              onPressed: () async {
+                final confirmed = await showDialog<bool>(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text("Delete ceramic"),
+                    content: const Text(
+                      "Are you sure you want to delete this ceramic?",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text("Cancel"),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text("Delete"),
+                      ),
+                    ],
+                  ),
+                );
+
+                if (confirmed != true) return;
+
+                final success = await _controller.deleteCeramic();
+
+                if (success && context.mounted) {
+                  Navigator.of(context).pop(true);
+                }
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.share),
+              onPressed: () async {
+              },
+            ),
+          ],
         ),
         body: SafeArea(
           child: AnimatedBuilder(
@@ -115,27 +160,31 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
             child: Row(
               children: [
-                SquareWidget(
-                  icon: Icons.image,
-                  iconColor: Colors.grey.shade400,
-                  iconSize: 42,
-                  width: 92,
-                  height: 92,
-                  backgroundColor: Colors.grey.shade300,
-                ),
+                for (final image in controller.ceramic.images) ... [
+                  SquareWidget(
+                    width: 92,
+                    height: 92,
+                    imageUri: image.uri,
+                    onPressed: () async {
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.black87,
+                        builder: (_) => CeramicImageViewPage(
+                          image: image,
+                          onDelete: () async {
 
-                const SizedBox(width: 12),
+                            final success = await controller.deleteImage(image);
 
-                SquareWidget(
-                  icon: Icons.image,
-                  iconColor: Colors.grey.shade400,
-                  iconSize: 42,
-                  width: 92,
-                  height: 92,
-                  backgroundColor: Colors.grey.shade300,
-                ),
-
-                const SizedBox(width: 12),
+                            if (success && context.mounted) {
+                              Navigator.pop(context);
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 12),
+                ],
 
                 SquareWidget(
                   icon: Icons.add,
@@ -144,6 +193,43 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                   width: 92,
                   height: 92,
                   backgroundColor: Colors.grey.shade300,
+                  onPressed: () async {
+                    final source = await showModalBottomSheet<ImageSource>(
+                      context: context,
+                      builder: (context) {
+                        return SafeArea(
+                          child: Wrap(
+                            children: [
+                              ListTile(
+                                leading: const Icon(Icons.photo_library),
+                                title: const Text('Select from gallery'),
+                                onTap: () {
+                                  Navigator.pop(context, ImageSource.gallery);
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.camera_alt),
+                                title: const Text('Take a picture'),
+                                onTap: () {
+                                  Navigator.pop(context, ImageSource.camera);
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+
+                    if (source == null) return;
+
+                    final picked = await ImagePicker().pickImage(
+                      source: source,
+                    );
+
+                    if (picked != null) {
+                      controller.uploadImage(File(picked.path));
+                    }
+                  },
                 ),
               ],
             ),
@@ -160,7 +246,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           ),
           const SizedBox(height: 8),
           StepperSelectWidget(
-            initialValue: widget.ceramic.stageId.toString(),
+            initialValue: controller.ceramic.stageId.toString(),
             fontSize: 12,
             fontWeight: FontWeight.w600,
             size: 40,
@@ -193,7 +279,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           const SizedBox(height: 4),
           TextFieldWidget(
             placeholder: "Title",
-            initialValue: widget.ceramic.title,
+            initialValue: controller.ceramic.title,
             debounceDuration: Duration(milliseconds: 300),
 
             onChanged: (value) async {
@@ -213,7 +299,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
           DropdownWidget(
             placeholder: "Select",
-            initialValue: widget.ceramic.clayTypeId.toString(),
+            initialValue: controller.ceramic.clayTypeId.toString(),
             entries: [
               for (final clayType in widget.clayTypes)
                 MapEntry(clayType.title, clayType.id.toString()),
@@ -237,7 +323,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           TextFieldWidget(
             placeholder: "0.0",
             suffix: "kg",
-            initialValue: widget.ceramic.weight != 0 ? widget.ceramic.weight.toString() : "",
+            initialValue: controller.ceramic.weight != 0 ? controller.ceramic.weight.toString() : "",
             debounceDuration: Duration(milliseconds: 300),
 
             keyboardType: TextInputType.number,
@@ -258,7 +344,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           const SizedBox(height: 8),
           GlazeInputWidget(
             initialValues: [
-              for (final glazes in widget.ceramic.glazes)
+              for (final glazes in controller.ceramic.glazes)
                 GlazeEntry(
                   id: glazes.id,
                   glazeName: widget.glazes.firstWhere((e) => e.id == glazes.glazeId).title,
@@ -291,7 +377,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           // =========================
           TextWidget(text: "Rate", fontSize: 18, fontWeight: FontWeight.w700),
           StarStepperSelectWidget(
-            initialValue: widget.ceramic.rating,
+            initialValue: controller.ceramic.rating,
 
             selectedIconColor: Colors.green,
 
@@ -324,7 +410,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             removeIconColor: Colors.red,
 
             initialValues: [
-              for (final tags in widget.ceramic.tags)
+              for (final tags in controller.ceramic.tags)
                 TagEntry(
                   id: tags.id,
                   value: tags.tag,
@@ -348,7 +434,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
           TextFieldWidget(
             placeholder: "Project note",
-            initialValue: widget.ceramic.note,
+            initialValue: controller.ceramic.note,
             debounceDuration: Duration(milliseconds: 300),
             minLines: 3,
             maxLines: 5,

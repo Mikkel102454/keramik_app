@@ -1,11 +1,17 @@
+import 'dart:io';
+
+import 'package:ceramic_app/extensions/extensions.dart';
 import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
+import 'package:ceramic_app/objects/ceramic_image_dto.dart';
 import 'package:ceramic_app/objects/ceramic_tag_dto.dart';
 import 'package:ceramic_app/repositories/stage_repository.dart';
+import 'package:ceramic_app/utils/file.dart';
 import 'package:flutter/material.dart';
 
 import 'package:ceramic_app/objects/stage_dto.dart';
 import 'package:ceramic_app/repositories/ceramic_repository.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class CeramicCreatePageController extends ChangeNotifier{
   List<StageDto> stages = [];
@@ -15,6 +21,7 @@ class CeramicCreatePageController extends ChangeNotifier{
   double weight = 0.0;
   List<CeramicGlazeEntryDto> glazes = [];
   List<CeramicTagDto> tags = [];
+  List<XFile> images = [];
   String notes = '';
   int rating = 0;
   int stageId = 1;
@@ -113,6 +120,35 @@ class CeramicCreatePageController extends ChangeNotifier{
     stageId = value;
   }
 
+  Future<bool> uploadImage(File file) async {
+    List<XFile> oldImages = images.copy();
+    try {
+      final XFile compressed = await compressFile(file);
+      images.add(compressed);
+      notifyListeners();
+      return true;
+
+    } catch (e) {
+      images = oldImages;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> deleteImage(int imageId) async {
+    List<XFile> oldImages = images.copy();
+    try {
+      images.removeAt(imageId);
+      notifyListeners();
+      return true;
+
+    } catch (e) {
+      images = oldImages;
+      notifyListeners();
+      return false;
+    }
+  }
+
   Future<void> create() async{
     CeramicDto ceramicDto = CeramicDto(
       title: title,
@@ -123,9 +159,10 @@ class CeramicCreatePageController extends ChangeNotifier{
       stageId: stageId,
       tags: tags,
       glazes: glazes,
+      images: [],
       id: 0,
     );
-    return await CeramicRepository.createCeramic(ceramic: ceramicDto);
+    return await CeramicRepository.createCeramic(ceramic: ceramicDto, images: images);
   }
 
   bool get isLoading => _isLoading;
