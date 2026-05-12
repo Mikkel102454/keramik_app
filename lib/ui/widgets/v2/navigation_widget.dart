@@ -1,3 +1,5 @@
+import 'package:auto_route/auto_route.dart';
+import 'package:ceramic_app/config/router/app_router.dart';
 import 'package:ceramic_app/ui/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
 
@@ -24,51 +26,45 @@ class NavigationWidget extends StatelessWidget {
       BuildContext context,
       NavigationPage page,
       ) {
-    if (page == currentPage) {
-      return;
-    }
-
-    Widget targetPage;
+    if (page == currentPage) return;
 
     switch (page) {
       case NavigationPage.home:
-        targetPage = const HomePage();
+        context.router.replace(
+          const HomeRoute(),
+          onFailure: (failure) {},
+        );
         break;
 
+        //This fails cause the route don't exist yet
       case NavigationPage.glazes:
-        targetPage = const GlazesPage();
+        context.router.replace(
+          const GlazesRoute(),
+          onFailure: (failure) {},
+        );
         break;
 
       case NavigationPage.shop:
-        targetPage = const ShopPage();
+        context.router.replace(
+          const ShopRoute(),
+          onFailure: (failure) {},
+        );
         break;
 
       case NavigationPage.notifications:
-        targetPage =
-        const NotificationsPage();
+        context.router.replace(
+          const NotificationsRoute(),
+          onFailure: (failure) {},
+        );
         break;
 
       case NavigationPage.profile:
-        targetPage = const TestPage();
+        context.router.replace(
+          const ProfileRoute(),
+          onFailure: (failure) {},
+        );
         break;
     }
-
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (
-            context,
-            animation,
-            secondaryAnimation,
-            ) {
-          return targetPage;
-        },
-
-        transitionDuration: Duration.zero,
-        reverseTransitionDuration:
-        Duration.zero,
-      ),
-    );
   }
 
   @override

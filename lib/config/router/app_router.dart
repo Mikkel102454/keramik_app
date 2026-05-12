@@ -12,6 +12,15 @@ part 'app_router.gr.dart';
 @Singleton()
 class AppRouter extends RootStackRouter {
   @override
+  RouteType get defaultRouteType =>
+      RouteType.custom(
+        duration: Duration.zero,
+        reverseDuration: Duration.zero,
+        transitionsBuilder:
+        TransitionsBuilders.noTransition,
+      );
+
+  @override
   List<AutoRoute> get routes => [
     AutoRoute(
       page: LoginRoute.page,
