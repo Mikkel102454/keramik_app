@@ -1,7 +1,7 @@
 /* ---------- Category Model ---------- */
 import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/ceramic_image_dto.dart';
 import 'package:ceramic_app/objects/ceramic_tag_dto.dart';
+import 'package:ceramic_app/objects/image_dto.dart';
 
 class CeramicDto {
   int id;
@@ -13,7 +13,7 @@ class CeramicDto {
   String note;
   List<CeramicGlazeEntryDto> glazes;
   List<CeramicTagDto> tags;
-  List<CeramicImageDto> images;
+  List<ImageDto> images;
 
   CeramicDto({
     required this.id,
@@ -39,7 +39,7 @@ class CeramicDto {
       note: json['note'],
       glazes: (json['glazes'] as List).map((e) => CeramicGlazeEntryDto.fromJson(e)).toList(),
       tags: (json['tags'] as List).map((e) => CeramicTagDto.fromJson(e)).toList(),
-      images: (json['images'] as List).map((e) => CeramicImageDto.fromJson(e)).toList(),
+      images: (json['images'] as List).map((e) => ImageDto.fromJson(e)).toList(),
     );
   }
 
@@ -52,6 +52,9 @@ class CeramicDto {
       'rating': rating,
       'weight': weight,
       'note': note,
+      'glazes': glazes.map((e) => e.toJson()).toList(),
+      'tags': tags.map((e) => e.toJson()).toList(),
+      'images': images.map((e) => e.toJson()).toList(),
     };
   }
 }

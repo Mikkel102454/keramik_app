@@ -1,17 +1,17 @@
 import 'dart:io';
 
-import 'package:ceramic_app/objects/ceramic_image_dto.dart';
+import 'package:ceramic_app/objects/image_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class CeramicImageViewPage extends StatelessWidget {
+class ImageViewPage extends StatelessWidget {
 
-  final CeramicImageDto? image;
+  final ImageDto? image;
   final XFile? xFile;
 
   final Future<void> Function() onDelete;
 
-  const CeramicImageViewPage({
+  const ImageViewPage({
     super.key,
     this.image,
     this.xFile,

@@ -8,7 +8,7 @@ import 'package:ceramic_app/ui/pages/test_page.dart';
 
 enum NavigationPage {
   home,
-  glazes,
+  materials,
   shop,
   notifications,
   profile,
@@ -37,9 +37,9 @@ class NavigationWidget extends StatelessWidget {
         break;
 
         //This fails cause the route don't exist yet
-      case NavigationPage.glazes:
+      case NavigationPage.materials:
         context.router.replace(
-          const GlazesRoute(),
+          const MaterialsRoute(),
           onFailure: (failure) {},
         );
         break;
@@ -115,12 +115,12 @@ class NavigationWidget extends StatelessWidget {
 
                   isSelected:
                   currentPage ==
-                      NavigationPage.glazes,
+                      NavigationPage.materials,
 
                   onTap: () {
                     _navigate(
                       context,
-                      NavigationPage.glazes,
+                      NavigationPage.materials,
                     );
                   },
                 ),

@@ -3,24 +3,6 @@ import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
-class GlazesPage extends StatelessWidget {
-  const GlazesPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        bottomNavigationBar:
-        const NavigationWidget(
-          currentPage:
-          NavigationPage.glazes,
-        ),
-      ),
-    );
-  }
-}
-
-@RoutePage()
 class ShopPage extends StatelessWidget {
   const ShopPage({super.key});
 

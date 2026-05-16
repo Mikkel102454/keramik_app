@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:ceramic_app/objects/ceramic_dto.dart';
+import 'package:ceramic_app/objects/image_dto.dart';
 import 'package:ceramic_app/utils/file.dart';
-import 'package:ceramic_app/objects/ceramic_image_dto.dart';
 
 import 'package:ceramic_app/api/api_client.dart';
 import 'package:ceramic_app/utils/web.dart';
@@ -105,7 +105,7 @@ class CeramicRepository {
     checkSuccess(response);
   }
 
-  static Future<CeramicImageDto> uploadCeramicImage({
+  static Future<ImageDto> uploadCeramicImage({
     required int ceramicId,
     required File file,
   }) async {
@@ -129,16 +129,16 @@ class CeramicRepository {
 
     checkSuccess(response);
 
-    return CeramicImageDto.fromJson(
+    return ImageDto.fromJson(
       response.data['data'],
     );
   }
 
   static Future<void> deleteCeramicImage({
-    required CeramicImageDto image
+    required ImageDto image
   }) async {
     final response = await ApiClient.dio.delete(
-      '/api/ceramics/${image.ceramicId}/image/${image.id}',
+      '/api/ceramics/${image.objectId}/image/${image.id}',
     );
 
     checkSuccess(response);

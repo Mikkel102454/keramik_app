@@ -140,6 +140,9 @@ class _HomePageState extends State<HomePage>
                       fontColor: Colors.black,
                       backgroundColor: Colors.grey.shade300,
                       title: ceramics[index].title,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      imageUri: ceramics[index].images.isNotEmpty ? ceramics[index].images[0].uri : null,
                       width: 118,
                       height: 118,
                       onPressed: () async {

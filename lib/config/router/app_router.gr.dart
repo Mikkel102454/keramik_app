@@ -11,22 +11,6 @@
 part of 'app_router.dart';
 
 /// generated route for
-/// [GlazesPage]
-class GlazesRoute extends PageRouteInfo<void> {
-  const GlazesRoute({List<PageRouteInfo>? children})
-    : super(GlazesRoute.name, initialChildren: children);
-
-  static const String name = 'GlazesRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const GlazesPage();
-    },
-  );
-}
-
-/// generated route for
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
@@ -54,6 +38,22 @@ class LoginRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const LoginPage();
+    },
+  );
+}
+
+/// generated route for
+/// [MaterialsPage]
+class MaterialsRoute extends PageRouteInfo<void> {
+  const MaterialsRoute({List<PageRouteInfo>? children})
+    : super(MaterialsRoute.name, initialChildren: children);
+
+  static const String name = 'MaterialsRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const MaterialsPage();
     },
   );
 }

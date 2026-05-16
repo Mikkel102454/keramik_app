@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:ceramic_app/objects/stage_dto.dart';
-import 'package:ceramic_app/ui/pages/home/ceramic_image_view/ceramic_image_view_page.dart';
+import 'package:ceramic_app/ui/pages/image_view/image_view_page.dart';
 import 'package:ceramic_app/ui/widgets/v2/dropdown_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/glaze_input_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
@@ -52,7 +52,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create new ceramic"),
+        title: Text("Ceramic"),
 
         actions: [IconButton(icon: const Icon(Icons.check), onPressed: () {_createCeramic();})],
       ),
@@ -111,7 +111,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
                     showDialog(
                       context: context,
                       barrierColor: Colors.black87,
-                      builder: (_) => CeramicImageViewPage(
+                      builder: (_) => ImageViewPage(
                         xFile: entry.value,
                         onDelete: () async {
 
@@ -362,7 +362,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           const SizedBox(height: 8),
 
           TextFieldWidget(
-            placeholder: "Project note",
+            placeholder: "Project notes",
 
             minLines: 3,
             maxLines: 5,

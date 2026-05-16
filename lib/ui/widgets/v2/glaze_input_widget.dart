@@ -104,7 +104,7 @@ class GlazeInputWidget extends StatefulWidget {
     this.dropdownColor = Colors.black,
     this.dropdownDecoration = TextDecoration.none,
 
-    this.iconSize = 18,
+    this.iconSize = 22,
 
     this.backgroundColor = const Color(
       0xFFF5F5F5,
@@ -632,9 +632,10 @@ class _GlazeInputWidgetState
 
               icon: Icon(
                 Icons
-                    .keyboard_arrow_down,
+                    .arrow_drop_down,
                 size:
                 widget.iconSize,
+                color: Color(0xFF9A9A9A),
               ),
 
               borderRadius:
