@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/ui/pages/home/home_page.dart';
+import 'package:ceramic_app/ui/pages/notification/notification_page.dart';
 import 'package:ceramic_app/ui/pages/materials/materials_page.dart';
 import 'package:ceramic_app/ui/pages/v2/pages.dart';
 import 'package:injectable/injectable.dart';
@@ -37,7 +38,7 @@ class AppRouter extends RootStackRouter {
       page: ShopRoute.page,
     ),
     AutoRoute(
-      page: NotificationsRoute.page,
+      page: NotificationRoute.page,
     ),
     AutoRoute(
       page: MaterialsRoute.page,

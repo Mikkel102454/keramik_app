@@ -1,11 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/config/router/app_router.dart';
-import 'package:ceramic_app/ui/pages/home/home_page.dart';
 import 'package:flutter/material.dart';
-
-import 'package:ceramic_app/ui/pages/v2/pages.dart';
-import 'package:ceramic_app/ui/pages/test_page.dart';
-
 enum NavigationPage {
   home,
   materials,
@@ -36,7 +31,6 @@ class NavigationWidget extends StatelessWidget {
         );
         break;
 
-        //This fails cause the route don't exist yet
       case NavigationPage.materials:
         context.router.replace(
           const MaterialsRoute(),
@@ -53,7 +47,7 @@ class NavigationWidget extends StatelessWidget {
 
       case NavigationPage.notifications:
         context.router.replace(
-          const NotificationsRoute(),
+          const NotificationRoute(),
           onFailure: (failure) {},
         );
         break;
