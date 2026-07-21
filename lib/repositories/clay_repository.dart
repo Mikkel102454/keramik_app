@@ -10,6 +10,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class ClayRepository {
+  static final Map<int, Future<void>> _updateQueues = {};
   static Future<List<ClayDto>> getClayTypes() async {
     final response = await ApiClient.dio.get('/api/clay');
 
@@ -62,6 +63,7 @@ class ClayRepository {
           return MultipartFile.fromFile(
             image.path,
             filename: image.name,
+            contentType: DioMediaType('image', 'jpeg'),
           );
         }),
       ),
@@ -78,16 +80,23 @@ class ClayRepository {
   static Future<void> updateClay({
     required ClayDto clay
   }) async {
-    final response = await ApiClient.dio.put(
-      '/api/clay/${clay.id}',
-      data: {
-        'title': clay.title,
-        'supplier': clay.supplier,
-        'note': clay.note,
-      },
-    );
-
-    checkSuccess(response);
+    final id = clay.id;
+    final payload = <String, dynamic>{
+      'title': clay.title,
+      'supplier': clay.supplier,
+      'note': clay.note,
+    };
+    final previous = _updateQueues[id] ?? Future<void>.value();
+    final request = previous.catchError((_) {}).then((_) async {
+      final response = await ApiClient.dio.put('/api/clay/$id', data: payload);
+      checkSuccess(response);
+    });
+    _updateQueues[id] = request;
+    try {
+      await request;
+    } finally {
+      if (identical(_updateQueues[id], request)) _updateQueues.remove(id);
+    }
   }
 
   static Future<ImageDto> uploadClayImage({

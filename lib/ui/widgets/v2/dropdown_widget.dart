@@ -47,6 +47,18 @@ class _DropdownWidgetState
     }
   }
 
+  @override
+  void didUpdateWidget(covariant DropdownWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue ||
+        widget.entries != oldWidget.entries) {
+      final values = widget.entries.map((entry) => entry.value).toSet();
+      final next = values.contains(widget.initialValue) ? widget.initialValue : null;
+      selectedValue = next;
+      lastValidValue = next;
+    }
+  }
+
   Future<void> _handleChanged(String? value) async {
     if (value == null) {
       return;

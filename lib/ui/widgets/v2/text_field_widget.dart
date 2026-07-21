@@ -105,6 +105,16 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
   }
 
   @override
+  void didUpdateWidget(covariant TextFieldWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != _controller.text) {
+      _controller.text = widget.initialValue ?? '';
+      lastValidValue = _controller.text;
+    }
+  }
+
+  @override
   void dispose() {
     _debounce?.cancel();
     _controller.dispose();

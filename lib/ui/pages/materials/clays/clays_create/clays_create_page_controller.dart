@@ -60,7 +60,9 @@ class ClaysCreatePageController extends ChangeNotifier{
   Future<bool> deleteImage(int imageId) async {
     List<XFile> oldImages = images.copy();
     try {
-      images.removeAt(imageId);
+      final removed = images.removeAt(imageId);
+      final file = File(removed.path);
+      if (await file.exists()) await file.delete();
       notifyListeners();
       return true;
 
@@ -79,7 +81,23 @@ class ClaysCreatePageController extends ChangeNotifier{
       images: [],
       id: 0,
     );
-    return await ClayRepository.createClay(clay: clayDto, images: images);
+    await ClayRepository.createClay(clay: clayDto, images: images);
+    await cleanupImages();
+  }
+
+  Future<void> cleanupImages() async {
+    final drafts = List<XFile>.from(images);
+    images.clear();
+    for (final draft in drafts) {
+      final file = File(draft.path);
+      if (await file.exists()) await file.delete();
+    }
+  }
+
+  @override
+  void dispose() {
+    cleanupImages();
+    super.dispose();
   }
 
   bool get isLoading => _isLoading;

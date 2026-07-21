@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
 import 'package:ceramic_app/api/api_client.dart';
+import 'package:ceramic_app/utils/web.dart';
 
 part 'authentication_state.dart';
 part 'authentication_cubit.freezed.dart';
@@ -33,10 +34,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         '/api/account/me',
       );
 
+      checkSuccess(response);
       final data = response.data;
-      final authorized = data is Map &&
-          (data['authorized'] == true ||
-              (data['data'] is Map && data['data']['authorized'] == true));
+      final authorized = data is Map && data['data'] is Map &&
+          data['data']['authorized'] == true;
       if (response.statusCode == 200 && authorized) {
         emit(const AuthenticationState.authenticated());
       } else {
@@ -65,6 +66,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         },
       );
 
+      checkSuccess(response);
       if (response.statusCode == 200) {
         emit(const AuthenticationState.authenticated());
       } else if (response.statusCode == 401) {
@@ -81,7 +83,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     try {
       await _dio.post('/api/auth/logout');
       await _cookieJar.deleteAll();
-      emit(const AuthenticationState.logout());
+      emit(const AuthenticationState.unauthenticated());
     } catch (e) {
       rethrow;
     }

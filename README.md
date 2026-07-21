@@ -23,6 +23,8 @@ Signing credentials are intentionally not stored in this repository.
 
 Ceramics, clays, glazes, images, and session login are functional. Shop, Profile, Notifications, glaze combinations, textiles, signup, forgot-password, share controls, and the notification badge are intentionally incomplete placeholders. Their current rendering and no-op behavior are preserved; they must not be presented as completed features.
 
+The client expects the backend's `{success, data, error}` envelope for every endpoint. Authentication failures follow the same envelope and route through the normal unauthenticated state. Create and edit forms use the backend's 255-character text limits, required ceramic fields, 0–5 rating, and nonnegative weight rules. Draft images are temporary JPEG files: they are retained after a failed create for retry and removed when deleted, after success, or when the create page is abandoned.
+
 ## Validation
 
 ```powershell

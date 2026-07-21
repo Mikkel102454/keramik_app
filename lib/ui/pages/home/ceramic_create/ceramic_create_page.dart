@@ -381,16 +381,23 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
   }
 
   Future<void> _createCeramic() async {
-    if (_controller.title.isEmpty) {
+    if (_controller.title.trim().isEmpty || _controller.title.length > 255) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Enter a title")));
+      ).showSnackBar(const SnackBar(content: Text("Enter a title up to 255 characters")));
       return;
     }
-    if (_controller.stageId == 0) {
+    if (_controller.stageId <= 0 || _controller.clayTypeId < 0) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Invalid stage selected")));
+      return;
+    }
+    if (_controller.rating < 0 || _controller.rating > 5 ||
+        _controller.weight < 0 || _controller.notes.length > 255) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Rating must be 0–5, weight nonnegative, and notes at most 255 characters.'),
+      ));
       return;
     }
 

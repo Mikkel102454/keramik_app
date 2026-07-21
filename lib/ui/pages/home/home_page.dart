@@ -65,16 +65,16 @@ class _HomePageState extends State<HomePage>
 
             if (_controller.error != null) {
               return Center(
-                child: Text(
-                  "Error: ${_controller.error}",
-                ),
+                child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Text("Error: ${_controller.error}"),
+                  const SizedBox(height: 12),
+                  FilledButton(onPressed: _controller.load, child: const Text('Retry')),
+                ]),
               );
             }
 
             return RefreshIndicator(
-              onRefresh: () async {
-                _controller.load();
-              },
+              onRefresh: _controller.load,
 
               child: _pageContent(
                 _controller,

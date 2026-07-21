@@ -9,33 +9,40 @@ Future<void> openWebPage(String url) async {
 }
 
 String getApiError(dynamic responseData) {
-  if (responseData is Map &&
-      responseData.containsKey('error') &&
-      responseData['error'] != null &&
-      responseData['error']['message'] != null) {
-    return responseData['error']['message'];
+  if (responseData is Map && responseData['error'] is Map) {
+    final message = responseData['error']['message'];
+    if (message is String && message.trim().isNotEmpty) return message.trim();
   }
-
-  return 'Unknown server error: $responseData';
+  return 'The server could not complete the request';
 }
 
 void checkSuccess(dynamic response) {
   if (response.statusCode == 401) {
-    throw const ApiException('Your session has expired', statusCode: 401);
+    throw ApiException(getApiError(response.data),
+        statusCode: 401, code: _errorCode(response.data));
   }
 
 
   final data = response.data;
 
   if (data == null || data['success'] != true) {
-    throw ApiException(getApiError(data), statusCode: response.statusCode);
+    throw ApiException(getApiError(data),
+        statusCode: response.statusCode, code: _errorCode(data));
   }
 }
 
+String? _errorCode(dynamic data) {
+  if (data is Map && data['error'] is Map && data['error']['code'] is String) {
+    return data['error']['code'];
+  }
+  return null;
+}
+
 class ApiException implements Exception {
-  const ApiException(this.message, {this.statusCode});
+  const ApiException(this.message, {this.statusCode, this.code});
   final String message;
   final int? statusCode;
+  final String? code;
 
   @override
   String toString() => message;

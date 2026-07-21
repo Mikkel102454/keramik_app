@@ -48,6 +48,15 @@ class _StepperSelectWidgetState
     lastValidValue = widget.initialValue;
   }
 
+  @override
+  void didUpdateWidget(covariant StepperSelectWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue) {
+      selectedValue = widget.initialValue;
+      lastValidValue = widget.initialValue;
+    }
+  }
+
   int get selectedIndex {
     return widget.entries.indexWhere(
           (entry) => entry.value == selectedValue,

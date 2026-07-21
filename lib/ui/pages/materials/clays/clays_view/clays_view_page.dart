@@ -62,9 +62,9 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (_) => AlertDialog(
-                    title: const Text("Delete ceramic"),
+                    title: const Text("Delete clay"),
                     content: const Text(
-                      "Are you sure you want to delete this ceramic?",
+                      "Are you sure you want to delete this clay?",
                     ),
                     actions: [
                       TextButton(
@@ -85,6 +85,10 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
 
                 if (success && context.mounted) {
                   Navigator.of(context).pop(true);
+                } else if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Could not delete clay.')),
+                  );
                 }
               },
             ),
@@ -104,13 +108,17 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
               }
 
               if (_controller.error != null) {
-                return Center(child: Text("Error: ${_controller.error}"));
+                return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Text("Error: ${_controller.error}"),
+                  FilledButton(
+                    onPressed: () => _controller.load(null),
+                    child: const Text('Retry'),
+                  ),
+                ]));
               }
 
               return RefreshIndicator(
-                onRefresh: () async {
-                  _controller.load(null);
-                },
+                onRefresh: () => _controller.load(null),
                 child: _pageContent(_controller),
               );
             },

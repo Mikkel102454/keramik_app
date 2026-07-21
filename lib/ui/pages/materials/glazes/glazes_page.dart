@@ -47,7 +47,10 @@ class _GlazesPageState extends State<GlazesPage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (_controller.error != null) {
-              return Center(child: Text('Error: ${_controller.error}'));
+              return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                Text('Error: ${_controller.error}'),
+                FilledButton(onPressed: _controller.load, child: const Text('Retry')),
+              ]));
             }
             return RefreshIndicator(
               onRefresh: _controller.load,

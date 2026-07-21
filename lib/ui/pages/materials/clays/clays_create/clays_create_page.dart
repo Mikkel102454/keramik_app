@@ -241,10 +241,16 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
   }
 
   Future<void> _createClay() async {
-    if (_controller.title.isEmpty) {
+    if (_controller.title.trim().isEmpty || _controller.title.length > 255) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Enter a title")));
+      ).showSnackBar(const SnackBar(content: Text("Enter a title up to 255 characters")));
+      return;
+    }
+    if (_controller.supplier.length > 255 || _controller.notes.length > 255) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Supplier and notes must be at most 255 characters.'),
+      ));
       return;
     }
 

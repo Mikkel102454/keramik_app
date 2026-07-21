@@ -101,6 +101,10 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
                 if (success && context.mounted) {
                   Navigator.of(context).pop(true);
+                } else if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Could not delete ceramic.')),
+                  );
                 }
               },
             ),
@@ -122,15 +126,17 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
               }
 
               if (_controller.error != null) {
-                return Center(
-                  child: Text("Error: ${_controller.error}"),
-                );
+                return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                  Text("Error: ${_controller.error}"),
+                  FilledButton(
+                    onPressed: () => _controller.load(null, null),
+                    child: const Text('Retry'),
+                  ),
+                ]));
               }
 
               return RefreshIndicator(
-                onRefresh: () async {
-                  _controller.load(null, null);
-                },
+                onRefresh: () => _controller.load(null, null),
                 child: _pageContent(_controller, widget)
               );
             },

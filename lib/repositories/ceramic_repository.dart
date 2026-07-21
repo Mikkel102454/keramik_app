@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 
 class CeramicRepository {
+  static final Map<int, Future<void>> _updateQueues = {};
   static Future<List<CeramicDto>> getCeramics() async {
     final response = await ApiClient.dio.get('/api/ceramics');
 
@@ -74,6 +75,7 @@ class CeramicRepository {
           return MultipartFile.fromFile(
             image.path,
             filename: image.name,
+            contentType: DioMediaType('image', 'jpeg'),
           );
         }),
       ),
@@ -90,19 +92,26 @@ class CeramicRepository {
   static Future<void> updateCeramic({
     required CeramicDto ceramic
   }) async {
-    final response = await ApiClient.dio.put(
-      '/api/ceramics/${ceramic.id}',
-      data: {
-        'title': ceramic.title,
-        'clayTypeId': ceramic.clayTypeId,
-        'weight': ceramic.weight,
-        'note': ceramic.note,
-        'rating': ceramic.rating,
-        'stageId': ceramic.stageId
-      },
-    );
-
-    checkSuccess(response);
+    final id = ceramic.id;
+    final payload = <String, dynamic>{
+      'title': ceramic.title,
+      'clayTypeId': ceramic.clayTypeId,
+      'weight': ceramic.weight,
+      'note': ceramic.note,
+      'rating': ceramic.rating,
+      'stageId': ceramic.stageId,
+    };
+    final previous = _updateQueues[id] ?? Future<void>.value();
+    final request = previous.catchError((_) {}).then((_) async {
+      final response = await ApiClient.dio.put('/api/ceramics/$id', data: payload);
+      checkSuccess(response);
+    });
+    _updateQueues[id] = request;
+    try {
+      await request;
+    } finally {
+      if (identical(_updateQueues[id], request)) _updateQueues.remove(id);
+    }
   }
 
   static Future<ImageDto> uploadCeramicImage({
