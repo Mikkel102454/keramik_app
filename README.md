@@ -1,17 +1,32 @@
-# kemik_app
+# Keramik Android client
 
-A new Flutter project.
+Flutter client for the Keramik ceramics journal. Android is the supported MVP target.
 
-## Getting Started
+## Run
 
-This project is a starting point for a Flutter application.
+Install Flutter using the version compatible with `pubspec.yaml`, then run:
 
-A few resources to get you started if this is your first Flutter project:
+```powershell
+flutter pub get
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
+```
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+`10.0.2.2` is the Android emulator route to the host. A physical device needs a reachable development URL. Release builds reject a missing or non-HTTPS URL:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```powershell
+flutter build apk --release --dart-define=API_BASE_URL=https://api.example.com
+```
+
+Signing credentials are intentionally not stored in this repository.
+
+## Current MVP boundary
+
+Ceramics, clays, glazes, images, and session login are functional. Shop, Profile, Notifications, glaze combinations, textiles, signup, forgot-password, share controls, and the notification badge are intentionally incomplete placeholders. Their current rendering and no-op behavior are preserved; they must not be presented as completed features.
+
+## Validation
+
+```powershell
+flutter analyze
+flutter test
+flutter build apk --debug --dart-define=API_BASE_URL=http://10.0.2.2:8080
+```

@@ -96,27 +96,25 @@ class ClayRepository {
   }) async {
 
     final XFile compressed = await compressFile(file);
-
-    final fileName =
-        compressed.path.split('/').last;
-
-    final formData = FormData.fromMap({
-      'file': await MultipartFile.fromFile(
-        compressed.path,
-        filename: fileName,
-      ),
-    });
-
-    final response = await ApiClient.dio.post(
-      '/api/clay/$id/image',
-      data: formData,
-    );
-
-    checkSuccess(response);
-
-    return ImageDto.fromJson(
-      response.data['data'],
-    );
+    try {
+      final fileName = compressed.path.split(Platform.pathSeparator).last;
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(
+          compressed.path,
+          filename: fileName,
+          contentType: DioMediaType('image', 'jpeg'),
+        ),
+      });
+      final response = await ApiClient.dio.post(
+        '/api/clay/$id/image',
+        data: formData,
+      );
+      checkSuccess(response);
+      return ImageDto.fromJson(response.data['data']);
+    } finally {
+      final temporaryFile = File(compressed.path);
+      if (await temporaryFile.exists()) await temporaryFile.delete();
+    }
   }
 
   static Future<void> deleteClayImage({

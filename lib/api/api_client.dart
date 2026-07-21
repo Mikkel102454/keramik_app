@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 class ApiClient {
   static late Dio dio;
   static late PersistCookieJar cookieJar;
+  static void Function()? onUnauthorized;
 
   static Future<void> init() async {
     final dir = await getApplicationDocumentsDirectory();
@@ -31,5 +32,9 @@ class ApiClient {
     );
 
     dio.interceptors.add(CookieManager(cookieJar));
+    dio.interceptors.add(InterceptorsWrapper(onResponse: (response, handler) {
+      if (response.statusCode == 401) onUnauthorized?.call();
+      handler.next(response);
+    }));
   }
 }

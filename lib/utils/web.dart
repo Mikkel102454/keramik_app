@@ -21,13 +21,22 @@ String getApiError(dynamic responseData) {
 
 void checkSuccess(dynamic response) {
   if (response.statusCode == 401) {
-    //go to login page
+    throw const ApiException('Your session has expired', statusCode: 401);
   }
 
 
   final data = response.data;
 
   if (data == null || data['success'] != true) {
-    throw Exception(getApiError(data));
+    throw ApiException(getApiError(data), statusCode: response.statusCode);
   }
+}
+
+class ApiException implements Exception {
+  const ApiException(this.message, {this.statusCode});
+  final String message;
+  final int? statusCode;
+
+  @override
+  String toString() => message;
 }

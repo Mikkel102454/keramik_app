@@ -55,7 +55,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {
+      onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
 
         Navigator.of(context).pop(_controller.hasChanged);
@@ -172,11 +172,12 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                         builder: (_) => ImageViewPage(
                           image: image,
                           onDelete: () async {
+                            final navigator = Navigator.of(context);
 
                             final success = await controller.deleteImage(image);
 
-                            if (success && context.mounted) {
-                              Navigator.pop(context);
+                            if (success) {
+                              navigator.pop();
                             }
                           },
                         ),

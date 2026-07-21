@@ -2,7 +2,7 @@ part of 'extensions.dart';
 
 extension StringExtensions on String {
   String mask(String maskText) {
-    return '${this}${maskText.substring(length, maskText.length)}';
+    return '$this${maskText.substring(length, maskText.length)}';
   }
 
   String removeLast({

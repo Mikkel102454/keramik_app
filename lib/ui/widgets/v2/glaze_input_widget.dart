@@ -174,7 +174,6 @@ class _GlazeInputWidgetState
       notes: "",
       expanded: true,
     );
-
     final previous = [...lastValidEntries];
 
     setState(() {
@@ -345,6 +344,7 @@ class _GlazeInputWidgetState
     }
 
     if (!success) {
+      setState(() => entries = previous);
       return false;
     }
 

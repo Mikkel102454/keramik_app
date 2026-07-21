@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future<XFile> compressFile(File file) async {
+  final temporaryDirectory = await getTemporaryDirectory();
   final targetPath =
-      '${file.parent.path}/${DateTime.now().millisecondsSinceEpoch}.jpg';
+      '${temporaryDirectory.path}/${DateTime.now().microsecondsSinceEpoch}.jpg';
 
   final XFile? compressed =
       await FlutterImageCompress.compressAndGetFile(

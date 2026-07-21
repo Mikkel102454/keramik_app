@@ -3,7 +3,6 @@ import 'package:ceramic_app/ui/pages/home/home_page.dart';
 import 'package:ceramic_app/ui/pages/notification/notification_page.dart';
 import 'package:ceramic_app/ui/pages/materials/materials_page.dart';
 import 'package:ceramic_app/ui/pages/v2/pages.dart';
-import 'package:injectable/injectable.dart';
 
 import 'package:ceramic_app/ui/pages/login/login_page.dart';
 import 'package:ceramic_app/ui/pages/test_page.dart';
@@ -11,7 +10,6 @@ import 'package:ceramic_app/ui/pages/test_page.dart';
 part 'app_router.gr.dart';
 
 @AutoRouterConfig()
-@Singleton()
 class AppRouter extends RootStackRouter {
   @override
   RouteType get defaultRouteType =>

@@ -90,6 +90,7 @@ class _HomePageState extends State<HomePage>
           List<StageDto> stages = await StageRepository.getStages();
           List<ClayDto> clayTypes = await ClayRepository.getClayTypes();
           List<GlazeDto> glazes = await GlazeRepository.getGlazes();
+          if (!context.mounted) return;
 
           final result = await Navigator.push<bool>(
             context,
@@ -149,6 +150,7 @@ class _HomePageState extends State<HomePage>
                         List<StageDto> stages = await StageRepository.getStages();
                         List<ClayDto> clayTypes = await ClayRepository.getClayTypes();
                         List<GlazeDto> glazes = await GlazeRepository.getGlazes();
+                        if (!context.mounted) return;
 
                         final result = await Navigator.push<bool>(
                           context,

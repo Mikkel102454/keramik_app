@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:ceramic_app/extensions/extensions.dart';
 import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/ceramic_tag_dto.dart';
 import 'package:ceramic_app/objects/image_dto.dart';
 import 'package:ceramic_app/repositories/glaze_entry_repository.dart';
 import 'package:ceramic_app/repositories/tag_repository.dart';

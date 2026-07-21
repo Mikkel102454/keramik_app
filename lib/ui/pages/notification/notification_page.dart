@@ -1,17 +1,6 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/objects/stage_dto.dart';
-import 'package:ceramic_app/repositories/clay_repository.dart';
-import 'package:ceramic_app/repositories/glaze_repository.dart';
-import 'package:ceramic_app/repositories/stage_repository.dart';
-import 'package:ceramic_app/ui/pages/home/ceramic_create/ceramic_create_page.dart';
-import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page.dart';
 import 'package:ceramic_app/ui/pages/notification/notification_controller_page.dart';
-import 'package:ceramic_app/ui/widgets/v2/accordion_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()

@@ -106,12 +106,13 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
                         builder: (_) => ImageViewPage(
                           xFile: entry.value,
                           onDelete: () async {
+                            final navigator = Navigator.of(context);
                             final success = await controller.deleteImage(
                               entry.key,
                             );
 
-                            if (success && context.mounted) {
-                              Navigator.pop(context);
+                            if (success) {
+                              navigator.pop();
                             }
                           },
                         ),
@@ -249,7 +250,7 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
 
     try {
       await _controller.create();
-      if (!context.mounted) return;
+      if (!mounted) return;
 
       Navigator.pop(context, true);
     } catch (e) {

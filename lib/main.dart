@@ -12,13 +12,19 @@ void main() async {
 
   final appRouter = AppRouter();
   await ApiClient.init();
+  final authenticationCubit = AuthenticationCubit();
+  ApiClient.onUnauthorized = authenticationCubit.sessionExpired;
 
   runApp(
     BlocProvider(
-      create: (_) => AuthenticationCubit(),
+      create: (_) => authenticationCubit,
       child: MyApp(appRouter: appRouter),
     ),
   );
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    authenticationCubit.checkAuthStatus();
+  });
 }
 
 class MyApp extends StatelessWidget {

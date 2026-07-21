@@ -1,5 +1,4 @@
 import 'package:ceramic_app/ui/pages/materials/glazes/glazes_combination_view/glazes_combination_view_page_controller.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/glazes_page_controller.dart';
 import 'package:flutter/material.dart';
 
 class GlazesCombinationViewPage extends StatefulWidget {

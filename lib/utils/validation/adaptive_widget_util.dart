@@ -18,13 +18,14 @@ class AdaptiveWidgetUtil {
             return AdaptiveWidgetType.cupertino;
           case TargetPlatform.android:
           case TargetPlatform.fuchsia:
-          default:
+          case TargetPlatform.linux:
+          case TargetPlatform.macOS:
+          case TargetPlatform.windows:
             return AdaptiveWidgetType.material;
         }
       case Platform.cupertino:
         return AdaptiveWidgetType.cupertino;
       case Platform.material:
-      default:
         return AdaptiveWidgetType.material;
     }
   }

@@ -1,7 +1,7 @@
 part of 'app_constants.dart';
 
-class _AnimationConstants {
-  const _AnimationConstants();
+class AnimationConstants {
+  const AnimationConstants();
 
   Duration get defaultDuration => const Duration(
     milliseconds: 300,
