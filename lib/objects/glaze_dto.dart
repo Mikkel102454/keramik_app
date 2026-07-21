@@ -1,6 +1,6 @@
 class GlazeDto {
   final int id;
-  final String title;
+  String title;
 
   GlazeDto({
     required this.id,

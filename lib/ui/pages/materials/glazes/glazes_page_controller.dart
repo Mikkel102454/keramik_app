@@ -1,8 +1,11 @@
+import 'package:ceramic_app/objects/glaze_dto.dart';
+import 'package:ceramic_app/repositories/glaze_repository.dart';
 import 'package:flutter/material.dart';
 
 class GlazesPageController extends ChangeNotifier{
   bool _isLoading = false;
   String? _error;
+  List<GlazeDto> glazes = [];
 
   Future<void> load() async {
     _isLoading = true;
@@ -10,6 +13,8 @@ class GlazesPageController extends ChangeNotifier{
     notifyListeners();
 
     try {
+      glazes = await GlazeRepository.getGlazes();
+      glazes.sort((a, b) => a.id.compareTo(b.id));
     } catch (e){
       _error = e.toString();
     }

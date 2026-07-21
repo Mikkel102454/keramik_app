@@ -1,4 +1,6 @@
 import 'package:ceramic_app/ui/pages/materials/glazes/glazes_create/glazes_create_page_controller.dart';
+import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
+import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
 
 class GlazesCreatePage extends StatefulWidget {
@@ -12,12 +14,6 @@ class _GlazesCreatePageState extends State<GlazesCreatePage> {
   final GlazesCreatePageController _controller = GlazesCreatePageController();
 
   @override
-  void initState() {
-    super.initState();
-    _controller.load();
-  }
-
-  @override
   void dispose() {
     _controller.dispose();
     super.dispose();
@@ -27,45 +23,64 @@ class _GlazesCreatePageState extends State<GlazesCreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Ceramic View"),
+        title: const Text('Glaze'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          IconButton(icon: const Icon(Icons.check), onPressed: _createGlaze),
+        ],
       ),
       body: SafeArea(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (_, _) {
-            if (_controller.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (_controller.error != null) {
-              return Center(child: Text("Error: ${_controller.error}"));
-            }
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                _controller.load();
-              },
-              child: _pageContent(_controller),
-            );
-          },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const TextWidget(
+                text: 'Information',
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+              const SizedBox(height: 8),
+              TextWidget(
+                text: 'Title',
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+                color: Colors.grey.shade500,
+              ),
+              const SizedBox(height: 4),
+              TextFieldWidget(
+                placeholder: 'Title',
+                onChanged: (value) async {
+                  _controller.setTitle(value);
+                  return true;
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  SingleChildScrollView _pageContent(GlazesCreatePageController controller) {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-
-      padding: const EdgeInsets.all(16),
-
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: []),
-    );
+  Future<void> _createGlaze() async {
+    if (_controller.title.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter a title')),
+      );
+      return;
+    }
+    try {
+      await _controller.create();
+      if (mounted) Navigator.pop(context, true);
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(error.toString().replaceFirst('Exception: ', ''))),
+      );
+    }
   }
 }
