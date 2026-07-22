@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
+import 'package:ceramic_app/ui/pages/profile/profile_feature_page.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
@@ -48,14 +49,6 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        bottomNavigationBar:
-        const NavigationWidget(
-          currentPage:
-          NavigationPage.profile,
-        ),
-      ),
-    );
+    return const ProfileFeaturePage();
   }
 }

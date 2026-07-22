@@ -6,6 +6,8 @@ import 'package:ceramic_app/config/router/app_router.dart';
 import 'package:ceramic_app/ui/app_coordinator.dart';
 
 import 'package:ceramic_app/api/api_client.dart';
+import 'package:ceramic_app/api/chat_event_service.dart';
+import 'package:ceramic_app/ui/widgets/v2/navigation_badge_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +16,8 @@ void main() async {
   await ApiClient.init();
   final authenticationCubit = AuthenticationCubit();
   ApiClient.onUnauthorized = authenticationCubit.sessionExpired;
+  ChatEventService.instance.onInvalidated =
+      NavigationBadgeController.instance.refresh;
 
   runApp(
     BlocProvider(
@@ -34,12 +38,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCoordinator(
-      appRouter: appRouter,
-      child: MaterialApp.router(
-        title: "Keramik App",
-
-        routerConfig: appRouter.config(),
+    return BlocListener<AuthenticationCubit, AuthenticationState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          authenticated: () {
+            ChatEventService.instance.start();
+            NavigationBadgeController.instance.refresh();
+          },
+          unauthenticated: () {
+            ChatEventService.instance.stop();
+            NavigationBadgeController.instance.setCount(0);
+          },
+          logout: () {
+            ChatEventService.instance.stop();
+            NavigationBadgeController.instance.setCount(0);
+          },
+        );
+      },
+      child: AppCoordinator(
+        appRouter: appRouter,
+        child: MaterialApp.router(
+          title: "Keramik App",
+          routerConfig: appRouter.config(),
+        ),
       ),
     );
   }

@@ -74,6 +74,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       } else {
         emit(const AuthenticationState.error("Server error"));
       }
+    } on ApiException catch (e) {
+      emit(AuthenticationState.error(authenticationErrorMessage(e)));
     } catch (e) {
       emit(const AuthenticationState.error("Network error"));
     }
@@ -88,4 +90,12 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       rethrow;
     }
   }
+}
+
+String authenticationErrorMessage(ApiException exception) {
+  if (exception.code == 'PASSWORD_CHANGE_REQUIRED') {
+    return 'Change your temporary password on the Keramik website before signing in.';
+  }
+  if (exception.statusCode == 401) return 'Invalid credentials';
+  return 'Server error';
 }

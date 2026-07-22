@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/config/router/app_router.dart';
+import 'package:ceramic_app/ui/widgets/v2/navigation_badge_controller.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 enum NavigationPage {
   home,
@@ -9,7 +11,7 @@ enum NavigationPage {
   profile,
 }
 
-class NavigationWidget extends StatelessWidget {
+class NavigationWidget extends StatefulWidget {
   final NavigationPage currentPage;
 
   const NavigationWidget({
@@ -17,11 +19,22 @@ class NavigationWidget extends StatelessWidget {
     required this.currentPage,
   });
 
+  @override
+  State<NavigationWidget> createState() => _NavigationWidgetState();
+}
+
+class _NavigationWidgetState extends State<NavigationWidget> {
+  @override
+  void initState() {
+    super.initState();
+    NavigationBadgeController.instance.refresh();
+  }
+
   void _navigate(
       BuildContext context,
       NavigationPage page,
       ) {
-    if (page == currentPage) return;
+    if (page == widget.currentPage) return;
 
     switch (page) {
       case NavigationPage.home:
@@ -87,7 +100,7 @@ class NavigationWidget extends StatelessWidget {
                   selectedIcon: Icons.home,
 
                   isSelected:
-                  currentPage ==
+                  widget.currentPage ==
                       NavigationPage.home,
 
                   onTap: () {
@@ -108,7 +121,7 @@ class NavigationWidget extends StatelessWidget {
                   Icons.palette,
 
                   isSelected:
-                  currentPage ==
+                  widget.currentPage ==
                       NavigationPage.materials,
 
                   onTap: () {
@@ -129,7 +142,7 @@ class NavigationWidget extends StatelessWidget {
                   Icons.shopping_cart,
 
                   isSelected:
-                  currentPage ==
+                  widget.currentPage ==
                       NavigationPage.shop,
 
                   onTap: () {
@@ -150,11 +163,11 @@ class NavigationWidget extends StatelessWidget {
                   Icons.notifications,
 
                   isSelected:
-                  currentPage ==
+                  widget.currentPage ==
                       NavigationPage
                           .notifications,
 
-                  badgeCount: 4,
+                  badgeListenable: NavigationBadgeController.instance.count,
 
                   onTap: () {
                     _navigate(
@@ -174,7 +187,7 @@ class NavigationWidget extends StatelessWidget {
                   Icons.person,
 
                   isSelected:
-                  currentPage ==
+                  widget.currentPage ==
                       NavigationPage.profile,
 
                   onTap: () {
@@ -201,7 +214,7 @@ class _NavigationItem
 
   final bool isSelected;
 
-  final int? badgeCount;
+  final ValueListenable<int>? badgeListenable;
 
   final VoidCallback onTap;
 
@@ -210,7 +223,7 @@ class _NavigationItem
     required this.selectedIcon,
     required this.isSelected,
     required this.onTap,
-    this.badgeCount,
+    this.badgeListenable,
   });
 
   @override
@@ -238,44 +251,41 @@ class _NavigationItem
               color: Colors.black,
             ),
 
-            if (badgeCount != null &&
-                badgeCount! > 0)
-              Positioned(
-                top: -6,
-                right: -10,
-
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFF5F5F5),
-                    shape: BoxShape.circle,
-                  ),
-
-                  child: Container(
-                    width: 22,
-                    height: 22,
-
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFFF375F),
-                      shape: BoxShape.circle,
-                    ),
-
-                    child: Center(
-                      child: Text(
-                        badgeCount.toString(),
-
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            if (badgeListenable != null)
+              ValueListenableBuilder<int>(
+                valueListenable: badgeListenable!,
+                builder: (context, value, _) => value <= 0
+                    ? const SizedBox.shrink()
+                    : _Badge(count: value),
+              )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Badge extends StatelessWidget {
+  const _Badge({required this.count});
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      top: -6,
+      right: -10,
+      child: Container(
+        padding: const EdgeInsets.all(2),
+        decoration: const BoxDecoration(color: Color(0xFFF5F5F5), shape: BoxShape.circle),
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          decoration: const BoxDecoration(color: Color(0xFFFF375F), shape: BoxShape.circle),
+          alignment: Alignment.center,
+          child: Text(
+            count > 99 ? '99+' : '$count',
+            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
+          ),
         ),
       ),
     );
