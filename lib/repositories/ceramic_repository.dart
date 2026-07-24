@@ -60,6 +60,11 @@ class CeramicRepository {
           'glazes': ceramic.glazes
               .map((e) => e.toJson())
               .toList(),
+          'heightCm': ceramic.heightCm,
+          'widthCm': ceramic.widthCm,
+          'depthCm': ceramic.depthCm,
+          'diameterCm': ceramic.diameterCm,
+          'outcomeNote': ceramic.outcomeNote,
         }),
 
         contentType: DioMediaType(
@@ -112,6 +117,22 @@ class CeramicRepository {
     } finally {
       if (identical(_updateQueues[id], request)) _updateQueues.remove(id);
     }
+  }
+
+  static Future<void> updateCeramicDetails({
+    required CeramicDto ceramic,
+  }) async {
+    final response = await ApiClient.dio.put(
+      '/api/ceramics/${ceramic.id}/details',
+      data: {
+        'heightCm': ceramic.heightCm,
+        'widthCm': ceramic.widthCm,
+        'depthCm': ceramic.depthCm,
+        'diameterCm': ceramic.diameterCm,
+        'outcomeNote': ceramic.outcomeNote,
+      },
+    );
+    checkSuccess(response);
   }
 
   static Future<ImageDto> uploadCeramicImage({

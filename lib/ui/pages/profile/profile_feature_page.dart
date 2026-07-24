@@ -2,8 +2,11 @@ import 'package:ceramic_app/ui/pages/profile/friends_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_edit_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
 import 'package:ceramic_app/ui/pages/profile/user_search_page.dart';
+import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page.dart';
+import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class ProfileFeaturePage extends StatefulWidget {
@@ -37,7 +40,6 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile', style: TextStyle(fontSize: 14, color: Colors.black54)),
         actions: [
           IconButton(
             tooltip: 'Search accounts',
@@ -119,7 +121,63 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                   ),
                   const SizedBox(height: 15),
                   const Divider(height: 1),
-                  const SizedBox(height: 300),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 10),
+                    child: Row(children: [
+                      Text('Finished pieces', style: Theme.of(context).textTheme.titleMedium),
+                      const Spacer(),
+                      Text('${_controller.finishedCeramics.length}'),
+                    ]),
+                  ),
+                  if (_controller.finishedCeramics.isEmpty)
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(24, 28, 24, 70),
+                      child: Column(children: [
+                        Icon(Icons.auto_awesome_outlined, size: 40, color: Colors.black38),
+                        SizedBox(height: 10),
+                        Text(
+                          'Pieces moved to Finished will appear here.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                      ]),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
+                      child: GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _controller.finishedCeramics.length,
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 12,
+                          mainAxisSpacing: 12,
+                          childAspectRatio: .72,
+                        ),
+                        itemBuilder: (_, index) {
+                          final ceramic = _controller.finishedCeramics[index];
+                          final stage = _controller.stages
+                              .where((item) => item.id == ceramic.stageId)
+                              .first;
+                          final clay = _controller.clays
+                              .where((item) => item.id == ceramic.clayTypeId)
+                              .map((item) => item.title)
+                              .firstOrNull;
+                          return CeramicJournalCard(
+                            ceramic: ceramic,
+                            stageTitle: stage.title,
+                            clayTitle: clay,
+                            onTap: () => _open(CeramicViewPage(
+                              ceramic: ceramic,
+                              stages: _controller.stages,
+                              clayTypes: _controller.clays,
+                              glazes: _controller.glazes,
+                            )),
+                          );
+                        },
+                      ),
+                    ),
                 ],
               ),
             );

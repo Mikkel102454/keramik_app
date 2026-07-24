@@ -24,6 +24,11 @@ class CeramicCreatePageController extends ChangeNotifier{
   String notes = '';
   int rating = 0;
   int stageId = 1;
+  double? heightCm;
+  double? widthCm;
+  double? depthCm;
+  double? diameterCm;
+  String outcomeNote = '';
 
   bool _isLoading = false;
   String? _error;
@@ -37,7 +42,7 @@ class CeramicCreatePageController extends ChangeNotifier{
       stages = await StageRepository.getStages();
       stageId = stages.first.id;
     } catch (e){
-      _error = e.toString();
+      _error = 'We could not prepare the ceramic form.';
     }
 
     _isLoading = false;
@@ -58,8 +63,12 @@ class CeramicCreatePageController extends ChangeNotifier{
     weight = double.tryParse(value) ?? 0.0;
   }
 
-  Future<void> updateGlaze(int id, String value) async {
-    glazes.firstWhere((g) => g.id == id).note = value;
+  Future<bool> updateGlaze(int id, String value, int coatCount) async {
+    final glaze = glazes.firstWhere((g) => g.id == id);
+    glaze.note = value;
+    glaze.coatCount = coatCount;
+    notifyListeners();
+    return true;
   }
 
   Future<int> addGlaze(int glazeId) async {
@@ -73,14 +82,35 @@ class CeramicCreatePageController extends ChangeNotifier{
         glazeId: glazeId,
         ceramicId: 0,
         note: "",
+        layerOrder: glazes.length + 1,
+        coatCount: 1,
       ),
     );
 
+    notifyListeners();
     return newId;
+  }
+
+  Future<bool> moveGlaze(int id, int direction) async {
+    glazes.sort((a, b) => a.layerOrder.compareTo(b.layerOrder));
+    final index = glazes.indexWhere((entry) => entry.id == id);
+    final target = index + direction;
+    if (index < 0 || target < 0 || target >= glazes.length) return false;
+    final moved = glazes.removeAt(index);
+    glazes.insert(target, moved);
+    for (var i = 0; i < glazes.length; i++) {
+      glazes[i].layerOrder = i + 1;
+    }
+    notifyListeners();
+    return true;
   }
 
   Future<void> removeGlaze(int id) async {
     glazes.removeWhere((g) => g.id == id);
+    for (var i = 0; i < glazes.length; i++) {
+      glazes[i].layerOrder = i + 1;
+    }
+    notifyListeners();
   }
 
   Future<void> updateTag(int id, String value) async {
@@ -117,6 +147,28 @@ class CeramicCreatePageController extends ChangeNotifier{
 
   void setStage(int value) {
     stageId = value;
+  }
+
+  void setDimension(String field, String value) {
+    final parsed = value.trim().isEmpty ? null : double.tryParse(value);
+    switch (field) {
+      case 'height':
+        heightCm = parsed;
+        return;
+      case 'width':
+        widthCm = parsed;
+        return;
+      case 'depth':
+        depthCm = parsed;
+        return;
+      case 'diameter':
+        diameterCm = parsed;
+        return;
+    }
+  }
+
+  void setOutcomeNote(String value) {
+    outcomeNote = value;
   }
 
   Future<bool> uploadImage(File file) async {
@@ -162,6 +214,11 @@ class CeramicCreatePageController extends ChangeNotifier{
       glazes: glazes,
       images: [],
       id: 0,
+      heightCm: heightCm,
+      widthCm: widthCm,
+      depthCm: depthCm,
+      diameterCm: diameterCm,
+      outcomeNote: outcomeNote,
     );
     await CeramicRepository.createCeramic(ceramic: ceramicDto, images: images);
     await cleanupImages();

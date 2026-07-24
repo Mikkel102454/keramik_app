@@ -73,7 +73,7 @@ class _NotificationPageState extends State<NotificationPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: const Text('Chats', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 28)),
+        title: const Text('Chats'),
         actions: [
           IconButton(
             tooltip: 'Search accounts',

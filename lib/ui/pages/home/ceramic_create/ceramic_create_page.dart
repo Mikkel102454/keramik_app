@@ -5,7 +5,7 @@ import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:ceramic_app/objects/stage_dto.dart';
 import 'package:ceramic_app/ui/pages/image_view/image_view_page.dart';
 import 'package:ceramic_app/ui/widgets/v2/dropdown_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/glaze_input_widget.dart';
+import 'package:ceramic_app/ui/widgets/glaze_application_editor.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/star_stepper_select_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/stepper_select_widget.dart';
@@ -282,27 +282,46 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
           const SizedBox(height: 20),
 
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: const Text('Dimensions', style: TextStyle(fontWeight: FontWeight.w700)),
+            subtitle: const Text('Optional · centimeters'),
+            children: [
+              Row(children: [
+                Expanded(child: _dimensionField('Height', (value) => controller.setDimension('height', value))),
+                const SizedBox(width: 10),
+                Expanded(child: _dimensionField('Width', (value) => controller.setDimension('width', value))),
+              ]),
+              const SizedBox(height: 10),
+              Row(children: [
+                Expanded(child: _dimensionField('Depth', (value) => controller.setDimension('depth', value))),
+                const SizedBox(width: 10),
+                Expanded(child: _dimensionField('Diameter', (value) => controller.setDimension('diameter', value))),
+              ]),
+              const SizedBox(height: 12),
+            ],
+          ),
+
           // =========================
           // Glazes
           // =========================
-          TextWidget(text: "Glazes", fontSize: 18, fontWeight: FontWeight.w700),
-          const SizedBox(height: 8),
-          GlazeInputWidget(
-            glazeEntries: [
-              for (final glazes in widget.glazes)
-                MapEntry(glazes.title, glazes.id),
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: const Text('Glaze applications', style: TextStyle(fontWeight: FontWeight.w700)),
+            children: [
+              GlazeApplicationEditor(
+                entries: controller.glazes,
+                glazes: widget.glazes,
+                onAdd: (glazeId) async => await controller.addGlaze(glazeId) > 0,
+                onDelete: (id) async {
+                  await controller.removeGlaze(id);
+                  return true;
+                },
+                onEdit: controller.updateGlaze,
+                onMove: controller.moveGlaze,
+              ),
+              const SizedBox(height: 12),
             ],
-            onCreate: (glazeId) async {
-              return controller.addGlaze(glazeId);
-            },
-            onDelete: (id) async {
-              controller.removeGlaze(id);
-              return true;
-            },
-            onNotesChanged: (id, value) async {
-              controller.updateGlaze(id, value);
-              return true;
-            },
           ),
 
           const SizedBox(height: 20),
@@ -374,6 +393,25 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             },
           ),
 
+          const SizedBox(height: 12),
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            title: const Text('Outcome', style: TextStyle(fontWeight: FontWeight.w700)),
+            subtitle: const Text('Optional result notes'),
+            children: [
+              TextFieldWidget(
+                placeholder: 'How did the piece turn out?',
+                minLines: 3,
+                maxLines: 6,
+                onChanged: (value) async {
+                  controller.setOutcomeNote(value);
+                  return true;
+                },
+              ),
+              const SizedBox(height: 12),
+            ],
+          ),
+
           const SizedBox(height: 40),
         ],
       ),
@@ -394,9 +432,10 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
       return;
     }
     if (_controller.rating < 0 || _controller.rating > 5 ||
-        _controller.weight < 0 || _controller.notes.length > 255) {
+        _controller.weight < 0 || _controller.notes.length > 255 ||
+        _controller.outcomeNote.length > 2000) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Rating must be 0–5, weight nonnegative, and notes at most 255 characters.'),
+        content: Text('Check rating, weight, and note lengths before saving.'),
       ));
       return;
     }
@@ -413,5 +452,20 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
         SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
       );
     }
+  }
+
+  Widget _dimensionField(String label, ValueChanged<String> onChanged) {
+    return TextFieldWidget(
+      placeholder: label,
+      suffix: 'cm',
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+      ],
+      onChanged: (value) async {
+        onChanged(value);
+        return true;
+      },
+    );
   }
 }
