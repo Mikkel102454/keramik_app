@@ -8,16 +8,38 @@ class CeramicJournalCard extends StatelessWidget {
     required this.stageTitle,
     required this.clayTitle,
     required this.onTap,
-  });
+  }) : publicTitle = null,
+       publicRating = null,
+       publicImageUrl = null;
 
-  final CeramicDto ceramic;
+  const CeramicJournalCard.public({
+    super.key,
+    required this.publicTitle,
+    required this.publicRating,
+    required this.publicImageUrl,
+    required this.stageTitle,
+    required this.clayTitle,
+    this.onTap,
+  }) : ceramic = null;
+
+  final CeramicDto? ceramic;
+  final String? publicTitle;
+  final int? publicRating;
+  final String? publicImageUrl;
   final String stageTitle;
   final String? clayTitle;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    final image = ceramic.images.isEmpty ? null : ceramic.images.first.uri;
+    final currentCeramic = ceramic;
+    final image = currentCeramic == null
+        ? publicImageUrl
+        : currentCeramic.images.isEmpty
+        ? null
+        : currentCeramic.images.first.uri;
+    final title = currentCeramic?.title ?? publicTitle ?? '';
+    final rating = currentCeramic?.rating ?? publicRating ?? 0;
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.zero,
@@ -33,7 +55,10 @@ class CeramicJournalCard extends StatelessWidget {
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   image: image == null
                       ? null
-                      : DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
+                      : DecorationImage(
+                          image: NetworkImage(image),
+                          fit: BoxFit.contain,
+                        ),
                 ),
                 child: image == null
                     ? Icon(
@@ -50,7 +75,7 @@ class CeramicJournalCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    ceramic.title,
+                    title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontWeight: FontWeight.w700),
@@ -68,7 +93,7 @@ class CeramicJournalCard extends StatelessWidget {
                       ),
                       const Spacer(),
                       const Icon(Icons.star_rounded, size: 15, color: Color(0xffd89b25)),
-                      Text('${ceramic.rating}', style: Theme.of(context).textTheme.bodySmall),
+                      Text('$rating', style: Theme.of(context).textTheme.bodySmall),
                     ],
                   ),
                   const SizedBox(height: 7),

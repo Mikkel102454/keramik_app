@@ -2281,6 +2281,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unable to load photo'**
   String get photoLoadFailed;
+
+  /// No description provided for @shareCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'Share ceramic'**
+  String get shareCeramic;
+
+  /// No description provided for @shareCeramicDisclosure.
+  ///
+  /// In en, this message translates to:
+  /// **'The complete journal entry, including notes, images, and future edits, will be visible to everyone who can see this conversation message.'**
+  String get shareCeramicDisclosure;
+
+  /// No description provided for @share.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get share;
+
+  /// No description provided for @chooseCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a ceramic'**
+  String get chooseCeramic;
+
+  /// No description provided for @noCeramicsToShare.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have any ceramics to share yet.'**
+  String get noCeramicsToShare;
+
+  /// No description provided for @shareToConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Share to a conversation'**
+  String get shareToConversation;
+
+  /// No description provided for @noWritableConversations.
+  ///
+  /// In en, this message translates to:
+  /// **'No writable conversations are available. Restore an archived chat or rejoin a group before sharing.'**
+  String get noWritableConversations;
+
+  /// No description provided for @directConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct conversation'**
+  String get directConversation;
+
+  /// No description provided for @ceramicShared.
+  ///
+  /// In en, this message translates to:
+  /// **'Ceramic shared.'**
+  String get ceramicShared;
+
+  /// No description provided for @ceramicUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This ceramic is no longer available.'**
+  String get ceramicUnavailable;
+
+  /// No description provided for @openSharedCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'Open shared ceramic {title}'**
+  String openSharedCeramic(String title);
+
+  /// No description provided for @sharedCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared ceramic'**
+  String get sharedCeramic;
+
+  /// No description provided for @sharedCeramicLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The shared ceramic could not be loaded.'**
+  String get sharedCeramicLoadFailed;
+
+  /// No description provided for @ceramicMessagePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared a ceramic'**
+  String get ceramicMessagePreview;
+
+  /// No description provided for @reportCeramicEvidenceDisclosure.
+  ///
+  /// In en, this message translates to:
+  /// **'The selected ceramic, every visible journal field, all current images, and up to two nearby messages on each side will be securely copied for review. The evidence will not change if the ceramic is edited or deleted. Reporting does not block this account or change the conversation.'**
+  String get reportCeramicEvidenceDisclosure;
+
+  /// No description provided for @measurements.
+  ///
+  /// In en, this message translates to:
+  /// **'Measurements'**
+  String get measurements;
+
+  /// No description provided for @noTags.
+  ///
+  /// In en, this message translates to:
+  /// **'No tags.'**
+  String get noTags;
+
+  /// No description provided for @timestamps.
+  ///
+  /// In en, this message translates to:
+  /// **'Timestamps'**
+  String get timestamps;
+
+  /// No description provided for @created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get created;
+
+  /// No description provided for @updated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get updated;
 }
 
 class _AppLocalizationsDelegate

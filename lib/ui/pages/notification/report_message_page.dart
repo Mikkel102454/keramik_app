@@ -2,6 +2,7 @@ import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/objects/chat_report_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:ceramic_app/ui/widgets/chat_ceramic_card.dart';
 import 'package:flutter/material.dart';
 
 typedef SubmitChatReport =
@@ -136,17 +137,26 @@ class _ReportMessagePageState extends State<ReportMessagePage> {
                     ),
                   ),
                   const SizedBox(height: 5),
-                  Text(
-                    widget.message.body,
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                  if (widget.message.type == 'CERAMIC')
+                    ChatCeramicCard(
+                      card: widget.message.ceramic ??
+                          const ChatCeramicCardDto(available: false),
+                      onTap: null,
+                    )
+                  else
+                    Text(
+                      widget.message.body,
+                      maxLines: 4,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              context.l10n.reportEvidenceDisclosure,
+              widget.message.type == 'CERAMIC'
+                  ? context.l10n.reportCeramicEvidenceDisclosure
+                  : context.l10n.reportEvidenceDisclosure,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 height: 1.35,

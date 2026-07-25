@@ -1230,4 +1230,70 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get photoLoadFailed => 'Billedet kunne ikke indlæses';
+
+  @override
+  String get shareCeramic => 'Del keramik';
+
+  @override
+  String get shareCeramicDisclosure =>
+      'Hele journalopslaget, herunder noter, billeder og fremtidige ændringer, bliver synligt for alle, der kan se denne samtalebesked.';
+
+  @override
+  String get share => 'Del';
+
+  @override
+  String get chooseCeramic => 'Vælg keramik';
+
+  @override
+  String get noCeramicsToShare => 'Du har endnu ingen keramik at dele.';
+
+  @override
+  String get shareToConversation => 'Del i en samtale';
+
+  @override
+  String get noWritableConversations =>
+      'Der er ingen skrivbare samtaler. Gendan en arkiveret chat, eller tilslut dig en gruppe igen, før du deler.';
+
+  @override
+  String get directConversation => 'Direkte samtale';
+
+  @override
+  String get ceramicShared => 'Keramikken er delt.';
+
+  @override
+  String get ceramicUnavailable => 'Denne keramik er ikke længere tilgængelig.';
+
+  @override
+  String openSharedCeramic(String title) {
+    return 'Åbn delt keramik $title';
+  }
+
+  @override
+  String get sharedCeramic => 'Delt keramik';
+
+  @override
+  String get sharedCeramicLoadFailed =>
+      'Den delte keramik kunne ikke indlæses.';
+
+  @override
+  String get ceramicMessagePreview => 'Delte keramik';
+
+  @override
+  String get reportCeramicEvidenceDisclosure =>
+      'Den valgte keramik, alle synlige journalfelter, alle aktuelle billeder og op til to nærliggende beskeder på hver side kopieres sikkert til gennemgang. Bevismaterialet ændres ikke, hvis keramikken redigeres eller slettes. Rapportering blokerer ikke kontoen og ændrer ikke samtalen.';
+
+  @override
+  String get measurements => 'Mål';
+
+  @override
+  String get noTags => 'Ingen tags.';
+
+  @override
+  String get timestamps => 'Tidsstempler';
+
+  @override
+  String get created => 'Oprettet';
+
+  @override
+  String get updated => 'Opdateret';
 }

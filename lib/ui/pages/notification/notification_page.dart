@@ -324,7 +324,9 @@ class _ConversationRow extends StatelessWidget {
         ],
       ),
       subtitle: Text(
-        conversation.lastMessagePreview ?? context.l10n.noMessagesYet,
+        conversation.lastMessageType == 'CERAMIC'
+            ? context.l10n.ceramicMessagePreview
+            : conversation.lastMessagePreview ?? context.l10n.noMessagesYet,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(

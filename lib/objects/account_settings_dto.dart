@@ -20,19 +20,21 @@ enum AccountThemeMode {
 }
 
 enum MeasurementSystem {
-  metric('METRIC', 'Metric', 'cm', '°C'),
-  imperial('IMPERIAL', 'Imperial', 'in', '°F');
+  metric('METRIC', 'Metric', 'cm', '°C', 'kg'),
+  imperial('IMPERIAL', 'Imperial', 'in', '°F', 'lb');
 
   const MeasurementSystem(
     this.apiValue,
     this.label,
     this.lengthSymbol,
     this.temperatureSymbol,
+    this.weightSymbol,
   );
   final String apiValue;
   final String label;
   final String lengthSymbol;
   final String temperatureSymbol;
+  final String weightSymbol;
 
   static MeasurementSystem parse(String? value) =>
       values.where((item) => item.apiValue == value).firstOrNull ?? metric;

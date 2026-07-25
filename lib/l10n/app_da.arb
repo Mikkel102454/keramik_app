@@ -544,5 +544,32 @@
   "surname": "Efternavn",
   "readOnlyFields": "Disse felter er skrivebeskyttede indtil videre.",
   "profilePhoto": "Profilbillede",
-  "photoLoadFailed": "Billedet kunne ikke indlæses"
+  "photoLoadFailed": "Billedet kunne ikke indlæses",
+  "shareCeramic": "Del keramik",
+  "shareCeramicDisclosure": "Hele journalopslaget, herunder noter, billeder og fremtidige ændringer, bliver synligt for alle, der kan se denne samtalebesked.",
+  "share": "Del",
+  "chooseCeramic": "Vælg keramik",
+  "noCeramicsToShare": "Du har endnu ingen keramik at dele.",
+  "shareToConversation": "Del i en samtale",
+  "noWritableConversations": "Der er ingen skrivbare samtaler. Gendan en arkiveret chat, eller tilslut dig en gruppe igen, før du deler.",
+  "directConversation": "Direkte samtale",
+  "ceramicShared": "Keramikken er delt.",
+  "ceramicUnavailable": "Denne keramik er ikke længere tilgængelig.",
+  "openSharedCeramic": "Åbn delt keramik {title}",
+  "@openSharedCeramic": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "sharedCeramic": "Delt keramik",
+  "sharedCeramicLoadFailed": "Den delte keramik kunne ikke indlæses.",
+  "ceramicMessagePreview": "Delte keramik",
+  "reportCeramicEvidenceDisclosure": "Den valgte keramik, alle synlige journalfelter, alle aktuelle billeder og op til to nærliggende beskeder på hver side kopieres sikkert til gennemgang. Bevismaterialet ændres ikke, hvis keramikken redigeres eller slettes. Rapportering blokerer ikke kontoen og ændrer ikke samtalen.",
+  "measurements": "Mål",
+  "noTags": "Ingen tags.",
+  "timestamps": "Tidsstempler",
+  "created": "Oprettet",
+  "updated": "Opdateret"
 }

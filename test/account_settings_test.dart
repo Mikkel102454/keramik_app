@@ -1,5 +1,6 @@
 import 'package:ceramic_app/objects/account_settings_dto.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
+import 'package:ceramic_app/ui/pages/home/ceramic_create/ceramic_create_page_controller.dart';
 import 'package:ceramic_app/ui/pages/settings/settings_controller.dart';
 import 'package:ceramic_app/utils/measurement.dart';
 import 'package:flutter/material.dart';
@@ -63,6 +64,37 @@ void main() {
       ),
       closeTo(1000, 0.0001),
     );
+
+    final pounds = Measurement.weightFromKilograms(
+      10,
+      MeasurementSystem.imperial,
+    );
+    expect(pounds, closeTo(22.0462, 0.0001));
+    expect(
+      Measurement.weightToKilograms(pounds, MeasurementSystem.imperial),
+      closeTo(10, 0.0001),
+    );
+    expect(MeasurementSystem.metric.weightSymbol, 'kg');
+    expect(MeasurementSystem.imperial.weightSymbol, 'lb');
+  });
+
+  test('ceramic weight input follows the active unit setting', () async {
+    final appSettings = AppSettingsController.instance;
+    final controller = CeramicCreatePageController();
+    try {
+      await appSettings.applyLocalSettings(
+        const AccountSettingsDto(
+          measurementSystem: MeasurementSystem.imperial,
+        ),
+      );
+
+      controller.setWeight('22.0462');
+
+      expect(controller.weight, closeTo(10, 0.0001));
+    } finally {
+      controller.dispose();
+      await appSettings.applyLocalSettings(const AccountSettingsDto());
+    }
   });
 
   test('account theme values map to the application theme modes', () {

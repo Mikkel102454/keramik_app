@@ -35,6 +35,7 @@ void main() {
         'actions': ['MESSAGE'],
       },
       'lastMessagePreview': 'Hello',
+      'lastMessageType': 'TEXT',
       'lastMessageAt': '2026-07-22T10:30:00Z',
       'unreadCount': 2,
       'archived': false,
@@ -53,8 +54,46 @@ void main() {
 
     expect(conversation.otherUser!.username, 'potter');
     expect(conversation.unreadCount, 2);
+    expect(conversation.lastMessageType, 'TEXT');
     expect(message.sequence, 4);
     expect(message.mine, isFalse);
+  });
+
+  test('parses available and unavailable ceramic message projections', () {
+    final available = ChatMessageDto.fromJson({
+      'id': '11111111-1111-4111-8111-111111111111',
+      'senderUserId': '22222222-2222-4222-8222-222222222222',
+      'body': '',
+      'createdAt': '2026-07-25T10:30:00Z',
+      'sequence': 9,
+      'mine': false,
+      'type': 'CERAMIC',
+      'ceramic': {
+        'available': true,
+        'imageUrl': 'https://example.test/image',
+        'title': 'Live bowl',
+        'stage': 'Glazed',
+        'clayTitle': 'Stoneware',
+        'rating': 5,
+      },
+    });
+    final unavailable = ChatMessageDto.fromJson({
+      'id': '33333333-3333-4333-8333-333333333333',
+      'senderUserId': '22222222-2222-4222-8222-222222222222',
+      'body': '',
+      'createdAt': '2026-07-25T10:31:00Z',
+      'sequence': 10,
+      'mine': false,
+      'type': 'CERAMIC',
+      'ceramic': {'available': false},
+    });
+
+    expect(available.type, 'CERAMIC');
+    expect(available.ceramic!.available, isTrue);
+    expect(available.ceramic!.title, 'Live bowl');
+    expect(available.ceramic!.stage, 'Glazed');
+    expect(unavailable.ceramic!.available, isFalse);
+    expect(unavailable.ceramic!.title, isNull);
   });
 
   test('creates RFC 4122 version 4 client IDs', () {

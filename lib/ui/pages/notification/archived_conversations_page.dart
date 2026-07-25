@@ -82,7 +82,9 @@ class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
                           ),
                           title: Text(item.title),
                           subtitle: Text(
-                            item.lastMessagePreview ?? context.l10n.noMessages,
+                            item.lastMessageType == 'CERAMIC'
+                                ? context.l10n.ceramicMessagePreview
+                                : item.lastMessagePreview ?? context.l10n.noMessages,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),

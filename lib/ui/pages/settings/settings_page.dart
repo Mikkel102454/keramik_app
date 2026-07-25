@@ -263,7 +263,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     MeasurementSystem.values,
                     (item) =>
                         '${item.localizedLabel(context.l10n)} '
-                        '(${item.lengthSymbol}, ${item.temperatureSymbol})',
+                        '(${item.lengthSymbol}, ${item.temperatureSymbol}, '
+                        '${item.weightSymbol})',
                   );
                   if (value != null) {
                     await _controller.save(

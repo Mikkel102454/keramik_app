@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:ceramic_app/objects/account_settings_dto.dart';
 import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
@@ -7,6 +8,7 @@ import 'package:ceramic_app/objects/stage_dto.dart';
 import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
 import 'package:ceramic_app/objects/ceramic_stage_history_dto.dart';
 import 'package:ceramic_app/ui/pages/image_view/image_view_page.dart';
+import 'package:ceramic_app/ui/pages/notification/ceramic_sharing_pages.dart';
 import 'package:ceramic_app/ui/widgets/firing_editor_dialog.dart';
 import 'package:ceramic_app/ui/widgets/v2/dropdown_widget.dart';
 import 'package:ceramic_app/ui/widgets/glaze_application_editor.dart';
@@ -113,7 +115,25 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                 }
               },
             ),
-            IconButton(icon: const Icon(Icons.share), onPressed: () async {}),
+            IconButton(
+              tooltip: context.l10n.shareCeramic,
+              icon: const Icon(Icons.share),
+              onPressed: () async {
+                final shared = await Navigator.push<bool>(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ShareCeramicConversationPickerPage(
+                      ceramicId: widget.ceramic.id,
+                    ),
+                  ),
+                );
+                if (shared == true && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(context.l10n.ceramicShared)),
+                  );
+                }
+              },
+            ),
           ],
         ),
         body: SafeArea(
@@ -344,9 +364,18 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
           TextFieldWidget(
             placeholder: "0.0",
-            suffix: "kg",
+            suffix:
+                AppSettingsController.instance.measurementSystem.weightSymbol,
             initialValue: controller.ceramic.weight != 0
-                ? controller.ceramic.weight.toString()
+                ? AppSettingsController.instance.measurementSystem ==
+                          MeasurementSystem.metric
+                      ? controller.ceramic.weight.toString()
+                      : Measurement.format(
+                          Measurement.weightFromKilograms(
+                            controller.ceramic.weight,
+                            AppSettingsController.instance.measurementSystem,
+                          ),
+                        )
                 : "",
             debounceDuration: Duration(milliseconds: 300),
 

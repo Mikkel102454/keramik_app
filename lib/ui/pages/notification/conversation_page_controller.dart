@@ -23,6 +23,7 @@ class ConversationPageController extends ChangeNotifier {
   bool _disposed = false;
   bool _liveReloading = false;
   bool _liveReloadQueued = false;
+  final Map<int, String> _ceramicClientIds = {};
 
   void _handleEvent(ChatEventDto event) {
     if (_disposed) return;
@@ -143,6 +144,30 @@ class ConversationPageController extends ChangeNotifier {
     }
   }
 
+  Future<bool> sendCeramic(int ceramicId) async {
+    if (_disposed || isSending || conversation.readOnly) return false;
+    isSending = true;
+    error = null;
+    _notifySafely();
+    final clientId = _ceramicClientIds.putIfAbsent(ceramicId, createClientUuid);
+    try {
+      final sent = await ChatRepository.sendCeramic(
+        conversation.id,
+        clientId,
+        ceramicId,
+      );
+      _ceramicClientIds.remove(ceramicId);
+      messages = [...messages, sent];
+      return true;
+    } catch (exception) {
+      error = exception.toString();
+      return false;
+    } finally {
+      isSending = false;
+      _notifySafely();
+    }
+  }
+
   Future<void> archive() => ChatRepository.archive(conversation.id);
 
   Future<void> _markLatestRead() async {
@@ -158,6 +183,7 @@ class ConversationPageController extends ChangeNotifier {
       memberCount: conversation.memberCount,
       otherUser: conversation.otherUser,
       lastMessagePreview: conversation.lastMessagePreview,
+      lastMessageType: conversation.lastMessageType,
       lastMessageAt: conversation.lastMessageAt,
       unreadCount: 0,
       archived: conversation.archived,

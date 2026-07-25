@@ -1228,4 +1228,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get photoLoadFailed => 'Unable to load photo';
+
+  @override
+  String get shareCeramic => 'Share ceramic';
+
+  @override
+  String get shareCeramicDisclosure =>
+      'The complete journal entry, including notes, images, and future edits, will be visible to everyone who can see this conversation message.';
+
+  @override
+  String get share => 'Share';
+
+  @override
+  String get chooseCeramic => 'Choose a ceramic';
+
+  @override
+  String get noCeramicsToShare => 'You do not have any ceramics to share yet.';
+
+  @override
+  String get shareToConversation => 'Share to a conversation';
+
+  @override
+  String get noWritableConversations =>
+      'No writable conversations are available. Restore an archived chat or rejoin a group before sharing.';
+
+  @override
+  String get directConversation => 'Direct conversation';
+
+  @override
+  String get ceramicShared => 'Ceramic shared.';
+
+  @override
+  String get ceramicUnavailable => 'This ceramic is no longer available.';
+
+  @override
+  String openSharedCeramic(String title) {
+    return 'Open shared ceramic $title';
+  }
+
+  @override
+  String get sharedCeramic => 'Shared ceramic';
+
+  @override
+  String get sharedCeramicLoadFailed =>
+      'The shared ceramic could not be loaded.';
+
+  @override
+  String get ceramicMessagePreview => 'Shared a ceramic';
+
+  @override
+  String get reportCeramicEvidenceDisclosure =>
+      'The selected ceramic, every visible journal field, all current images, and up to two nearby messages on each side will be securely copied for review. The evidence will not change if the ceramic is edited or deleted. Reporting does not block this account or change the conversation.';
+
+  @override
+  String get measurements => 'Measurements';
+
+  @override
+  String get noTags => 'No tags.';
+
+  @override
+  String get timestamps => 'Timestamps';
+
+  @override
+  String get created => 'Created';
+
+  @override
+  String get updated => 'Updated';
 }

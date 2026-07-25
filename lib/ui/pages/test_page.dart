@@ -8,6 +8,7 @@ import 'package:ceramic_app/ui/widgets/v2/star_stepper_select_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/stepper_select_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/tag_input_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/app/app_settings_controller.dart';
 
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
@@ -161,7 +162,10 @@ class _TestPageState extends State<TestPage> {
                   TextFieldWidget(
                     placeholder: "0.0",
                     initialValue: "1.0",
-                    suffix: "kg",
+                    suffix: AppSettingsController
+                        .instance
+                        .measurementSystem
+                        .weightSymbol,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(

@@ -89,7 +89,11 @@ class CeramicViewPageController extends ChangeNotifier{
   Future<bool> setWeight(String value) async {
     final oldValue = ceramic.weight;
     try {
-      ceramic.weight = double.tryParse(value) ?? 0.0;
+      final displayValue = double.tryParse(value) ?? 0.0;
+      ceramic.weight = Measurement.weightToKilograms(
+        displayValue,
+        AppSettingsController.instance.measurementSystem,
+      );
       notifyListeners();
       await CeramicRepository.updateCeramic(ceramic: ceramic);
       hasChanged = true;

@@ -278,7 +278,8 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
           TextFieldWidget(
             placeholder: "0.0",
-            suffix: "kg",
+            suffix:
+                AppSettingsController.instance.measurementSystem.weightSymbol,
             keyboardType: TextInputType.number,
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),

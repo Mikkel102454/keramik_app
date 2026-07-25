@@ -3,6 +3,8 @@ import 'package:ceramic_app/objects/account_settings_dto.dart';
 class Measurement {
   const Measurement._();
 
+  static const double poundsPerKilogram = 2.2046226218487757;
+
   static double lengthFromCentimeters(
     double centimeters,
     MeasurementSystem system,
@@ -23,6 +25,20 @@ class Measurement {
     MeasurementSystem system,
   ) => system == MeasurementSystem.imperial
       ? (displayValue - 32) * 5 / 9
+      : displayValue;
+
+  static double weightFromKilograms(
+    double kilograms,
+    MeasurementSystem system,
+  ) => system == MeasurementSystem.imperial
+      ? kilograms * poundsPerKilogram
+      : kilograms;
+
+  static double weightToKilograms(
+    double displayValue,
+    MeasurementSystem system,
+  ) => system == MeasurementSystem.imperial
+      ? displayValue / poundsPerKilogram
       : displayValue;
 
   static String format(double value) {

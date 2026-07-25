@@ -1,8 +1,12 @@
 import 'package:ceramic_app/objects/chat_dto.dart';
+import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/ui/pages/notification/add_group_members_page.dart';
 import 'package:ceramic_app/ui/pages/notification/conversation_page_controller.dart';
+import 'package:ceramic_app/ui/pages/notification/ceramic_sharing_pages.dart';
 import 'package:ceramic_app/ui/pages/notification/report_message_page.dart';
+import 'package:ceramic_app/ui/pages/notification/shared_ceramic_detail_page.dart';
+import 'package:ceramic_app/ui/widgets/chat_ceramic_card.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
@@ -65,6 +69,37 @@ class _ConversationPageState extends State<ConversationPage> {
         );
       }
     });
+  }
+
+  Future<void> _shareCeramic() async {
+    final ceramic = await Navigator.push<CeramicDto>(
+      context,
+      MaterialPageRoute(builder: (_) => const CeramicPickerPage()),
+    );
+    if (!mounted || ceramic == null || !await confirmCeramicShare(context)) return;
+    final sent = await _controller.sendCeramic(ceramic.id);
+    if (!mounted || !sent) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scroll.hasClients) {
+        _scroll.animateTo(
+          _scroll.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  void _openCeramic(ChatMessageDto message) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => SharedCeramicDetailPage(
+          conversationId: _controller.conversation.id,
+          messageId: message.id,
+        ),
+      ),
+    );
   }
 
   void _comingLater() {
@@ -296,6 +331,7 @@ class _ConversationPageState extends State<ConversationPage> {
                   sending: _controller.isSending,
                   onSend: _send,
                   onFutureFeature: _comingLater,
+                  onCeramic: conversation.archived ? null : _shareCeramic,
                 ),
             ],
           ),
@@ -371,8 +407,12 @@ class _ConversationPageState extends State<ConversationPage> {
               _MessageBubble(
                 message: message,
                 isGroup: _controller.conversation.type == 'GROUP',
-                onLongPress: !message.mine && message.type == 'TEXT'
+                onLongPress: !message.mine &&
+                        (message.type == 'TEXT' || message.type == 'CERAMIC')
                     ? () => _showMessageActions(message)
+                    : null,
+                onCeramicTap: message.ceramic?.available == true
+                    ? () => _openCeramic(message)
                     : null,
               ),
             ],
@@ -390,11 +430,13 @@ class _MessageBubble extends StatelessWidget {
   const _MessageBubble({
     required this.message,
     required this.isGroup,
+    this.onCeramicTap,
     this.onLongPress,
   });
   final ChatMessageDto message;
   final bool isGroup;
   final VoidCallback? onLongPress;
+  final VoidCallback? onCeramicTap;
 
   @override
   Widget build(BuildContext context) {
@@ -407,6 +449,34 @@ class _MessageBubble extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      );
+    }
+    if (message.type == 'CERAMIC') {
+      return Align(
+        alignment: message.mine ? Alignment.centerRight : Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 9),
+          child: Column(
+            crossAxisAlignment: message.mine
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: [
+              if (isGroup && !message.mine && message.senderUsername != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, bottom: 4),
+                  child: Text(
+                    message.senderUsername!,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ),
+              ChatCeramicCard(
+                card: message.ceramic ?? const ChatCeramicCardDto(available: false),
+                onTap: onCeramicTap,
+                onLongPress: onLongPress,
+              ),
+            ],
           ),
         ),
       );
@@ -503,11 +573,13 @@ class _Composer extends StatelessWidget {
     required this.sending,
     required this.onSend,
     required this.onFutureFeature,
+    required this.onCeramic,
   });
   final TextEditingController controller;
   final bool sending;
   final VoidCallback onSend;
   final VoidCallback onFutureFeature;
+  final VoidCallback? onCeramic;
 
   @override
   Widget build(BuildContext context) {
@@ -560,9 +632,9 @@ class _Composer extends StatelessWidget {
                         ),
                       ),
                       IconButton(
-                        tooltip: context.l10n.imageComingLater,
-                        onPressed: onFutureFeature,
-                        icon: const Icon(Icons.image_outlined),
+                        tooltip: context.l10n.shareCeramic,
+                        onPressed: onCeramic,
+                        icon: const Icon(Icons.handyman_outlined),
                       ),
                     ],
                   ),

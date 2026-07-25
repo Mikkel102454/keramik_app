@@ -544,5 +544,32 @@
   "surname": "Surname",
   "readOnlyFields": "These fields are read-only for now.",
   "profilePhoto": "Profile photo",
-  "photoLoadFailed": "Unable to load photo"
+  "photoLoadFailed": "Unable to load photo",
+  "shareCeramic": "Share ceramic",
+  "shareCeramicDisclosure": "The complete journal entry, including notes, images, and future edits, will be visible to everyone who can see this conversation message.",
+  "share": "Share",
+  "chooseCeramic": "Choose a ceramic",
+  "noCeramicsToShare": "You do not have any ceramics to share yet.",
+  "shareToConversation": "Share to a conversation",
+  "noWritableConversations": "No writable conversations are available. Restore an archived chat or rejoin a group before sharing.",
+  "directConversation": "Direct conversation",
+  "ceramicShared": "Ceramic shared.",
+  "ceramicUnavailable": "This ceramic is no longer available.",
+  "openSharedCeramic": "Open shared ceramic {title}",
+  "@openSharedCeramic": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "sharedCeramic": "Shared ceramic",
+  "sharedCeramicLoadFailed": "The shared ceramic could not be loaded.",
+  "ceramicMessagePreview": "Shared a ceramic",
+  "reportCeramicEvidenceDisclosure": "The selected ceramic, every visible journal field, all current images, and up to two nearby messages on each side will be securely copied for review. The evidence will not change if the ceramic is edited or deleted. Reporting does not block this account or change the conversation.",
+  "measurements": "Measurements",
+  "noTags": "No tags.",
+  "timestamps": "Timestamps",
+  "created": "Created",
+  "updated": "Updated"
 }

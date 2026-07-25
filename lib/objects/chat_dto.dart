@@ -15,6 +15,7 @@ class DirectConversationDto {
     this.otherUser,
     this.memberCount = 2,
     this.lastMessagePreview,
+    this.lastMessageType,
     this.lastMessageAt,
     this.readOnlyReason,
   });
@@ -28,6 +29,7 @@ class DirectConversationDto {
   final int memberCount;
   final UserProfileDto? otherUser;
   final String? lastMessagePreview;
+  final String? lastMessageType;
   final DateTime? lastMessageAt;
   final int unreadCount;
   final bool archived;
@@ -49,6 +51,7 @@ class DirectConversationDto {
       memberCount: (json['memberCount'] as num?)?.toInt() ?? 2,
       otherUser: otherUser,
       lastMessagePreview: json['lastMessagePreview'] as String?,
+      lastMessageType: json['lastMessageType'] as String?,
       lastMessageAt: json['lastMessageAt'] == null
           ? null
           : DateTime.parse(json['lastMessageAt'] as String).toLocal(),
@@ -74,6 +77,7 @@ class ChatMessageDto {
     this.senderAvatarUrl,
     this.senderAvatarInitials,
     this.senderAvatarColor,
+    this.ceramic,
   });
 
   final String id;
@@ -87,6 +91,7 @@ class ChatMessageDto {
   final String? senderAvatarUrl;
   final String? senderAvatarInitials;
   final String? senderAvatarColor;
+  final ChatCeramicCardDto? ceramic;
 
   factory ChatMessageDto.fromJson(Map<String, dynamic> json) {
     return ChatMessageDto(
@@ -101,6 +106,38 @@ class ChatMessageDto {
       senderAvatarUrl: json['senderAvatarUrl'] as String?,
       senderAvatarInitials: json['senderAvatarInitials'] as String?,
       senderAvatarColor: json['senderAvatarColor'] as String?,
+      ceramic: json['ceramic'] == null
+          ? null
+          : ChatCeramicCardDto.fromJson(json['ceramic'] as Map<String, dynamic>),
+    );
+  }
+}
+
+class ChatCeramicCardDto {
+  const ChatCeramicCardDto({
+    required this.available,
+    this.imageUrl,
+    this.title,
+    this.stage,
+    this.clayTitle,
+    this.rating,
+  });
+
+  final bool available;
+  final String? imageUrl;
+  final String? title;
+  final String? stage;
+  final String? clayTitle;
+  final int? rating;
+
+  factory ChatCeramicCardDto.fromJson(Map<String, dynamic> json) {
+    return ChatCeramicCardDto(
+      available: json['available'] as bool? ?? false,
+      imageUrl: json['imageUrl'] as String?,
+      title: json['title'] as String?,
+      stage: json['stage'] as String?,
+      clayTitle: json['clayTitle'] as String?,
+      rating: (json['rating'] as num?)?.toInt(),
     );
   }
 }

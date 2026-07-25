@@ -100,7 +100,13 @@ class ChatRequestsPage extends StatelessWidget {
                       imageUrl: item.otherUser!.avatarUrl,
                     ),
                     title: Text(item.otherUser!.username, style: const TextStyle(fontWeight: FontWeight.w700)),
-                    subtitle: Text(item.lastMessagePreview ?? '', maxLines: 2, overflow: TextOverflow.ellipsis),
+                    subtitle: Text(
+                      item.lastMessageType == 'CERAMIC'
+                          ? context.l10n.ceramicMessagePreview
+                          : item.lastMessagePreview ?? '',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     trailing: Wrap(
                       spacing: 2,
                       children: [

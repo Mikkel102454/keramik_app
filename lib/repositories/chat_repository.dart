@@ -1,6 +1,7 @@
 import 'package:ceramic_app/api/api_client.dart';
 import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/objects/chat_report_dto.dart';
+import 'package:ceramic_app/objects/shared_ceramic_dto.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/utils/web.dart';
 
@@ -150,6 +151,32 @@ class ChatRepository {
     );
     checkSuccess(response);
     return ChatMessageDto.fromJson(response.data['data']);
+  }
+
+  static Future<ChatMessageDto> sendCeramic(
+    String id,
+    String clientMessageId,
+    int ceramicId,
+  ) async {
+    final response = await ApiClient.dio.post(
+      '/api/chat/conversations/$id/ceramics',
+      data: {'clientMessageId': clientMessageId, 'ceramicId': ceramicId},
+    );
+    checkSuccess(response);
+    return ChatMessageDto.fromJson(response.data['data']);
+  }
+
+  static Future<SharedCeramicDetailDto> getSharedCeramic(
+    String conversationId,
+    String messageId,
+  ) async {
+    final response = await ApiClient.dio.get(
+      '/api/chat/conversations/$conversationId/messages/$messageId/ceramic',
+    );
+    checkSuccess(response);
+    return SharedCeramicDetailDto.fromJson(
+      response.data['data'] as Map<String, dynamic>,
+    );
   }
 
   static Future<void> markRead(String id, String messageId) async {

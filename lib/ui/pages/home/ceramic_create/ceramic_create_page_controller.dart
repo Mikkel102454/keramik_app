@@ -62,7 +62,11 @@ class CeramicCreatePageController extends ChangeNotifier{
   }
 
   void setWeight(String value) {
-    weight = double.tryParse(value) ?? 0.0;
+    final displayValue = double.tryParse(value) ?? 0.0;
+    weight = Measurement.weightToKilograms(
+      displayValue,
+      AppSettingsController.instance.measurementSystem,
+    );
   }
 
   Future<bool> updateGlaze(int id, String value, int coatCount) async {

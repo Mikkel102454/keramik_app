@@ -1,5 +1,6 @@
 import 'package:ceramic_app/api/api_client.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
+import 'package:ceramic_app/objects/public_ceramic_card_dto.dart';
 import 'package:ceramic_app/utils/web.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
@@ -29,6 +30,22 @@ class SocialRepository {
     final response = await ApiClient.dio.get('/api/users/$userId');
     checkSuccess(response);
     return UserProfileDto.fromJson(response.data['data']);
+  }
+
+  static Future<List<PublicCeramicCardDto>> getFinishedCeramics(
+    String userId,
+  ) async {
+    final response = await ApiClient.dio.get(
+      '/api/users/$userId/finished-ceramics',
+    );
+    checkSuccess(response);
+    return (response.data['data'] as List)
+        .map(
+          (item) => PublicCeramicCardDto.fromJson(
+            item as Map<String, dynamic>,
+          ),
+        )
+        .toList();
   }
 
   static Future<CursorPage<UserProfileDto>> getFriends({String? cursor}) async {
