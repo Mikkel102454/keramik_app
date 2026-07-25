@@ -63,10 +63,10 @@ class _AccordionWidgetState
               vertical: 14,
             ),
 
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               border: Border(
                 top: BorderSide(
-                  color: Color(0xFFE0E0E0),
+                  color: Theme.of(context).dividerColor,
                 ),
               ),
             ),
@@ -115,9 +115,8 @@ class _AccordionWidgetState
                     alignment: Alignment.center,
 
                     decoration:
-                    const BoxDecoration(
-                      color:
-                      Color(0xFFE5E5EA),
+                    BoxDecoration(
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,
 
                       borderRadius:
                       BorderRadius.all(

@@ -13,14 +13,14 @@ class StarStepperSelectWidget extends StatefulWidget {
   final double fontSize;
   final FontWeight fontWeight;
   final String? fontFamily;
-  final Color color;
+  final Color? color;
   final TextDecoration decoration;
 
   final IconData selectedIcon;
   final IconData unselectedIcon;
 
   final Color selectedIconColor;
-  final Color unselectedIconColor;
+  final Color? unselectedIconColor;
 
   final bool showLabel;
 
@@ -37,14 +37,14 @@ class StarStepperSelectWidget extends StatefulWidget {
     this.fontSize = 14,
     this.fontWeight = FontWeight.w500,
     this.fontFamily,
-    this.color = Colors.black,
+    this.color,
     this.decoration = TextDecoration.none,
 
     this.selectedIcon = Icons.star,
     this.unselectedIcon = Icons.star_border,
 
     this.selectedIconColor = const Color(0xFF34C759),
-    this.unselectedIconColor = const Color(0xFFD9D9D9),
+    this.unselectedIconColor,
 
     this.showLabel = false,
   });
@@ -137,7 +137,8 @@ class _StarStepperSelectWidgetState
 
                     color: isSelected
                         ? widget.selectedIconColor
-                        : widget.unselectedIconColor,
+                        : widget.unselectedIconColor ??
+                            Theme.of(context).colorScheme.outline,
                   ),
 
                   if (widget.showLabel) ...[
@@ -149,7 +150,7 @@ class _StarStepperSelectWidgetState
                         fontSize: widget.fontSize,
                         fontWeight: widget.fontWeight,
                         fontFamily: widget.fontFamily,
-                        color: widget.color,
+                        color: widget.color ?? Theme.of(context).colorScheme.onSurface,
                         decoration: widget.decoration,
                       ),
                     ),

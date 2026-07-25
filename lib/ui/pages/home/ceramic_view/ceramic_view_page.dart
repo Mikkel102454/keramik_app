@@ -5,6 +5,7 @@ import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:ceramic_app/objects/stage_dto.dart';
 import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
+import 'package:ceramic_app/objects/ceramic_stage_history_dto.dart';
 import 'package:ceramic_app/ui/pages/image_view/image_view_page.dart';
 import 'package:ceramic_app/ui/widgets/firing_editor_dialog.dart';
 import 'package:ceramic_app/ui/widgets/v2/dropdown_widget.dart';
@@ -17,6 +18,9 @@ import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ceramic_app/app/app_settings_controller.dart';
+import 'package:ceramic_app/utils/measurement.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -65,7 +69,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Ceramic"),
+          title: Text(context.l10n.ceramic),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -81,18 +85,16 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (_) => AlertDialog(
-                    title: const Text("Delete ceramic"),
-                    content: const Text(
-                      "Are you sure you want to delete this ceramic?",
-                    ),
+                    title: Text(context.l10n.deleteCeramic),
+                    content: Text(context.l10n.deleteCeramicQuestion),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text("Cancel"),
+                        child: Text(context.l10n.cancel),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(context, true),
-                        child: const Text("Delete"),
+                        child: Text(context.l10n.delete),
                       ),
                     ],
                   ),
@@ -106,7 +108,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                   Navigator.of(context).pop(true);
                 } else if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Could not delete ceramic.')),
+                    SnackBar(content: Text(context.l10n.deleteCeramicFailed)),
                   );
                 }
               },
@@ -127,10 +129,14 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text("Error: ${_controller.error}"),
+                      Text(
+                        context.l10n.errorWithDetails(
+                          '${_controller.error}',
+                        ),
+                      ),
                       FilledButton(
                         onPressed: () => _controller.load(null, null),
-                        child: const Text('Retry'),
+                        child: Text(context.l10n.retry),
                       ),
                     ],
                   ),
@@ -200,11 +206,11 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
                 SquareWidget(
                   icon: Icons.add,
-                  iconColor: Colors.grey.shade500,
+                  iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   iconSize: 42,
                   width: 92,
                   height: 92,
-                  backgroundColor: Colors.grey.shade300,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   onPressed: () async {
                     final source = await showModalBottomSheet<ImageSource>(
                       context: context,
@@ -214,14 +220,14 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                             children: [
                               ListTile(
                                 leading: const Icon(Icons.photo_library),
-                                title: const Text('Select from gallery'),
+                                title: Text(context.l10n.selectFromGallery),
                                 onTap: () {
                                   Navigator.pop(context, ImageSource.gallery);
                                 },
                               ),
                               ListTile(
                                 leading: const Icon(Icons.camera_alt),
-                                title: const Text('Take a picture'),
+                                title: Text(context.l10n.takePicture),
                                 onTap: () {
                                   Navigator.pop(context, ImageSource.camera);
                                 },
@@ -252,7 +258,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           // Progress
           // =========================
           TextWidget(
-            text: "Progress",
+            text: context.l10n.progress,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -264,7 +270,10 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             size: 40,
             entries: [
               for (final stage in widget.stages)
-                MapEntry(stage.title, stage.id.toString()),
+                MapEntry(
+                  localizedStageName(context.l10n, stage.title),
+                  stage.id.toString(),
+                ),
             ],
 
             onChanged: (value) async {
@@ -277,20 +286,20 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           // Information
           // =========================
           TextWidget(
-            text: "Information",
+            text: context.l10n.information,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
           const SizedBox(height: 8),
           TextWidget(
-            text: "Title",
+            text: context.l10n.title,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
           TextFieldWidget(
-            placeholder: "Title",
+            placeholder: context.l10n.title,
             initialValue: controller.ceramic.title,
             debounceDuration: Duration(milliseconds: 300),
 
@@ -303,15 +312,15 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           const SizedBox(height: 12),
 
           TextWidget(
-            text: "Clay Type",
+            text: context.l10n.clayType,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
 
           DropdownWidget(
-            placeholder: "Select",
+            placeholder: context.l10n.select,
             initialValue: controller.ceramic.clayTypeId.toString(),
             entries: [
               for (final clayType in widget.clayTypes)
@@ -326,10 +335,10 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           const SizedBox(height: 12),
 
           TextWidget(
-            text: "Weight",
+            text: context.l10n.weight,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
 
@@ -354,17 +363,23 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text(
-              'Dimensions',
-              style: TextStyle(fontWeight: FontWeight.w700),
+            title: Text(
+              context.l10n.dimensions,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
-            subtitle: const Text('Optional · centimeters'),
+            subtitle: Text(
+              context.l10n.optionalMeasurementSystem(
+                AppSettingsController.instance.measurementSystem
+                    .localizedLabel(context.l10n)
+                    .toLowerCase(),
+              ),
+            ),
             children: [
               Row(
                 children: [
                   Expanded(
                     child: _dimensionField(
-                      'Height',
+                      context.l10n.height,
                       controller.ceramic.heightCm,
                       (value) => controller.setDimension('height', value),
                     ),
@@ -372,7 +387,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: _dimensionField(
-                      'Width',
+                      context.l10n.width,
                       controller.ceramic.widthCm,
                       (value) => controller.setDimension('width', value),
                     ),
@@ -384,7 +399,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                 children: [
                   Expanded(
                     child: _dimensionField(
-                      'Depth',
+                      context.l10n.depth,
                       controller.ceramic.depthCm,
                       (value) => controller.setDimension('depth', value),
                     ),
@@ -392,7 +407,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: _dimensionField(
-                      'Diameter',
+                      context.l10n.diameter,
                       controller.ceramic.diameterCm,
                       (value) => controller.setDimension('diameter', value),
                     ),
@@ -408,9 +423,9 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           // =========================
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text(
-              'Glaze applications',
-              style: TextStyle(fontWeight: FontWeight.w700),
+            title: Text(
+              context.l10n.glazeApplications,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             children: [
               GlazeApplicationEditor(
@@ -428,41 +443,47 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text(
-              'Firings',
-              style: TextStyle(fontWeight: FontWeight.w700),
+            title: Text(
+              context.l10n.firings,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             subtitle: Text(
-              '${controller.firings.length} ${controller.firings.length == 1 ? 'record' : 'records'}',
+              context.l10n.firingRecordCount(controller.firings.length),
             ),
             children: [
               if (controller.firings.isEmpty)
-                const Align(
+                Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 10),
                     child: Text(
-                      'No firing records yet.',
-                      style: TextStyle(color: Colors.black54),
+                      context.l10n.noFiringRecords,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 ),
               for (final firing in controller.firings)
                 Card(
                   child: ListTile(
-                    title: Text(_firingTypeLabel(firing.type)),
+                    title: Text(_firingTypeLabel(context, firing.type)),
                     subtitle: Text(
                       [
-                        firing.status == 'PLANNED' ? 'Planned' : 'Completed',
+                        firing.status == 'PLANNED'
+                            ? context.l10n.planned
+                            : context.l10n.completed,
                         if (firing.firingDate != null)
-                          DateFormat.yMMMd().format(firing.firingDate!),
+                          DateFormat.yMMMd(
+                            Localizations.localeOf(context).toLanguageTag(),
+                          ).format(firing.firingDate!),
                         if (firing.targetCone.isNotEmpty)
-                          'Cone ${firing.targetCone}',
+                          context.l10n.coneValue(firing.targetCone),
                       ].join(' · '),
                     ),
                     onTap: () => _showFiringEditor(firing),
                     trailing: IconButton(
-                      tooltip: 'Delete firing',
+                      tooltip: context.l10n.deleteFiring,
                       onPressed: () => _deleteFiring(firing),
                       icon: const Icon(Icons.delete_outline),
                     ),
@@ -473,7 +494,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                 child: OutlinedButton.icon(
                   onPressed: () => _showFiringEditor(null),
                   icon: const Icon(Icons.add),
-                  label: const Text('Add firing'),
+                  label: Text(context.l10n.addFiring),
                 ),
               ),
               const SizedBox(height: 12),
@@ -485,7 +506,11 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           // =========================
           // Rating
           // =========================
-          TextWidget(text: "Rate", fontSize: 18, fontWeight: FontWeight.w700),
+          TextWidget(
+            text: context.l10n.rate,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
           StarStepperSelectWidget(
             initialValue: controller.ceramic.rating,
 
@@ -501,7 +526,11 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           // =========================
           // Tags
           // =========================
-          TextWidget(text: "Tags", fontSize: 18, fontWeight: FontWeight.w700),
+          TextWidget(
+            text: context.l10n.tags,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
           const SizedBox(height: 8),
 
           TagInputWidget(
@@ -513,8 +542,8 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             fontSize: 16,
             fontWeight: FontWeight.normal,
 
-            borderColor: Colors.black,
-            backgroundColor: Colors.grey.shade300,
+            borderColor: Theme.of(context).colorScheme.outline,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
 
             removeIconSize: 20,
             removeIconColor: Colors.red,
@@ -536,11 +565,15 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           // =========================
           // Notes
           // =========================
-          TextWidget(text: "Notes", fontSize: 18, fontWeight: FontWeight.w700),
+          TextWidget(
+            text: context.l10n.notes,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
           const SizedBox(height: 8),
 
           TextFieldWidget(
-            placeholder: "Project notes",
+            placeholder: context.l10n.projectNotes,
             initialValue: controller.ceramic.note,
             debounceDuration: Duration(milliseconds: 300),
             minLines: 3,
@@ -554,13 +587,13 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           const SizedBox(height: 10),
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text(
-              'Outcome',
-              style: TextStyle(fontWeight: FontWeight.w700),
+            title: Text(
+              context.l10n.outcome,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             children: [
               TextFieldWidget(
-                placeholder: 'How did the piece turn out?',
+                placeholder: context.l10n.outcomeHint,
                 initialValue: controller.ceramic.outcomeNote,
                 debounceDuration: const Duration(milliseconds: 300),
                 minLines: 3,
@@ -573,14 +606,21 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text(
-              'History',
-              style: TextStyle(fontWeight: FontWeight.w700),
+            title: Text(
+              context.l10n.history,
+              style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             subtitle: Text(
               controller.ceramic.updatedAt == null
-                  ? '${controller.stageHistory.length} stage events'
-                  : 'Updated ${DateFormat.yMMMd().add_jm().format(controller.ceramic.updatedAt!.toLocal())}',
+                  ? context.l10n.stageEventCount(
+                      controller.stageHistory.length,
+                    )
+                  : context.l10n.updatedOn(
+                      _formatDateTime(
+                        context,
+                        controller.ceramic.updatedAt!.toLocal(),
+                      ),
+                    ),
             ),
             children: [
               for (final event in controller.stageHistory)
@@ -588,16 +628,10 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.timeline),
                   title: Text(
-                    event.baseline
-                        ? 'History started at ${event.toStageTitle}'
-                        : event.fromStageTitle == null
-                        ? 'Started at ${event.toStageTitle}'
-                        : '${event.fromStageTitle} → ${event.toStageTitle}',
+                    _historyTitle(context, event),
                   ),
                   subtitle: Text(
-                    DateFormat.yMMMd().add_jm().format(
-                      event.changedAt.toLocal(),
-                    ),
+                    _formatDateTime(context, event.changedAt.toLocal()),
                   ),
                 ),
               const SizedBox(height: 8),
@@ -615,10 +649,16 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
     double? value,
     Future<bool> Function(String) onChanged,
   ) {
+    final units = AppSettingsController.instance.measurementSystem;
+    final displayValue = value == null
+        ? null
+        : Measurement.lengthFromCentimeters(value, units);
     return TextFieldWidget(
       placeholder: label,
-      initialValue: value?.toString(),
-      suffix: 'cm',
+      initialValue: displayValue == null
+          ? null
+          : Measurement.format(displayValue),
+      suffix: units.lengthSymbol,
       debounceDuration: const Duration(milliseconds: 300),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [
@@ -643,18 +683,20 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete firing record?'),
+        title: Text(context.l10n.deleteFiringQuestion),
         content: Text(
-          'This will permanently remove the ${_firingTypeLabel(firing.type).toLowerCase()} record.',
+          context.l10n.deleteFiringExplanation(
+            _firingTypeLabel(context, firing.type).toLowerCase(),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(context.l10n.delete),
           ),
         ],
       ),
@@ -663,19 +705,37 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
       final success = await _controller.deleteFiring(firing.id);
       if (!success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('The firing record could not be deleted.'),
-          ),
+          SnackBar(content: Text(context.l10n.deleteFiringFailed)),
         );
       }
     }
   }
 
-  String _firingTypeLabel(String type) => switch (type) {
-    'BISQUE' => 'Bisque firing',
-    'GLAZE' => 'Glaze firing',
-    'SINGLE' => 'Single firing',
-    'OVERGLAZE' => 'Overglaze / luster firing',
-    _ => 'Other firing',
+  String _firingTypeLabel(BuildContext context, String type) => switch (type) {
+    'BISQUE' => context.l10n.bisqueFiring,
+    'GLAZE' => context.l10n.glazeFiring,
+    'SINGLE' => context.l10n.singleFiring,
+    'OVERGLAZE' => context.l10n.overglazeFiring,
+    _ => context.l10n.otherFiring,
   };
+
+  String _historyTitle(
+    BuildContext context,
+    CeramicStageHistoryDto event,
+  ) {
+    final toStage = localizedStageName(context.l10n, event.toStageTitle);
+    if (event.baseline) return context.l10n.historyStartedAt(toStage);
+    final from = event.fromStageTitle;
+    if (from == null) return context.l10n.startedAtStage(toStage);
+    return context.l10n.stageTransition(
+      localizedStageName(context.l10n, from),
+      toStage,
+    );
+  }
+
+  String _formatDateTime(BuildContext context, DateTime value) {
+    return DateFormat.yMMMd(
+      Localizations.localeOf(context).toLanguageTag(),
+    ).add_jm().format(value);
+  }
 }

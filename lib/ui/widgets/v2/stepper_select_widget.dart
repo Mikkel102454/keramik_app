@@ -11,7 +11,7 @@ class StepperSelectWidget extends StatefulWidget {
   final double fontSize;
   final FontWeight fontWeight;
   final String? fontFamily;
-  final Color color;
+  final Color? color;
   final TextDecoration decoration;
 
   const StepperSelectWidget({
@@ -25,7 +25,7 @@ class StepperSelectWidget extends StatefulWidget {
     this.fontSize = 14,
     this.fontWeight = FontWeight.w500,
     this.fontFamily,
-    this.color = Colors.black,
+    this.color,
     this.decoration = TextDecoration.none,
   });
 
@@ -137,7 +137,7 @@ class _StepperSelectWidgetState
 
                         color: isSelected
                             ? const Color(0xFF34C759)
-                            : const Color(0xFFD9D9D9),
+                            : Theme.of(context).colorScheme.surfaceContainerHighest,
                       ),
 
                       child: isSelected
@@ -157,7 +157,7 @@ class _StepperSelectWidgetState
                         fontSize: widget.fontSize,
                         fontWeight: widget.fontWeight,
                         fontFamily: widget.fontFamily,
-                        color: widget.color,
+                        color: widget.color ?? Theme.of(context).colorScheme.onSurface,
                         decoration: widget.decoration,
                       ),
                     ),

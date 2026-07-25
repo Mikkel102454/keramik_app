@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/objects/ceramic_dto.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/ui/pages/home/ceramic_create/ceramic_create_page.dart';
 import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page.dart';
 import 'package:ceramic_app/ui/pages/home/ceramic_journal_query.dart';
@@ -44,7 +45,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ceramic journal')),
+      appBar: AppBar(title: Text(context.l10n.ceramicJournal)),
       body: SafeArea(
         child: AnimatedBuilder(
           animation: _controller,
@@ -59,9 +60,15 @@ class _HomePageState extends State<HomePage>
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     const Icon(Icons.cloud_off_outlined, size: 42),
                     const SizedBox(height: 12),
-                    Text(_controller.error!, textAlign: TextAlign.center),
+                    Text(
+                      context.l10n.journalLoadFailed,
+                      textAlign: TextAlign.center,
+                    ),
                     const SizedBox(height: 12),
-                    FilledButton(onPressed: _controller.load, child: const Text('Try again')),
+                    FilledButton(
+                      onPressed: _controller.load,
+                      child: Text(context.l10n.tryAgain),
+                    ),
                   ]),
                 ),
               );
@@ -75,7 +82,7 @@ class _HomePageState extends State<HomePage>
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _createCeramic,
-        tooltip: 'Create ceramic',
+        tooltip: context.l10n.createCeramic,
         child: const Icon(Icons.add),
       ),
       bottomNavigationBar: const NavigationWidget(currentPage: NavigationPage.home),
@@ -92,12 +99,12 @@ class _HomePageState extends State<HomePage>
           controller: _searchController,
           onChanged: (value) => controller.updateQuery(controller.query.copyWith(search: value)),
           decoration: InputDecoration(
-            hintText: 'Search titles, notes, tags, clay, or glaze',
+            hintText: context.l10n.journalSearchHint,
             prefixIcon: const Icon(Icons.search),
             suffixIcon: controller.query.search.isEmpty
                 ? null
                 : IconButton(
-                    tooltip: 'Clear search',
+                    tooltip: context.l10n.clearSearch,
                     onPressed: () {
                       _searchController.clear();
                       controller.updateQuery(controller.query.copyWith(search: ''));
@@ -116,7 +123,7 @@ class _HomePageState extends State<HomePage>
               child: OutlinedButton.icon(
                 onPressed: _showFilters,
                 icon: const Icon(Icons.tune),
-                label: const Text('Filters'),
+                label: Text(context.l10n.filters),
               ),
             ),
             const SizedBox(width: 8),
@@ -132,7 +139,12 @@ class _HomePageState extends State<HomePage>
                   ),
                 ),
                 itemBuilder: (_) => CeramicJournalSort.values
-                    .map((sort) => PopupMenuItem(value: sort, child: Text(_sortLabel(sort))))
+                    .map(
+                      (sort) => PopupMenuItem(
+                        value: sort,
+                        child: Text(_sortLabel(context, sort)),
+                      ),
+                    )
                     .toList(),
                 child: InputDecorator(
                   decoration: const InputDecoration(
@@ -140,12 +152,14 @@ class _HomePageState extends State<HomePage>
                     border: OutlineInputBorder(),
                     prefixIcon: Icon(Icons.sort),
                   ),
-                  child: Text(_sortLabel(controller.query.sort)),
+                  child: Text(_sortLabel(context, controller.query.sort)),
                 ),
               ),
             ),
             IconButton(
-              tooltip: controller.query.descending ? 'Descending' : 'Ascending',
+              tooltip: controller.query.descending
+                  ? context.l10n.descending
+                  : context.l10n.ascending,
               onPressed: () => controller.updateQuery(
                 controller.query.copyWith(descending: !controller.query.descending),
               ),
@@ -155,7 +169,7 @@ class _HomePageState extends State<HomePage>
         ),
         const SizedBox(height: 12),
         Text(
-          '${ceramics.length} ${ceramics.length == 1 ? 'piece' : 'pieces'}',
+          context.l10n.pieceCount(ceramics.length),
           style: Theme.of(context).textTheme.labelLarge,
         ),
         const SizedBox(height: 10),
@@ -191,7 +205,11 @@ class _HomePageState extends State<HomePage>
                     stageTitle: controller.stages
                         .where((stage) => stage.id == ceramic.stageId)
                         .map((stage) => stage.title)
-                        .firstOrNull ?? 'Unknown stage',
+                        .map(
+                          (title) =>
+                              localizedStageName(context.l10n, title),
+                        )
+                        .firstOrNull ?? context.l10n.unknownStage,
                     clayTitle: controller.clays
                         .where((clay) => clay.id == ceramic.clayTypeId)
                         .map((clay) => clay.title)
@@ -254,17 +272,22 @@ class _HomePageState extends State<HomePage>
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                 children: [
                   Row(children: [
-                    Text('Filter journal', style: Theme.of(context).textTheme.titleLarge),
+                    Text(
+                      context.l10n.filterJournal,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                     const Spacer(),
                     TextButton(
                       onPressed: () => update(query.clearFilters()),
-                      child: const Text('Clear'),
+                      child: Text(context.l10n.clear),
                     ),
                   ]),
                   _FilterSection(
-                    title: 'Stage',
+                    title: context.l10n.stage,
                     children: _controller.stages.map((stage) => FilterChip(
-                      label: Text(stage.title),
+                      label: Text(
+                        localizedStageName(context.l10n, stage.title),
+                      ),
                       selected: query.stageIds.contains(stage.id),
                       onSelected: (_) => update(query.copyWith(
                         stageIds: _toggle(query.stageIds, stage.id),
@@ -272,7 +295,7 @@ class _HomePageState extends State<HomePage>
                     )).toList(),
                   ),
                   _FilterSection(
-                    title: 'Clay',
+                    title: context.l10n.clay,
                     children: _controller.clays.map((clay) => FilterChip(
                       label: Text(clay.title),
                       selected: query.clayIds.contains(clay.id),
@@ -282,7 +305,7 @@ class _HomePageState extends State<HomePage>
                     )).toList(),
                   ),
                   _FilterSection(
-                    title: 'Glaze',
+                    title: context.l10n.glaze,
                     children: _controller.glazes.map((glaze) => FilterChip(
                       label: Text(glaze.title),
                       selected: query.glazeIds.contains(glaze.id),
@@ -292,7 +315,7 @@ class _HomePageState extends State<HomePage>
                     )).toList(),
                   ),
                   _FilterSection(
-                    title: 'Minimum rating',
+                    title: context.l10n.minimumRating,
                     children: List.generate(5, (index) => ChoiceChip(
                       label: Text('${index + 1}+ ★'),
                       selected: query.minimumRating == index + 1,
@@ -303,7 +326,7 @@ class _HomePageState extends State<HomePage>
                   ),
                   if (_controller.availableTags.isNotEmpty)
                     _FilterSection(
-                      title: 'Tags',
+                      title: context.l10n.tags,
                       children: _controller.availableTags.map((tag) {
                         final normalized = tag.toLowerCase();
                         return FilterChip(
@@ -330,12 +353,13 @@ class _HomePageState extends State<HomePage>
     return result;
   }
 
-  static String _sortLabel(CeramicJournalSort sort) => switch (sort) {
-    CeramicJournalSort.recentlyUpdated => 'Recently updated',
-    CeramicJournalSort.title => 'Title',
-    CeramicJournalSort.rating => 'Rating',
-    CeramicJournalSort.stage => 'Stage',
-    CeramicJournalSort.created => 'Creation date',
+  static String _sortLabel(BuildContext context, CeramicJournalSort sort) =>
+      switch (sort) {
+    CeramicJournalSort.recentlyUpdated => context.l10n.sortRecentlyUpdated,
+    CeramicJournalSort.title => context.l10n.title,
+    CeramicJournalSort.rating => context.l10n.rating,
+    CeramicJournalSort.stage => context.l10n.stage,
+    CeramicJournalSort.created => context.l10n.creationDate,
   };
 }
 
@@ -363,16 +387,23 @@ class _EmptyJournal extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 70),
     child: Column(children: [
-      const Icon(Icons.handyman_outlined, size: 54, color: Colors.black38),
+      Icon(
+        Icons.handyman_outlined,
+        size: 54,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
       const SizedBox(height: 14),
-      Text('Start your ceramic journal', style: Theme.of(context).textTheme.titleLarge),
+      Text(
+        context.l10n.startCeramicJournal,
+        style: Theme.of(context).textTheme.titleLarge,
+      ),
       const SizedBox(height: 7),
-      const Text('Capture your first piece, materials, process, and results.'),
+      Text(context.l10n.emptyJournalDescription),
       const SizedBox(height: 18),
       FilledButton.icon(
         onPressed: onCreate,
         icon: const Icon(Icons.add),
-        label: const Text('Create your first piece'),
+        label: Text(context.l10n.createFirstPiece),
       ),
     ]),
   );
@@ -386,11 +417,21 @@ class _NoMatches extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 70),
     child: Column(children: [
-      const Icon(Icons.search_off, size: 48, color: Colors.black38),
+      Icon(
+        Icons.search_off,
+        size: 48,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
       const SizedBox(height: 12),
-      Text('No matching pieces', style: Theme.of(context).textTheme.titleMedium),
+      Text(
+        context.l10n.noMatchingPieces,
+        style: Theme.of(context).textTheme.titleMedium,
+      ),
       const SizedBox(height: 10),
-      OutlinedButton(onPressed: onClear, child: const Text('Clear search and filters')),
+      OutlinedButton(
+        onPressed: onClear,
+        child: Text(context.l10n.clearSearchAndFilters),
+      ),
     ]),
   );
 }

@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:ceramic_app/objects/stage_dto.dart';
 import 'package:ceramic_app/repositories/ceramic_repository.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:ceramic_app/app/app_settings_controller.dart';
+import 'package:ceramic_app/utils/measurement.dart';
 
 class CeramicCreatePageController extends ChangeNotifier{
   List<StageDto> stages = [];
@@ -150,7 +152,13 @@ class CeramicCreatePageController extends ChangeNotifier{
   }
 
   void setDimension(String field, String value) {
-    final parsed = value.trim().isEmpty ? null : double.tryParse(value);
+    final displayValue = value.trim().isEmpty ? null : double.tryParse(value);
+    final parsed = displayValue == null
+        ? null
+        : Measurement.lengthToCentimeters(
+            displayValue,
+            AppSettingsController.instance.measurementSystem,
+          );
     switch (field) {
       case 'height':
         heightCm = parsed;

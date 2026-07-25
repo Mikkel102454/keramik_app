@@ -2,6 +2,7 @@ import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/utils/client_uuid.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class MessageRequestPage extends StatefulWidget {
   const MessageRequestPage({required this.user, super.key});
@@ -43,15 +44,19 @@ class _MessageRequestPageState extends State<MessageRequestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Message ${widget.user.username}')),
+      appBar: AppBar(
+        title: Text(context.l10n.messageUser(widget.user.username)),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'You can send one preview. You can send more messages after they accept.',
-              style: TextStyle(color: Colors.black54),
+            Text(
+              context.l10n.messageRequestPreviewExplanation,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 18),
             TextField(
@@ -60,9 +65,9 @@ class _MessageRequestPageState extends State<MessageRequestPage> {
               minLines: 4,
               maxLines: 8,
               maxLength: 2000,
-              decoration: const InputDecoration(
-                hintText: 'Write a message request…',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: context.l10n.writeMessageRequest,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 12),
@@ -71,7 +76,7 @@ class _MessageRequestPageState extends State<MessageRequestPage> {
               icon: _sending
                   ? const SizedBox.square(dimension: 18, child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.send),
-              label: const Text('Send request'),
+              label: Text(context.l10n.sendRequest),
             ),
           ],
         ),

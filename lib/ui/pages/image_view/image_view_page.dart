@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ceramic_app/objects/image_dto.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class ImageViewPage extends StatelessWidget {
 
@@ -69,11 +70,11 @@ class ImageViewPage extends StatelessWidget {
                     await showDialog<bool>(
                       context: context,
                       builder: (_) => AlertDialog(
-                        title: const Text(
-                          'Delete image?',
+                        title: Text(
+                          context.l10n.deleteImageQuestion,
                         ),
-                        content: const Text(
-                          'This action cannot be undone.',
+                        content: Text(
+                          context.l10n.cannotUndo,
                         ),
                         actions: [
 
@@ -84,8 +85,8 @@ class ImageViewPage extends StatelessWidget {
                                 false,
                               );
                             },
-                            child: const Text(
-                              'Cancel',
+                            child: Text(
+                              context.l10n.cancel,
                             ),
                           ),
 
@@ -96,8 +97,8 @@ class ImageViewPage extends StatelessWidget {
                                 true,
                               );
                             },
-                            child: const Text(
-                              'Delete',
+                            child: Text(
+                              context.l10n.delete,
                             ),
                           ),
                         ],

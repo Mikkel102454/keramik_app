@@ -4,6 +4,7 @@ import 'package:ceramic_app/ui/pages/notification/friend_requests_page.dart';
 import 'package:ceramic_app/ui/pages/notification/notification_controller_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class ChatRequestsPage extends StatelessWidget {
   const ChatRequestsPage({required this.controller, super.key});
@@ -38,7 +39,12 @@ class ChatRequestsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Requests', style: TextStyle(fontWeight: FontWeight.w700))),
+      appBar: AppBar(
+        title: Text(
+          context.l10n.requests,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
       body: AnimatedBuilder(
         animation: controller,
         builder: (context, _) {
@@ -51,8 +57,13 @@ class ChatRequestsPage extends StatelessWidget {
               children: [
                 ListTile(
                   leading: const CircleAvatar(child: Icon(Icons.person_add_alt_1)),
-                  title: const Text('Friend requests', style: TextStyle(fontWeight: FontWeight.w700)),
-                  subtitle: Text('${controller.incoming.length} waiting'),
+                  title: Text(
+                    context.l10n.friendRequests,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  subtitle: Text(
+                    context.l10n.waitingCount(controller.incoming.length),
+                  ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => Navigator.push(
                     context,
@@ -60,14 +71,26 @@ class ChatRequestsPage extends StatelessWidget {
                   ),
                 ),
                 const Divider(),
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 12, 16, 6),
-                  child: Text('Message requests', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                  child: Text(
+                    context.l10n.messageRequests,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
                 if (requests.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.all(28),
-                    child: Text('No message requests.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black45)),
+                  Padding(
+                    padding: const EdgeInsets.all(28),
+                    child: Text(
+                      context.l10n.noMessageRequests,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                 ...requests.map(
                   (item) => ListTile(
@@ -81,8 +104,16 @@ class ChatRequestsPage extends StatelessWidget {
                     trailing: Wrap(
                       spacing: 2,
                       children: [
-                        IconButton(tooltip: 'Decline', onPressed: () => _decline(context, item), icon: const Icon(Icons.close)),
-                        IconButton(tooltip: 'Accept', onPressed: () => _accept(context, item), icon: const Icon(Icons.check)),
+                        IconButton(
+                          tooltip: context.l10n.decline,
+                          onPressed: () => _decline(context, item),
+                          icon: const Icon(Icons.close),
+                        ),
+                        IconButton(
+                          tooltip: context.l10n.accept,
+                          onPressed: () => _accept(context, item),
+                          icon: const Icon(Icons.check),
+                        ),
                       ],
                     ),
                     onTap: () => Navigator.push(

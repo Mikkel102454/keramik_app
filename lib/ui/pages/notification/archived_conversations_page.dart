@@ -3,6 +3,7 @@ import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class ArchivedConversationsPage extends StatefulWidget {
   const ArchivedConversationsPage({super.key});
@@ -49,20 +50,28 @@ class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Archived chats')),
+      appBar: AppBar(title: Text(context.l10n.archivedChats)),
       body: _loading && _items.isEmpty
           ? const Center(child: CircularProgressIndicator())
           : _error != null && _items.isEmpty
-              ? Center(child: FilledButton(onPressed: _load, child: const Text('Retry')))
+              ? Center(
+                  child: FilledButton(
+                    onPressed: _load,
+                    child: Text(context.l10n.retry),
+                  ),
+                )
               : RefreshIndicator(
                   onRefresh: _load,
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: [
                       if (_items.isEmpty)
-                        const Padding(
-                          padding: EdgeInsets.all(36),
-                          child: Text('No archived chats.', textAlign: TextAlign.center),
+                        Padding(
+                          padding: const EdgeInsets.all(36),
+                          child: Text(
+                            context.l10n.noArchivedChats,
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ..._items.map(
                         (item) => ListTile(
@@ -72,8 +81,16 @@ class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
                             imageUrl: item.otherUser?.avatarUrl,
                           ),
                           title: Text(item.title),
-                          subtitle: Text(item.lastMessagePreview ?? 'No messages', maxLines: 1, overflow: TextOverflow.ellipsis),
-                          trailing: IconButton(tooltip: 'Restore', onPressed: () => _restore(item), icon: const Icon(Icons.unarchive_outlined)),
+                          subtitle: Text(
+                            item.lastMessagePreview ?? context.l10n.noMessages,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: IconButton(
+                            tooltip: context.l10n.restore,
+                            onPressed: () => _restore(item),
+                            icon: const Icon(Icons.unarchive_outlined),
+                          ),
                           onTap: () async {
                             await Navigator.push(
                               context,

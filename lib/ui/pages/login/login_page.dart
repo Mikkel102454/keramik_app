@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 @RoutePage()
 class LoginPage extends StatelessWidget {
@@ -30,6 +31,7 @@ class LoginPage extends StatelessWidget {
               loading: () => true,
               orElse: () => false,
             );
+            final authentication = context.read<AuthenticationCubit>();
 
             return Center(
               child: SingleChildScrollView(
@@ -42,7 +44,7 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 60),
 
                       Text(
-                        "Welcome Back",
+                        context.l10n.welcomeBack,
                         style: theme.textTheme.headlineMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -50,7 +52,7 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 8),
 
                       Text(
-                        "Sign in to your account",
+                        context.l10n.signInToAccount,
                         style: theme.textTheme.bodyMedium,
                         textAlign: TextAlign.center,
                       ),
@@ -58,11 +60,11 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 40),
 
                       TextFieldWidget(
-                        placeholder: "Email",
-                        keyboardType: TextInputType.emailAddress,
+                        placeholder: context.l10n.emailOrUsername,
+                        keyboardType: TextInputType.text,
                         maxLines: 1,
                         onChanged: (value) async {
-                          context.read<AuthenticationCubit>().usernameChanged(
+                          context.read<AuthenticationCubit>().identifierChanged(
                             value,
                           );
                           return true;
@@ -72,7 +74,7 @@ class LoginPage extends StatelessWidget {
                       const SizedBox(height: 16),
 
                       TextFieldWidget(
-                        placeholder: "Password",
+                        placeholder: context.l10n.password,
                         obscureText: true,
                         maxLines: 1,
                         onChanged: (value) async {
@@ -90,7 +92,7 @@ class LoginPage extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {},
                           child: Text(
-                            "Forgot password",
+                            context.l10n.forgotPassword,
                             style: TextStyle(
                               color: theme.colorScheme.primary,
                               fontWeight: FontWeight.w600,
@@ -111,20 +113,57 @@ class LoginPage extends StatelessWidget {
                                 },
                           child: isLoading
                               ? const CircularProgressIndicator()
-                              : const Text("Login"),
+                              : Text(context.l10n.logIn),
                         ),
                       ),
 
                       const SizedBox(height: 24),
 
-                      const Row(
-                        children: [
-                          Expanded(child: Divider()),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 12),
-                            child: Text("OR"),
+                      if (authentication.deletionPending) ...[
+                        Card(
+                          color: theme.colorScheme.errorContainer,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Text(
+                                  context.l10n.accountDeletionPending,
+                                  style: theme.textTheme.titleMedium,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  context.l10n
+                                      .accountDeletionPendingExplanation,
+                                ),
+                                const SizedBox(height: 12),
+                                FilledButton(
+                                  onPressed: isLoading
+                                      ? null
+                                      : authentication.cancelDeletion,
+                                  child: Text(context.l10n.cancelDeletion),
+                                ),
+                                TextButton(
+                                  onPressed: isLoading
+                                      ? null
+                                      : authentication.signOutPendingDeletion,
+                                  child: Text(context.l10n.signOut),
+                                ),
+                              ],
+                            ),
                           ),
-                          Expanded(child: Divider()),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(context.l10n.or),
+                          ),
+                          const Expanded(child: Divider()),
                         ],
                       ),
 
@@ -133,11 +172,11 @@ class LoginPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text("Don’t have an account? "),
+                          Text(context.l10n.noAccountQuestion),
                           GestureDetector(
                             onTap: () {},
                             child: Text(
-                              "Sign up",
+                              context.l10n.signUp,
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.w600,

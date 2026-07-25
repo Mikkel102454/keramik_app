@@ -1,0 +1,548 @@
+{
+  "@@locale": "da",
+  "languageName": "Dansk",
+  "@languageName": {
+    "description": "Sprogets eget navn, som vises i sprogvælgeren."
+  },
+  "appTitle": "Keramik",
+  "cancel": "Annuller",
+  "save": "Gem",
+  "delete": "Slet",
+  "retry": "Prøv igen",
+  "tryAgain": "Prøv igen",
+  "add": "Tilføj",
+  "create": "Opret",
+  "edit": "Rediger",
+  "remove": "Fjern",
+  "send": "Send",
+  "accept": "Acceptér",
+  "decline": "Afvis",
+  "restore": "Gendan",
+  "clear": "Ryd",
+  "ok": "OK",
+  "loading": "Indlæser…",
+  "loadMore": "Indlæs flere",
+  "pleaseWait": "Vent venligst…",
+  "noMessages": "Ingen beskeder",
+  "errorWithDetails": "Fejl: {details}",
+  "@errorWithDetails": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "stageIdeas": "Idéer",
+  "stageThrown": "Drejet",
+  "stageTrimmed": "Afdrejet",
+  "stageBisqued": "Forglødnet",
+  "stageGlazed": "Glaseret",
+  "stageFinished": "Færdig",
+  "themeSystem": "System",
+  "themeLight": "Lys",
+  "themeDark": "Mørk",
+  "measurementMetric": "Metrisk",
+  "measurementImperial": "Britisk/amerikansk",
+  "privacyEveryone": "Alle",
+  "privacyFriends": "Venner",
+  "privacyFriendsOfFriends": "Venners venner",
+  "privacyNoOne": "Ingen",
+  "settingsLoadFailed": "Indstillingerne kunne ikke indlæses. Kontrollér forbindelsen, og prøv igen.",
+  "settingSaveFailed": "Indstillingen kunne ikke gemmes. Dit tidligere valg er gendannet.",
+  "settingsAndPrivacy": "Indstillinger og privatliv",
+  "settingsAccount": "Konto",
+  "editProfile": "Rediger profil",
+  "accountInformation": "Kontooplysninger",
+  "passwordAndSecurity": "Adgangskode og sikkerhed",
+  "downloadYourData": "Download dine data",
+  "deleteAccount": "Slet konto",
+  "settingsPrivacy": "Privatliv",
+  "discoverability": "Synlighed",
+  "whoCanDiscover": "Hvem kan finde din konto?",
+  "friendRequests": "Venneanmodninger",
+  "whoCanSendFriendRequests": "Hvem kan sende venneanmodninger?",
+  "messages": "Beskeder",
+  "whoCanSendMessageRequests": "Hvem kan sende beskedanmodninger?",
+  "blockedAccounts": "Blokerede konti",
+  "contentAndDisplay": "Indhold og visning",
+  "notifications": "Notifikationer",
+  "appearance": "Udseende",
+  "units": "Enheder",
+  "language": "Sprog",
+  "supportAndAbout": "Hjælp og om",
+  "websiteHelpCenter": "Hjælpecenter på webstedet",
+  "privacyInformation": "Oplysninger om privatliv",
+  "aboutKeramik": "Om Keramik",
+  "loginSection": "Login",
+  "logOut": "Log ud",
+  "loggingOut": "Logger ud…",
+  "logOutQuestion": "Log ud?",
+  "logOutExplanation": "Du kan logge ind igen med din e-mail eller dit brugernavn.",
+  "logoutFailed": "Log ud mislykkedes. Din session er stadig aktiv; prøv igen.",
+  "linkOpenFailed": "Linket kunne ikke åbnes.",
+  "currentLanguage": "Nuværende sprog",
+  "languageSaveFailed": "Sproget kunne ikke gemmes. Dit tidligere sprog er gendannet.",
+  "username": "Brugernavn",
+  "name": "Navn",
+  "publicUserId": "Offentligt bruger-id",
+  "accountInformationPrivacyNote": "Dit offentlige bruger-id bruges til profillinks og kan ikke ændres.",
+  "accountInformationLoadFailed": "Kontooplysningerne kunne ikke indlæses.",
+  "accountEmailPrivacyNote": "Din e-mailadresse er privat. Af sikkerhedshensyn håndteres ændringer af kontoens e-mail gennem support.",
+  "notSet": "Ikke angivet",
+  "currentPassword": "Nuværende adgangskode",
+  "newPassword": "Ny adgangskode",
+  "confirmNewPassword": "Bekræft ny adgangskode",
+  "passwordLengthHelp": "Brug 8–128 tegn.",
+  "changePassword": "Skift adgangskode",
+  "websitePasswordPage": "Brug webstedets adgangskodeside",
+  "passwordsDoNotMatch": "De nye adgangskoder er ikke ens.",
+  "passwordChanged": "Adgangskoden er ændret. Andre sessioner er logget ud.",
+  "passwordChangeFailed": "Adgangskoden kunne ikke ændres. Prøv igen.",
+  "dataExportDescription": "Din ZIP-fil indeholder JSON-/CSV-poster, indstillinger, relationer, tilgængelige samtaledata samt profil-, keramik- og lerbilleder gemt på serveren.",
+  "dataExportLimit": "Der kan kun køre én eksport ad gangen. Færdige pakker udløber efter syv dage.",
+  "exportRequestFailed": "Eksporten kunne ikke bestilles.",
+  "exportRefreshFailed": "Eksportstatus kunne ikke opdateres.",
+  "exportDownloadFailed": "ZIP-filen kunne ikke downloades eller åbnes.",
+  "availableUntil": "Tilgængelig indtil {date}",
+  "@availableUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "refreshStatus": "Opdater status",
+  "downloadZip": "Download ZIP",
+  "createExport": "Opret eksport",
+  "exportQueued": "Eksporten er sat i kø",
+  "exportCreating": "Opretter din eksport",
+  "exportReady": "Eksporten er klar",
+  "exportExpired": "Eksporten er udløbet",
+  "exportFailed": "Eksporten mislykkedes",
+  "deletionScheduleFailed": "Sletningen kunne ikke planlægges. Prøv igen.",
+  "deletionCancellationPeriod": "Sletning starter en annulleringsperiode på 30 dage.",
+  "deletionSignOutExplanation": "Du bliver straks logget ud overalt og kan ikke bruge appens almindelige funktioner. Log ind igen inden for de næste 30 dage for at annullere sletningen eller logge ud.",
+  "deletionRetentionExplanation": "Efter 30 dage slettes privat identitet, journal- og materialedata samt ejede medier. En deaktiveret pseudonym konto og delte chat-, rapport-, revisions- og sikkerhedsdata bevares på ubestemt tid. Andre medlemmer vil se “Slettet medlem”.",
+  "deletionUnderstand": "Jeg forstår, hvad der slettes og bevares.",
+  "typeDeleteToConfirm": "Skriv DELETE for at bekræfte",
+  "scheduleAccountDeletion": "Planlæg sletning af konto",
+  "directMessages": "Direkte beskeder",
+  "messageRequests": "Beskedanmodninger",
+  "groupActivity": "Gruppeaktivitet",
+  "pushNotifications": "Pushnotifikationer",
+  "pushNotificationsComingLater": "Kommer senere. Keramik leverer ikke notifikationer, mens appen er sat på pause.",
+  "blockedAccountsLoadFailed": "Blokerede konti kunne ikke indlæses.",
+  "accountUnblockFailed": "{username} kunne ikke fjernes fra blokeringen.",
+  "@accountUnblockFailed": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "noBlockedAccounts": "Du har ikke blokeret nogen konti.",
+  "unblock": "Fjern blokering",
+  "welcomeBack": "Velkommen tilbage",
+  "signInToAccount": "Log ind på din konto",
+  "emailOrUsername": "E-mail eller brugernavn",
+  "password": "Adgangskode",
+  "forgotPassword": "Glemt adgangskode",
+  "logIn": "Log ind",
+  "accountDeletionPending": "Kontosletning afventer",
+  "accountDeletionPendingExplanation": "Almindelig aktivitet er begrænset i perioden på 30 dage. Annuller sletningen for at gendanne kontoen, eller log ud.",
+  "cancelDeletion": "Annuller sletning",
+  "signOut": "Log ud",
+  "or": "ELLER",
+  "noAccountQuestion": "Har du ikke en konto? ",
+  "signUp": "Opret konto",
+  "materials": "Materialer",
+  "clays": "Lertyper",
+  "glazes": "Glasurer",
+  "navigationHome": "Hjem",
+  "navigationMaterials": "Materialer",
+  "navigationShop": "Butik",
+  "navigationChats": "Chats",
+  "navigationProfile": "Profil",
+  "ceramicJournal": "Keramikjournal",
+  "journalLoadFailed": "Vi kunne ikke indlæse din keramikjournal.",
+  "createCeramic": "Opret keramik",
+  "journalSearchHint": "Søg i titler, noter, mærker, ler eller glasur",
+  "clearSearch": "Ryd søgning",
+  "filters": "Filtre",
+  "descending": "Faldende",
+  "ascending": "Stigende",
+  "pieceCount": "{count, plural, =0 {Ingen emner} =1 {1 emne} other {{count} emner}}",
+  "@pieceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "unknownStage": "Ukendt trin",
+  "filterJournal": "Filtrer journal",
+  "stage": "Trin",
+  "clay": "Ler",
+  "glaze": "Glasur",
+  "minimumRating": "Mindste bedømmelse",
+  "tags": "Mærker",
+  "sortRecentlyUpdated": "Senest opdateret",
+  "title": "Titel",
+  "rating": "Bedømmelse",
+  "creationDate": "Oprettelsesdato",
+  "startCeramicJournal": "Start din keramikjournal",
+  "emptyJournalDescription": "Gem dit første emne, materialer, proces og resultater.",
+  "createFirstPiece": "Opret dit første emne",
+  "noMatchingPieces": "Ingen emner matcher",
+  "clearSearchAndFilters": "Ryd søgning og filtre",
+  "ceramic": "Keramik",
+  "progress": "Fremskridt",
+  "information": "Oplysninger",
+  "clayType": "Lertype",
+  "select": "Vælg",
+  "weight": "Vægt",
+  "dimensions": "Mål",
+  "optionalMeasurementSystem": "Valgfrit · {system}",
+  "@optionalMeasurementSystem": {
+    "placeholders": {
+      "system": {
+        "type": "String"
+      }
+    }
+  },
+  "height": "Højde",
+  "width": "Bredde",
+  "depth": "Dybde",
+  "diameter": "Diameter",
+  "glazeApplications": "Glasurlag",
+  "rate": "Bedøm",
+  "notes": "Noter",
+  "projectNotes": "Projektnoter",
+  "outcome": "Resultat",
+  "optionalResultNotes": "Valgfrie resultatnoter",
+  "outcomeHint": "Hvordan blev emnet?",
+  "selectFromGallery": "Vælg fra galleri",
+  "takePicture": "Tag et billede",
+  "titleValidation": "Angiv en titel på højst 255 tegn",
+  "invalidStage": "Ugyldigt trin valgt",
+  "ceramicFieldsInvalid": "Kontrollér bedømmelse, vægt og notelængder, før du gemmer.",
+  "addFiring": "Tilføj brænding",
+  "editFiring": "Rediger brænding",
+  "status": "Status",
+  "planned": "Planlagt",
+  "completed": "Fuldført",
+  "firingType": "Brændingstype",
+  "firingBisque": "Forglødning",
+  "firingGlaze": "Glasurbrænding",
+  "firingSingle": "Enkeltbrænding",
+  "firingOverglaze": "Overglasur / lustre",
+  "other": "Andet",
+  "firingDate": "Brændingsdato",
+  "targetCone": "Målkegle",
+  "targetTemperature": "Måltemperatur",
+  "observedCone": "Observeret kegle",
+  "peakTemperature": "Maksimal temperatur",
+  "kiln": "Ovn",
+  "program": "Program",
+  "firingNote": "Brændingsnote",
+  "firingSaveFailed": "Brændingen kunne ikke gemmes. Prøv igen.",
+  "noGlazeApplications": "Ingen glasurlag endnu.",
+  "coatCount": "{count, plural, =1 {1 lag} other {{count} lag}}",
+  "@coatCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moveUp": "Flyt op",
+  "moveDown": "Flyt ned",
+  "removeApplication": "Fjern lag",
+  "addGlazeApplication": "Tilføj glasurlag",
+  "unknownGlaze": "Ukendt glasur",
+  "coatCountLabel": "Antal lag",
+  "applicationNote": "Påføringsnote",
+  "coatMinimum": "Angiv mindst ét lag.",
+  "glazeApplicationSaveFailed": "Glasurlaget kunne ikke gemmes. Prøv igen.",
+  "deleteCeramic": "Slet keramik",
+  "deleteCeramicQuestion": "Er du sikker på, at du vil slette denne keramik?",
+  "deleteCeramicFailed": "Keramikken kunne ikke slettes.",
+  "firings": "Brændinger",
+  "firingRecordCount": "{count, plural, =0 {Ingen poster} =1 {1 post} other {{count} poster}}",
+  "@firingRecordCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noFiringRecords": "Ingen brændingsposter endnu.",
+  "coneValue": "Kegle {cone}",
+  "@coneValue": {
+    "placeholders": {
+      "cone": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFiring": "Slet brænding",
+  "history": "Historik",
+  "stageEventCount": "{count, plural, =0 {Ingen trinhændelser} =1 {1 trinhændelse} other {{count} trinhændelser}}",
+  "@stageEventCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "updatedOn": "Opdateret {date}",
+  "@updatedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "historyStartedAt": "Historikken startede ved {stage}",
+  "@historyStartedAt": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "startedAtStage": "Startede ved {stage}",
+  "@startedAtStage": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "stageTransition": "{fromStage} → {toStage}",
+  "@stageTransition": {
+    "placeholders": {
+      "fromStage": {
+        "type": "String"
+      },
+      "toStage": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFiringQuestion": "Slet brændingspost?",
+  "deleteFiringExplanation": "Dette fjerner permanent posten for {type}.",
+  "@deleteFiringExplanation": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFiringFailed": "Brændingsposten kunne ikke slettes.",
+  "bisqueFiring": "Forglødning",
+  "glazeFiring": "Glasurbrænding",
+  "singleFiring": "Enkeltbrænding",
+  "overglazeFiring": "Overglasur-/lustrebrænding",
+  "otherFiring": "Anden brænding",
+  "clayBodies": "Lertyper",
+  "clayBody": "Lertype",
+  "supplier": "Leverandør",
+  "clayNotes": "Lernoter",
+  "materialFieldsTooLong": "Leverandør og noter må højst være 255 tegn.",
+  "deleteClay": "Slet ler",
+  "deleteClayQuestion": "Er du sikker på, at du vil slette denne lertype?",
+  "deleteClayFailed": "Lertypen kunne ikke slettes.",
+  "enterTitle": "Angiv en titel",
+  "deleteGlaze": "Slet glasur",
+  "deleteGlazeQuestion": "Er du sikker på, at du vil slette denne glasur?",
+  "glazeCannotDelete": "Glasuren kan ikke slettes",
+  "deleteImageQuestion": "Slet billede?",
+  "cannotUndo": "Denne handling kan ikke fortrydes.",
+  "tag": "Mærke",
+  "chats": "Chats",
+  "searchAccounts": "Søg efter konti",
+  "newGroup": "Ny gruppe",
+  "archivedChats": "Arkiverede chats",
+  "noArchivedChats": "Ingen arkiverede chats.",
+  "requests": "Anmodninger",
+  "waitingCount": "{count, plural, =0 {Ingen venter} =1 {1 venter} other {{count} venter}}",
+  "@waitingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMessageRequests": "Ingen beskedanmodninger.",
+  "messageUser": "Skriv til {username}",
+  "@messageUser": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "messageRequestPreviewExplanation": "Du kan sende én forhåndsvisning. Du kan sende flere beskeder, når modtageren har accepteret.",
+  "writeMessageRequest": "Skriv en beskedanmodning…",
+  "sendRequest": "Send anmodning",
+  "groupName": "Gruppenavn",
+  "selectFriendsMemberCount": "Vælg venner · {count}/50 medlemmer",
+  "@selectFriendsMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addFriendBeforeGroup": "Tilføj en ven, før du opretter en gruppe.",
+  "addMembers": "Tilføj medlemmer",
+  "chooseFriendsLimit": "Vælg op til {count} af dine venner. Eksisterende medlemmer afvises sikkert.",
+  "@chooseFriendsLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportMessage": "Rapportér besked",
+  "reportReasonQuestion": "Hvorfor rapporterer du denne besked?",
+  "reportSpam": "Spam",
+  "reportHarassment": "Chikane",
+  "reportHate": "Had",
+  "reportSexualContent": "Seksuelt indhold",
+  "reportViolence": "Vold",
+  "reportChooseReason": "Vælg en årsag til rapporteringen.",
+  "reportOtherExplanationRequired": "Tilføj en forklaring, når du vælger Andet.",
+  "reportExplanationTooLong": "Forklaringen må højst indeholde 1000 tegn.",
+  "reportExplanationOptional": "Forklaring (valgfri)",
+  "reportExplanationHint": "Tilføj oplysninger, der kan hjælpe ved en senere gennemgang.",
+  "messageBeingReported": "Besked, der rapporteres",
+  "reportEvidenceDisclosure": "Den valgte besked og op til to nærliggende beskeder på hver side inkluderes sikkert til gennemgang. Rapportering blokerer ikke kontoen og ændrer ikke samtalen.",
+  "submitReport": "Indsend rapport",
+  "all": "Alle",
+  "unread": "Ulæste",
+  "groups": "Grupper",
+  "noGroupChats": "Ingen gruppechats endnu.",
+  "noUnreadChats": "Ingen ulæste chats.",
+  "noConversations": "Ingen samtaler endnu. Søg efter en konto for at komme i gang.",
+  "noMessagesYet": "Ingen beskeder endnu",
+  "now": "nu",
+  "relativeMinutes": "{count} min.",
+  "@relativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeHours": "{count} t.",
+  "@relativeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeDays": "{count} d.",
+  "@relativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountBlocked": "{username} er blokeret",
+  "@accountBlocked": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "Fortryd",
+  "received": "Modtaget",
+  "sent": "Sendt",
+  "noReceivedRequests": "Ingen modtagne anmodninger.",
+  "noSentRequests": "Ingen sendte anmodninger.",
+  "requestSent": "Anmodning sendt",
+  "wantsToBeFriends": "Vil gerne være venner",
+  "comingLater": "Kommer senere",
+  "renameGroup": "Omdøb gruppe",
+  "leaveGroupQuestion": "Forlad gruppen?",
+  "leaveGroupExplanation": "Du beholder skrivebeskyttet historik fra dine medlemsperioder.",
+  "leave": "Forlad",
+  "leaveGroup": "Forlad gruppe",
+  "reportSubmitted": "Rapporten er indsendt. Blokering er en separat handling.",
+  "memberCount": "{count, plural, =1 {1 medlem} other {{count} medlemmer}}",
+  "@memberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "archiveChat": "Arkivér chat",
+  "conversationReadOnly": "Denne samtale er skrivebeskyttet.",
+  "startConversation": "Start samtalen.",
+  "loadEarlierMessages": "Indlæs tidligere beskeder",
+  "messageActionsHint": "Hold nede for beskedhandlinger",
+  "today": "I dag",
+  "voiceMessageComingLater": "Talebesked — kommer senere",
+  "messageHint": "Besked…",
+  "emojiComingLater": "Emoji — kommer senere",
+  "imageComingLater": "Billede — kommer senere",
+  "profile": "Profil",
+  "removeFriendQuestion": "Fjern ven?",
+  "removeFriendExplanation": "Du og {username} vil ikke længere være venner.",
+  "@removeFriendExplanation": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "blockUserQuestion": "Bloker {username}?",
+  "@blockUserQuestion": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "blockExplanation": "I forsvinder fra hinandens søgning, profiler, vennelister og anmodninger. Eksisterende venskab og anmodninger annulleres.",
+  "block": "Bloker",
+  "sendFriendRequest": "Send venneanmodning",
+  "acceptRequest": "Acceptér anmodning",
+  "declineRequest": "Afvis anmodning",
+  "message": "Besked",
+  "sendMessageRequest": "Send beskedanmodning",
+  "removeFriend": "Fjern ven",
+  "blockAccount": "Bloker konto",
+  "relationshipFriends": "Venner",
+  "friendRequestSent": "Venneanmodning sendt",
+  "previouslyDeclined": "Du har tidligere afvist denne anmodning",
+  "friendRequestDeclined": "Venneanmodning afvist",
+  "account": "Konto",
+  "friend": "Ven",
+  "incomingRequest": "Indgående anmodning",
+  "searchFriends": "Søg blandt venner",
+  "noFriendsFound": "Ingen venner fundet.",
+  "searchMinimumCharacters": "Indtast mindst 3 tegn for at søge efter konti.",
+  "noAccountsFound": "Ingen konti fundet.",
+  "accounts": "Konti",
+  "finishedPieces": "Færdige emner",
+  "finishedPiecesEmpty": "Emner, der flyttes til Færdig, vises her.",
+  "viewPhoto": "Se billede",
+  "takePhoto": "Tag billede",
+  "uploadPhoto": "Upload billede",
+  "chooseFromGallery": "Vælg fra galleri",
+  "removePhoto": "Fjern billede",
+  "changePhoto": "Skift billede",
+  "profilePhotoPrivacy": "Profilbilleder er offentlige. Cachede kopier kan blive liggende efter fjernelse.",
+  "forename": "Fornavn",
+  "surname": "Efternavn",
+  "readOnlyFields": "Disse felter er skrivebeskyttede indtil videre.",
+  "profilePhoto": "Profilbillede",
+  "photoLoadFailed": "Billedet kunne ikke indlæses"
+}

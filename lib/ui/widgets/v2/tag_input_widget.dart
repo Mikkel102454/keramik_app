@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 import 'text_field_widget.dart';
 
@@ -34,7 +35,7 @@ class TagInputWidget extends StatefulWidget {
   final Future<bool> Function(
       int id)? onRemove;
 
-  final String placeholder;
+  final String? placeholder;
 
   final double spacing;
   final double runSpacing;
@@ -46,19 +47,19 @@ class TagInputWidget extends StatefulWidget {
   final double borderRadius;
   final double borderWidth;
 
-  final Color borderColor;
+  final Color? borderColor;
   final Color backgroundColor;
 
   // TEXT STYLE
   final double fontSize;
   final FontWeight fontWeight;
   final String? fontFamily;
-  final Color textColor;
+  final Color? textColor;
   final TextDecoration decoration;
 
   // REMOVE ICON
   final double removeIconSize;
-  final Color removeIconColor;
+  final Color? removeIconColor;
   final double removeIconSpacing;
 
   const TagInputWidget({
@@ -66,7 +67,7 @@ class TagInputWidget extends StatefulWidget {
     this.initialValues = const [],
     this.onCreate,
     this.onRemove,
-    this.placeholder = "Tag",
+    this.placeholder,
 
     this.spacing = 8,
     this.runSpacing = 8,
@@ -77,20 +78,19 @@ class TagInputWidget extends StatefulWidget {
     this.borderRadius = 10,
     this.borderWidth = 1,
 
-    this.borderColor = Colors.black87,
+    this.borderColor,
     this.backgroundColor =
         Colors.transparent,
 
     this.fontSize = 16,
     this.fontWeight = FontWeight.w500,
     this.fontFamily,
-    this.textColor = Colors.black,
+    this.textColor,
     this.decoration =
         TextDecoration.none,
 
     this.removeIconSize = 18,
-    this.removeIconColor =
-        Colors.black,
+    this.removeIconColor,
     this.removeIconSpacing = 10,
   });
 
@@ -280,7 +280,7 @@ class _TagInputWidgetState
 
                 border: Border.all(
                   color:
-                  widget.borderColor,
+                  widget.borderColor ?? Theme.of(context).colorScheme.outline,
 
                   width:
                   widget.borderWidth,
@@ -306,7 +306,7 @@ class _TagInputWidgetState
                           .fontFamily,
 
                       color:
-                      widget.textColor,
+                      widget.textColor ?? Theme.of(context).colorScheme.onSurface,
 
                       decoration: widget
                           .decoration,
@@ -328,8 +328,8 @@ class _TagInputWidgetState
                       size: widget
                           .removeIconSize,
 
-                      color: widget
-                          .removeIconColor,
+                      color: widget.removeIconColor ??
+                          Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -344,7 +344,7 @@ class _TagInputWidgetState
           key: _textFieldKey,
 
           placeholder:
-          widget.placeholder,
+          widget.placeholder ?? context.l10n.tag,
 
           textInputAction:
           TextInputAction.done,

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/config/router/app_router.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_badge_controller.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 enum NavigationPage {
@@ -79,8 +80,8 @@ class _NavigationWidgetState extends State<NavigationWidget> {
     return Container(
       height: 82,
 
-      decoration: const BoxDecoration(
-        color: Color(0xFFF5F5F5),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
       ),
 
       child: SafeArea(
@@ -96,6 +97,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
             children: [
               Expanded(
                 child: _NavigationItem(
+                  label: context.l10n.navigationHome,
                   icon: Icons.home_outlined,
                   selectedIcon: Icons.home,
 
@@ -114,6 +116,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
 
               Expanded(
                 child: _NavigationItem(
+                  label: context.l10n.navigationMaterials,
                   icon:
                   Icons.palette_outlined,
 
@@ -135,6 +138,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
 
               Expanded(
                 child: _NavigationItem(
+                  label: context.l10n.navigationShop,
                   icon: Icons
                       .shopping_cart_outlined,
 
@@ -156,6 +160,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
 
               Expanded(
                 child: _NavigationItem(
+                  label: context.l10n.navigationChats,
                   icon: Icons
                       .notifications_none_outlined,
 
@@ -181,6 +186,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
 
               Expanded(
                 child: _NavigationItem(
+                  label: context.l10n.navigationProfile,
                   icon: Icons.person_outline,
 
                   selectedIcon:
@@ -208,6 +214,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
 
 class _NavigationItem
     extends StatelessWidget {
+  final String label;
   final IconData icon;
 
   final IconData selectedIcon;
@@ -219,6 +226,7 @@ class _NavigationItem
   final VoidCallback onTap;
 
   const _NavigationItem({
+    required this.label,
     required this.icon,
     required this.selectedIcon,
     required this.isSelected,
@@ -228,7 +236,11 @@ class _NavigationItem
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: label,
+      child: GestureDetector(
       behavior: HitTestBehavior.opaque,
 
       onTap: onTap,
@@ -248,7 +260,7 @@ class _NavigationItem
                   : icon,
 
               size: 32,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
 
             if (badgeListenable != null)
@@ -260,6 +272,7 @@ class _NavigationItem
               )
           ],
         ),
+      ),
       ),
     );
   }
@@ -276,7 +289,10 @@ class _Badge extends StatelessWidget {
       right: -10,
       child: Container(
         padding: const EdgeInsets.all(2),
-        decoration: const BoxDecoration(color: Color(0xFFF5F5F5), shape: BoxShape.circle),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceContainer,
+          shape: BoxShape.circle,
+        ),
         child: Container(
           constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
           padding: const EdgeInsets.symmetric(horizontal: 5),

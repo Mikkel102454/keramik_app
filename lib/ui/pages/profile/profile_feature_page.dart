@@ -1,23 +1,26 @@
 import 'package:ceramic_app/ui/pages/profile/friends_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_edit_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
-import 'package:ceramic_app/ui/pages/profile/user_search_page.dart';
+import 'package:ceramic_app/ui/pages/settings/settings_page.dart';
 import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page.dart';
 import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class ProfileFeaturePage extends StatefulWidget {
-  const ProfileFeaturePage({super.key});
+  const ProfileFeaturePage({super.key, this.controller});
+  final ProfilePageController? controller;
 
   @override
   State<ProfileFeaturePage> createState() => _ProfileFeaturePageState();
 }
 
 class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
-  final ProfilePageController _controller = ProfilePageController();
+  late final ProfilePageController _controller =
+      widget.controller ?? ProfilePageController();
 
   @override
   void initState() {
@@ -27,7 +30,7 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
 
@@ -42,9 +45,9 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
       appBar: AppBar(
         actions: [
           IconButton(
-            tooltip: 'Search accounts',
-            onPressed: () => _open(const UserSearchPage()),
-            icon: const Icon(Icons.search, color: Colors.black),
+            tooltip: context.l10n.settingsAndPrivacy,
+            onPressed: () => _open(const SettingsPage()),
+            icon: const Icon(Icons.menu),
           ),
         ],
       ),
@@ -87,13 +90,21 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                       child: FilledButton(
                         onPressed: () => _open(ProfileEditPage(controller: _controller)),
                         style: FilledButton.styleFrom(
-                          backgroundColor: const Color(0xffeeeeee),
-                          foregroundColor: Colors.black,
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
+                          foregroundColor: Theme.of(context).colorScheme.onSurface,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(horizontal: 22),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
                         ),
-                        child: const Text('Edit profile', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                        child: Text(
+                          context.l10n.editProfile,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -113,7 +124,13 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                               style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(height: 2),
-                            const Text('Friends', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                            Text(
+                              context.l10n.relationshipFriends,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -124,21 +141,30 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 18, 16, 10),
                     child: Row(children: [
-                      Text('Finished pieces', style: Theme.of(context).textTheme.titleMedium),
+                      Text(
+                        context.l10n.finishedPieces,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       const Spacer(),
                       Text('${_controller.finishedCeramics.length}'),
                     ]),
                   ),
                   if (_controller.finishedCeramics.isEmpty)
-                    const Padding(
-                      padding: EdgeInsets.fromLTRB(24, 28, 24, 70),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 28, 24, 70),
                       child: Column(children: [
-                        Icon(Icons.auto_awesome_outlined, size: 40, color: Colors.black38),
-                        SizedBox(height: 10),
+                        Icon(
+                          Icons.auto_awesome_outlined,
+                          size: 40,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 10),
                         Text(
-                          'Pieces moved to Finished will appear here.',
+                          context.l10n.finishedPiecesEmpty,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.black54),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                         ),
                       ]),
                     )
@@ -166,7 +192,10 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                               .firstOrNull;
                           return CeramicJournalCard(
                             ceramic: ceramic,
-                            stageTitle: stage.title,
+                            stageTitle: localizedStageName(
+                              context.l10n,
+                              stage.title,
+                            ),
                             clayTitle: clay,
                             onTap: () => _open(CeramicViewPage(
                               ceramic: ceramic,
@@ -202,7 +231,7 @@ class _Retry extends StatelessWidget {
         children: [
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 12),
-          FilledButton(onPressed: onRetry, child: const Text('Retry')),
+          FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
         ],
       ),
     );

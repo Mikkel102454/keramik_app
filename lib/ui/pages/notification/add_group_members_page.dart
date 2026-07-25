@@ -4,6 +4,7 @@ import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/repositories/social_repository.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class AddGroupMembersPage extends StatefulWidget {
   const AddGroupMembersPage({required this.group, super.key});
@@ -62,18 +63,28 @@ class _AddGroupMembersPageState extends State<AddGroupMembersPage> {
     final remaining = 50 - widget.group.memberCount;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add members'),
-        actions: [TextButton(onPressed: _adding || _selected.isEmpty ? null : _add, child: const Text('Add'))],
+        title: Text(context.l10n.addMembers),
+        actions: [
+          TextButton(
+            onPressed: _adding || _selected.isEmpty ? null : _add,
+            child: Text(context.l10n.add),
+          ),
+        ],
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(child: FilledButton(onPressed: _load, child: const Text('Retry')))
+              ? Center(
+                  child: FilledButton(
+                    onPressed: _load,
+                    child: Text(context.l10n.retry),
+                  ),
+                )
               : ListView(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(16),
-                      child: Text('Choose up to $remaining of your friends. Existing members are rejected safely.'),
+                      child: Text(context.l10n.chooseFriendsLimit(remaining)),
                     ),
                     ..._friends.map((friend) {
                       final selected = _selected.contains(friend.userId);

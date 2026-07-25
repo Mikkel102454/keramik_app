@@ -6,9 +6,15 @@ import 'package:ceramic_app/utils/web.dart';
 
 class ChatRepository {
   static Future<int> getBadgeCount() async {
+    return (await getBadge()).count;
+  }
+
+  static Future<ChatBadgeDto> getBadge() async {
     final response = await ApiClient.dio.get('/api/chat/badge');
     checkSuccess(response);
-    return (response.data['data']['count'] as num).toInt();
+    return ChatBadgeDto.fromJson(
+      response.data['data'] as Map<String, dynamic>,
+    );
   }
 
   static Future<CursorPage<DirectConversationDto>> getConversations({

@@ -4,6 +4,7 @@ import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/repositories/social_repository.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class NewGroupPage extends StatefulWidget {
   const NewGroupPage({super.key});
@@ -68,11 +69,11 @@ class _NewGroupPageState extends State<NewGroupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('New group'),
+        title: Text(context.l10n.newGroup),
         actions: [
           TextButton(
             onPressed: _creating || _name.text.trim().isEmpty || _selected.isEmpty ? null : _create,
-            child: const Text('Create'),
+            child: Text(context.l10n.create),
           ),
         ],
       ),
@@ -84,14 +85,18 @@ class _NewGroupPageState extends State<NewGroupPage> {
               controller: _name,
               maxLength: 100,
               onChanged: (_) => setState(() {}),
-              decoration: const InputDecoration(labelText: 'Group name', border: OutlineInputBorder()),
+              decoration: InputDecoration(
+                labelText: context.l10n.groupName,
+                border: const OutlineInputBorder(),
+              ),
             ),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Align(
               alignment: Alignment.centerLeft,
-              child: Text('Select friends · ${_selected.length + 1}/50 members',
+              child: Text(
+                  context.l10n.selectFriendsMemberCount(_selected.length + 1),
                   style: const TextStyle(fontWeight: FontWeight.w700)),
             ),
           ),
@@ -100,9 +105,16 @@ class _NewGroupPageState extends State<NewGroupPage> {
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
                 : _error != null
-                    ? Center(child: FilledButton(onPressed: _loadFriends, child: const Text('Retry')))
+                    ? Center(
+                        child: FilledButton(
+                          onPressed: _loadFriends,
+                          child: Text(context.l10n.retry),
+                        ),
+                      )
                     : _friends.isEmpty
-                        ? const Center(child: Text('Add a friend before creating a group.'))
+                        ? Center(
+                            child: Text(context.l10n.addFriendBeforeGroup),
+                          )
                         : ListView(
                             children: _friends.map((friend) {
                               final selected = _selected.contains(friend.userId);

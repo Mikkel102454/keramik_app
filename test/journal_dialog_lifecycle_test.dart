@@ -5,6 +5,7 @@ import 'package:ceramic_app/ui/widgets/firing_editor_dialog.dart';
 import 'package:ceramic_app/ui/widgets/glaze_application_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'test_app.dart';
 
 void main() {
   testWidgets('glaze editor disposes safely after cancel', (tester) async {
@@ -116,7 +117,7 @@ void main() {
 Widget _glazeEditor({
   Future<bool> Function(int entryId, String note, int coatCount)? onEdit,
 }) {
-  return MaterialApp(
+  return localizedTestApp(
     home: Scaffold(
       body: GlazeApplicationEditor(
         entries: [
@@ -139,7 +140,7 @@ Widget _glazeEditor({
 }
 
 Widget _dialogLauncher(WidgetBuilder dialogBuilder) {
-  return MaterialApp(
+  return localizedTestApp(
     home: Scaffold(
       body: Builder(
         builder: (context) => ElevatedButton(

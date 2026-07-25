@@ -3,6 +3,7 @@ import 'package:ceramic_app/objects/chat_report_dto.dart';
 import 'package:ceramic_app/ui/pages/notification/report_message_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'test_app.dart';
 
 void main() {
   test('parses report receipt and validates Unicode explanation length', () {
@@ -43,7 +44,7 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(
+        localizedTestApp(
           home: ReportMessagePage(
             conversationId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
             message: message,

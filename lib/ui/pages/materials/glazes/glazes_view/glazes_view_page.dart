@@ -3,6 +3,7 @@ import 'package:ceramic_app/ui/pages/materials/glazes/glazes_view/glazes_view_pa
 import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class GlazesViewPage extends StatefulWidget {
   final GlazeDto glaze;
@@ -37,7 +38,7 @@ class _GlazesViewPageState extends State<GlazesViewPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Glaze'),
+          title: Text(context.l10n.glaze),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(_controller.hasChanged),
@@ -62,7 +63,11 @@ class _GlazesViewPageState extends State<GlazesViewPage> {
                 return const Center(child: CircularProgressIndicator());
               }
               if (_controller.error != null) {
-                return Center(child: Text('Error: ${_controller.error}'));
+                return Center(
+                  child: Text(
+                    context.l10n.errorWithDetails('${_controller.error}'),
+                  ),
+                );
               }
               return RefreshIndicator(
                 onRefresh: () => _controller.load(null),
@@ -72,21 +77,21 @@ class _GlazesViewPageState extends State<GlazesViewPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const TextWidget(
-                        text: 'Information',
+                      TextWidget(
+                        text: context.l10n.information,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
                       ),
                       const SizedBox(height: 8),
                       TextWidget(
-                        text: 'Title',
+                        text: context.l10n.title,
                         fontSize: 16,
                         fontWeight: FontWeight.normal,
-                        color: Colors.grey.shade500,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(height: 4),
                       TextFieldWidget(
-                        placeholder: 'Title',
+                        placeholder: context.l10n.title,
                         initialValue: _controller.glaze.title,
                         debounceDuration: const Duration(milliseconds: 300),
                         onChanged: (value) async {
@@ -109,16 +114,16 @@ class _GlazesViewPageState extends State<GlazesViewPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete glaze'),
-        content: const Text('Are you sure you want to delete this glaze?'),
+        title: Text(context.l10n.deleteGlaze),
+        content: Text(context.l10n.deleteGlazeQuestion),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete'),
+            child: Text(context.l10n.delete),
           ),
         ],
       ),
@@ -135,12 +140,12 @@ class _GlazesViewPageState extends State<GlazesViewPage> {
     await showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Glaze cannot be deleted'),
+        title: Text(context.l10n.glazeCannotDelete),
         content: Text(error),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(context.l10n.ok),
           ),
         ],
       ),

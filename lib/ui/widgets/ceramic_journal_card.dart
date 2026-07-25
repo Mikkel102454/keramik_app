@@ -30,13 +30,17 @@ class CeramicJournalCard extends StatelessWidget {
               child: Ink(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color(0xffe9e4dd),
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   image: image == null
                       ? null
                       : DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
                 ),
                 child: image == null
-                    ? const Icon(Icons.handyman_outlined, size: 38, color: Colors.black38)
+                    ? Icon(
+                        Icons.handyman_outlined,
+                        size: 38,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      )
                     : null,
               ),
             ),

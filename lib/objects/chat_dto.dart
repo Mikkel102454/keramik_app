@@ -120,3 +120,26 @@ class ChatMessagePageDto {
     );
   }
 }
+class ChatBadgeDto {
+  const ChatBadgeDto({
+    required this.count,
+    required this.directMessages,
+    required this.messageRequests,
+    required this.friendRequests,
+    required this.groupActivity,
+  });
+
+  final int count;
+  final int directMessages;
+  final int messageRequests;
+  final int friendRequests;
+  final int groupActivity;
+
+  factory ChatBadgeDto.fromJson(Map<String, dynamic> json) => ChatBadgeDto(
+    count: (json['count'] as num?)?.toInt() ?? 0,
+    directMessages: (json['directMessages'] as num?)?.toInt() ?? 0,
+    messageRequests: (json['messageRequests'] as num?)?.toInt() ?? 0,
+    friendRequests: (json['friendRequests'] as num?)?.toInt() ?? 0,
+    groupActivity: (json['groupActivity'] as num?)?.toInt() ?? 0,
+  );
+}

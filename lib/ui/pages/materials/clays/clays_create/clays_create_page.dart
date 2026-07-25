@@ -6,6 +6,7 @@ import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ClaysCreatePage extends StatefulWidget {
@@ -34,7 +35,7 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Clay body"),
+        title: Text(context.l10n.clayBody),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -59,7 +60,11 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
             }
 
             if (_controller.error != null) {
-              return Center(child: Text("Error: ${_controller.error}"));
+              return Center(
+                child: Text(
+                  context.l10n.errorWithDetails('${_controller.error}'),
+                ),
+              );
             }
 
             return RefreshIndicator(
@@ -125,11 +130,11 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
 
                 SquareWidget(
                   icon: Icons.add,
-                  iconColor: Colors.grey.shade500,
+                  iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   iconSize: 42,
                   width: 92,
                   height: 92,
-                  backgroundColor: Colors.grey.shade300,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   onPressed: () async {
                     final source = await showModalBottomSheet<ImageSource>(
                       context: context,
@@ -139,14 +144,14 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
                             children: [
                               ListTile(
                                 leading: const Icon(Icons.photo_library),
-                                title: const Text('Select from gallery'),
+                                title: Text(context.l10n.selectFromGallery),
                                 onTap: () {
                                   Navigator.pop(context, ImageSource.gallery);
                                 },
                               ),
                               ListTile(
                                 leading: const Icon(Icons.camera_alt),
-                                title: const Text('Take a picture'),
+                                title: Text(context.l10n.takePicture),
                                 onTap: () {
                                   Navigator.pop(context, ImageSource.camera);
                                 },
@@ -177,20 +182,20 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
           // Information
           // =========================
           TextWidget(
-            text: "Information",
+            text: context.l10n.information,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
           const SizedBox(height: 8),
           TextWidget(
-            text: "Title",
+            text: context.l10n.title,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
           TextFieldWidget(
-            placeholder: "Title",
+            placeholder: context.l10n.title,
             onChanged: (value) async {
               controller.setTitle(value);
               return true;
@@ -200,14 +205,14 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
           const SizedBox(height: 12),
 
           TextWidget(
-            text: "Supplier",
+            text: context.l10n.supplier,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
           TextFieldWidget(
-            placeholder: "Supplier",
+            placeholder: context.l10n.supplier,
             onChanged: (value) async {
               controller.setSupplier(value);
               return true;
@@ -219,11 +224,15 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
           // =========================
           // Notes
           // =========================
-          TextWidget(text: "Notes", fontSize: 18, fontWeight: FontWeight.w700),
+          TextWidget(
+            text: context.l10n.notes,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
           const SizedBox(height: 8),
 
           TextFieldWidget(
-            placeholder: "Clay notes",
+            placeholder: context.l10n.clayNotes,
 
             minLines: 3,
             maxLines: 5,
@@ -244,12 +253,12 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
     if (_controller.title.trim().isEmpty || _controller.title.length > 255) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Enter a title up to 255 characters")));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.titleValidation)));
       return;
     }
     if (_controller.supplier.length > 255 || _controller.notes.length > 255) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Supplier and notes must be at most 255 characters.'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(context.l10n.materialFieldsTooLong),
       ));
       return;
     }

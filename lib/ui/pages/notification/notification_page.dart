@@ -9,18 +9,27 @@ import 'package:ceramic_app/ui/pages/profile/user_search_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/app/app_settings_controller.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:intl/intl.dart';
+
+enum _InboxFilter { all, unread, groups }
 
 @RoutePage()
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({super.key});
+  final NotificationControllerPage? controller;
+
+  const NotificationPage({super.key, this.controller});
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
 }
 
 class _NotificationPageState extends State<NotificationPage> {
-  final NotificationControllerPage _controller = NotificationControllerPage();
-  String _filter = 'All';
+  late final NotificationControllerPage _controller =
+      widget.controller ?? NotificationControllerPage();
+  late final bool _ownsController = widget.controller == null;
+  _InboxFilter _filter = _InboxFilter.all;
 
   @override
   void initState() {
@@ -30,7 +39,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (_ownsController) _controller.dispose();
     super.dispose();
   }
 
@@ -73,18 +82,24 @@ class _NotificationPageState extends State<NotificationPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: const Text('Chats'),
+        title: Text(context.l10n.chats),
         actions: [
           IconButton(
-            tooltip: 'Search accounts',
+            tooltip: context.l10n.searchAccounts,
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UserSearchPage())),
             icon: const Icon(Icons.search),
           ),
           PopupMenuButton<String>(
             onSelected: _selectMenu,
-            itemBuilder: (_) => const [
-              PopupMenuItem(value: 'group', child: Text('New group')),
-              PopupMenuItem(value: 'archive', child: Text('Archived chats')),
+            itemBuilder: (_) => [
+              PopupMenuItem(
+                value: 'group',
+                child: Text(context.l10n.newGroup),
+              ),
+              PopupMenuItem(
+                value: 'archive',
+                child: Text(context.l10n.archivedChats),
+              ),
             ],
           ),
         ],
@@ -106,30 +121,46 @@ class _NotificationPageState extends State<NotificationPage> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.only(bottom: 18),
                 children: [
-                  _RequestBanner(count: _controller.requestCount, onTap: _openRequests),
+                  _RequestBanner(
+                    count: AppSettingsController
+                            .instance
+                            .settings
+                            .notifyMessageRequests
+                        ? _controller.requestCount
+                        : 0,
+                    onTap: _openRequests,
+                  ),
                   if (_controller.error case final message?)
                     Material(
-                      color: const Color(0xfffff1f1),
+                      color: Theme.of(context).colorScheme.errorContainer,
                       child: ListTile(
                         dense: true,
                         leading: const Icon(Icons.cloud_off_outlined),
                         title: Text(message, maxLines: 2, overflow: TextOverflow.ellipsis),
-                        trailing: TextButton(onPressed: _controller.load, child: const Text('Retry')),
+                        trailing: TextButton(
+                          onPressed: _controller.load,
+                          child: Text(context.l10n.retry),
+                        ),
                       ),
                     ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 13, 16, 9),
                     child: Row(
-                      children: ['All', 'Unread', 'Groups']
+                      children: _InboxFilter.values
                           .map(
-                            (label) => Padding(
+                            (filter) => Padding(
                               padding: const EdgeInsets.only(right: 8),
                               child: ChoiceChip(
-                                label: Text(label),
-                                selected: _filter == label,
-                                onSelected: (_) => setState(() => _filter = label),
-                                selectedColor: Colors.black,
-                                labelStyle: TextStyle(color: _filter == label ? Colors.white : Colors.black),
+                                label: Text(_filterLabel(context, filter)),
+                                selected: _filter == filter,
+                                onSelected: (_) =>
+                                    setState(() => _filter = filter),
+                                selectedColor: Theme.of(context).colorScheme.primary,
+                                labelStyle: TextStyle(
+                                  color: _filter == filter
+                                      ? Theme.of(context).colorScheme.onPrimary
+                                      : Theme.of(context).colorScheme.onSurface,
+                                ),
                                 showCheckmark: false,
                               ),
                             ),
@@ -142,16 +173,25 @@ class _NotificationPageState extends State<NotificationPage> {
                       padding: const EdgeInsets.fromLTRB(24, 70, 24, 0),
                       child: Column(
                         children: [
-                          const Icon(Icons.chat_bubble_outline, size: 44, color: Colors.black26),
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 44,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                           const SizedBox(height: 12),
                           Text(
-                            _filter == 'Groups'
-                                ? 'No group chats yet.'
-                                : _filter == 'Unread'
-                                    ? 'No unread chats.'
-                                    : 'No conversations yet. Search for an account to get started.',
+                            switch (_filter) {
+                              _InboxFilter.groups =>
+                                context.l10n.noGroupChats,
+                              _InboxFilter.unread =>
+                                context.l10n.noUnreadChats,
+                              _InboxFilter.all =>
+                                context.l10n.noConversations,
+                            },
                             textAlign: TextAlign.center,
-                            style: const TextStyle(color: Colors.black45),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ],
                       ),
@@ -159,15 +199,29 @@ class _NotificationPageState extends State<NotificationPage> {
                   ...conversations.map(
                     (conversation) => _ConversationRow(
                       conversation: conversation,
+                      showAttention: conversation.type == 'GROUP'
+                          ? AppSettingsController
+                              .instance
+                              .settings
+                              .notifyGroupActivity
+                          : AppSettingsController
+                              .instance
+                              .settings
+                              .notifyDirectMessages,
                       onTap: () => _openConversation(conversation),
                     ),
                   ),
-                  if (_controller.conversationCursor != null && _filter == 'All')
+                  if (_controller.conversationCursor != null &&
+                      _filter == _InboxFilter.all)
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: OutlinedButton(
                         onPressed: _controller.isLoadingMore ? null : _controller.loadMoreConversations,
-                        child: Text(_controller.isLoadingMore ? 'Loading…' : 'Load more'),
+                        child: Text(
+                          _controller.isLoadingMore
+                              ? context.l10n.loading
+                              : context.l10n.loadMore,
+                        ),
                       ),
                     ),
                 ],
@@ -184,8 +238,10 @@ class _NotificationPageState extends State<NotificationPage> {
     final inbox = _controller.conversations
         .where((item) => !(item.status == 'PENDING' && item.incomingRequest));
     return switch (_filter) {
-      'Unread' => inbox.where((item) => item.unreadCount > 0).toList(),
-      'Groups' => inbox.where((item) => item.type == 'GROUP').toList(),
+      _InboxFilter.unread =>
+        inbox.where((item) => item.unreadCount > 0).toList(),
+      _InboxFilter.groups =>
+        inbox.where((item) => item.type == 'GROUP').toList(),
       _ => inbox.toList(),
     };
   }
@@ -199,7 +255,7 @@ class _RequestBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xfff3f3f3),
+      color: Theme.of(context).colorScheme.surfaceContainer,
       child: InkWell(
         onTap: onTap,
         child: Padding(
@@ -208,7 +264,12 @@ class _RequestBanner extends StatelessWidget {
             children: [
               const Icon(Icons.mark_chat_unread_outlined),
               const SizedBox(width: 12),
-              const Expanded(child: Text('Requests', style: TextStyle(fontWeight: FontWeight.w700))),
+              Expanded(
+                child: Text(
+                  context.l10n.requests,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
               if (count > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -226,13 +287,18 @@ class _RequestBanner extends StatelessWidget {
 }
 
 class _ConversationRow extends StatelessWidget {
-  const _ConversationRow({required this.conversation, required this.onTap});
+  const _ConversationRow({
+    required this.conversation,
+    required this.showAttention,
+    required this.onTap,
+  });
   final DirectConversationDto conversation;
+  final bool showAttention;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final unread = conversation.unreadCount > 0;
+    final unread = showAttention && conversation.unreadCount > 0;
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
       leading: ProfileAvatar(
@@ -248,19 +314,30 @@ class _ConversationRow extends StatelessWidget {
                 style: TextStyle(fontWeight: unread ? FontWeight.w800 : FontWeight.w600)),
           ),
           if (conversation.lastMessageAt case final date?)
-            Text(_relative(date), style: const TextStyle(fontSize: 12, color: Colors.black45)),
+            Text(
+              _relative(context, date),
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
         ],
       ),
       subtitle: Text(
-        conversation.lastMessagePreview ?? 'No messages yet',
+        conversation.lastMessagePreview ?? context.l10n.noMessagesYet,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(color: unread ? Colors.black87 : Colors.black45, fontWeight: unread ? FontWeight.w600 : null),
+        style: TextStyle(
+          color: unread
+              ? Theme.of(context).colorScheme.onSurface
+              : Theme.of(context).colorScheme.onSurfaceVariant,
+          fontWeight: unread ? FontWeight.w600 : null,
+        ),
       ),
       trailing: unread
           ? CircleAvatar(
               radius: 11,
-              backgroundColor: Colors.black,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               child: Text('${conversation.unreadCount}', style: const TextStyle(color: Colors.white, fontSize: 11)),
             )
           : null,
@@ -268,13 +345,21 @@ class _ConversationRow extends StatelessWidget {
     );
   }
 
-  static String _relative(DateTime date) {
+  static String _relative(BuildContext context, DateTime date) {
     final difference = DateTime.now().difference(date);
-    if (difference.inMinutes < 1) return 'now';
-    if (difference.inHours < 1) return '${difference.inMinutes}m';
-    if (difference.inDays < 1) return '${difference.inHours}h';
-    if (difference.inDays < 7) return '${difference.inDays}d';
-    return '${date.day}/${date.month}';
+    if (difference.inMinutes < 1) return context.l10n.now;
+    if (difference.inHours < 1) {
+      return context.l10n.relativeMinutes(difference.inMinutes);
+    }
+    if (difference.inDays < 1) {
+      return context.l10n.relativeHours(difference.inHours);
+    }
+    if (difference.inDays < 7) {
+      return context.l10n.relativeDays(difference.inDays);
+    }
+    return DateFormat.Md(
+      Localizations.localeOf(context).toLanguageTag(),
+    ).format(date);
   }
 }
 
@@ -291,9 +376,17 @@ class _InboxRetry extends StatelessWidget {
         children: [
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 12),
-          FilledButton(onPressed: onRetry, child: const Text('Retry')),
+          FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
         ],
       ),
     );
   }
+}
+
+String _filterLabel(BuildContext context, _InboxFilter filter) {
+  return switch (filter) {
+    _InboxFilter.all => context.l10n.all,
+    _InboxFilter.unread => context.l10n.unread,
+    _InboxFilter.groups => context.l10n.groups,
+  };
 }

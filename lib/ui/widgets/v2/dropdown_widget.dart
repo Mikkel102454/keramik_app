@@ -106,7 +106,7 @@ class _DropdownWidgetState
       ),
 
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F1F1),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(14),
       ),
 
@@ -119,16 +119,16 @@ class _DropdownWidgetState
           hint: Text(
             widget.placeholder ?? "Please Select",
 
-            style: const TextStyle(
-              color: Color(0xFF707070),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 16,
               fontWeight: FontWeight.w500,
             ),
           ),
 
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_drop_down,
-            color: Color(0xFF9A9A9A),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
 
           borderRadius: BorderRadius.circular(14),

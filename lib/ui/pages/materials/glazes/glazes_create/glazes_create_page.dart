@@ -2,6 +2,7 @@ import 'package:ceramic_app/ui/pages/materials/glazes/glazes_create/glazes_creat
 import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class GlazesCreatePage extends StatefulWidget {
   const GlazesCreatePage({super.key});
@@ -23,7 +24,7 @@ class _GlazesCreatePageState extends State<GlazesCreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Glaze'),
+        title: Text(context.l10n.glaze),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -39,21 +40,21 @@ class _GlazesCreatePageState extends State<GlazesCreatePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const TextWidget(
-                text: 'Information',
+              TextWidget(
+                text: context.l10n.information,
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
               ),
               const SizedBox(height: 8),
               TextWidget(
-                text: 'Title',
+                text: context.l10n.title,
                 fontSize: 16,
                 fontWeight: FontWeight.normal,
-                color: Colors.grey.shade500,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               const SizedBox(height: 4),
               TextFieldWidget(
-                placeholder: 'Title',
+                placeholder: context.l10n.title,
                 onChanged: (value) async {
                   _controller.setTitle(value);
                   return true;
@@ -69,7 +70,7 @@ class _GlazesCreatePageState extends State<GlazesCreatePage> {
   Future<void> _createGlaze() async {
     if (_controller.title.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a title')),
+        SnackBar(content: Text(context.l10n.enterTitle)),
       );
       return;
     }

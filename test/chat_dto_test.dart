@@ -4,6 +4,22 @@ import 'package:ceramic_app/utils/client_uuid.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  test('parses split notification badge categories', () {
+    final badge = ChatBadgeDto.fromJson(const {
+      'count': 4,
+      'directMessages': 1,
+      'messageRequests': 2,
+      'friendRequests': 3,
+      'groupActivity': 4,
+    });
+
+    expect(badge.count, 4);
+    expect(badge.directMessages, 1);
+    expect(badge.messageRequests, 2);
+    expect(badge.friendRequests, 3);
+    expect(badge.groupActivity, 4);
+  });
+
   test('parses direct conversation and encrypted-message API projections', () {
     final conversation = DirectConversationDto.fromJson({
       'id': 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',

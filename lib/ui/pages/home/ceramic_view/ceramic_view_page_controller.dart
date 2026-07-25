@@ -10,6 +10,8 @@ import 'package:ceramic_app/repositories/ceramic_stage_history_repository.dart';
 import 'package:ceramic_app/repositories/glaze_entry_repository.dart';
 import 'package:ceramic_app/repositories/tag_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/app/app_settings_controller.dart';
+import 'package:ceramic_app/utils/measurement.dart';
 
 import 'package:ceramic_app/objects/stage_dto.dart';
 import 'package:ceramic_app/repositories/ceramic_repository.dart';
@@ -244,7 +246,13 @@ class CeramicViewPageController extends ChangeNotifier{
       ceramic.depthCm,
       ceramic.diameterCm,
     ];
-    final parsed = value.trim().isEmpty ? null : double.tryParse(value);
+    final displayValue = value.trim().isEmpty ? null : double.tryParse(value);
+    final parsed = displayValue == null
+        ? null
+        : Measurement.lengthToCentimeters(
+            displayValue,
+            AppSettingsController.instance.measurementSystem,
+          );
     switch (field) {
       case 'height':
         ceramic.heightCm = parsed;

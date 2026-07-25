@@ -2,6 +2,7 @@ import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({required this.controller, super.key});
@@ -27,7 +28,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
           children: [
             ListTile(
               leading: const Icon(Icons.visibility_outlined),
-              title: const Text('View photo'),
+              title: Text(context.l10n.viewPhoto),
               enabled: account.avatarUrl != null,
               onTap: account.avatarUrl == null
                   ? null
@@ -43,7 +44,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             ),
             ListTile(
               leading: const Icon(Icons.camera_alt_outlined),
-              title: const Text('Take photo'),
+              title: Text(context.l10n.takePhoto),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _choosePhoto(ImageSource.camera);
@@ -51,8 +52,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library_outlined),
-              title: const Text('Upload photo'),
-              subtitle: const Text('Choose from gallery'),
+              title: Text(context.l10n.uploadPhoto),
+              subtitle: Text(context.l10n.chooseFromGallery),
               onTap: () {
                 Navigator.pop(sheetContext);
                 _choosePhoto(ImageSource.gallery);
@@ -61,7 +62,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             if (account.avatarUrl != null)
               ListTile(
                 leading: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
-                title: Text('Remove photo', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                title: Text(
+                  context.l10n.removePhoto,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
+                ),
                 onTap: () {
                   Navigator.pop(sheetContext);
                   _removePhoto();
@@ -97,11 +103,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff5f5f5),
       appBar: AppBar(
-        backgroundColor: const Color(0xfff5f5f5),
         centerTitle: true,
-        title: const Text('Edit profile', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(
+          context.l10n.editProfile,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       body: AnimatedBuilder(
         animation: widget.controller,
@@ -136,26 +143,53 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               const SizedBox(height: 12),
               TextButton(
                 onPressed: widget.controller.isUpdatingPhoto ? null : _showPhotoActions,
-                child: const Text('Change photo', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+                child: Text(
+                  context.l10n.changePhoto,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
-              const Text(
-                'Profile photos are public. Cached copies may remain after removal.',
+              Text(
+                context.l10n.profilePhotoPrivacy,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: Colors.black54),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 28),
               _ReadOnlyCard(
                 children: [
-                  _ReadOnlyField(label: 'Forename', value: _display(account.forename)),
-                  _ReadOnlyField(label: 'Surname', value: _display(account.surname)),
-                  _ReadOnlyField(label: 'Username', value: account.username),
-                  _ReadOnlyField(label: 'Public user ID', value: account.userId, compact: true),
+                  _ReadOnlyField(
+                    label: context.l10n.forename,
+                    value: _display(context, account.forename),
+                  ),
+                  _ReadOnlyField(
+                    label: context.l10n.surname,
+                    value: _display(context, account.surname),
+                  ),
+                  _ReadOnlyField(
+                    label: context.l10n.username,
+                    value: account.username,
+                  ),
+                  _ReadOnlyField(
+                    label: context.l10n.publicUserId,
+                    value: account.userId,
+                    compact: true,
+                  ),
                 ],
               ),
               const SizedBox(height: 14),
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Text('These fields are read-only for now.', style: TextStyle(color: Colors.black45)),
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(
+                  context.l10n.readOnlyFields,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ),
             ],
           );
@@ -164,7 +198,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
     );
   }
 
-  static String _display(String value) => value.trim().isEmpty ? 'Not set' : value;
+  static String _display(BuildContext context, String value) =>
+      value.trim().isEmpty ? context.l10n.notSet : value;
 }
 
 class _ReadOnlyCard extends StatelessWidget {
@@ -174,7 +209,10 @@ class _ReadOnlyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(18)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(18),
+      ),
       child: Column(children: children),
     );
   }
@@ -192,7 +230,16 @@ class _ReadOnlyField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
       child: Row(
         children: [
-          SizedBox(width: 96, child: Text(label, style: const TextStyle(color: Colors.black54, fontSize: 16))),
+          SizedBox(
+            width: 96,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 16,
+              ),
+            ),
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -203,7 +250,11 @@ class _ReadOnlyField extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          const Icon(Icons.lock_outline, size: 17, color: Colors.black38),
+          Icon(
+            Icons.lock_outline,
+            size: 17,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ],
       ),
     );
@@ -221,7 +272,7 @@ class _PhotoViewer extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
-        title: const Text('Profile photo'),
+        title: Text(context.l10n.profilePhoto),
       ),
       body: Center(
         child: InteractiveViewer(
@@ -230,7 +281,10 @@ class _PhotoViewer extends StatelessWidget {
           child: Image.network(
             imageUrl,
             fit: BoxFit.contain,
-            errorBuilder: (_, _, _) => const Text('Unable to load photo', style: TextStyle(color: Colors.white)),
+            errorBuilder: (_, _, _) => Text(
+              context.l10n.photoLoadFailed,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ),
       ),

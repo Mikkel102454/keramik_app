@@ -234,8 +234,8 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
       decoration: InputDecoration(
         hintText: widget.placeholder,
 
-        hintStyle: const TextStyle(
-          color: Color(0xFF9A9A9A),
+        hintStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
@@ -246,14 +246,14 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
 
         suffixText: widget.suffix,
 
-        suffixStyle: const TextStyle(
-          color: Color(0xFF8E8E93),
+        suffixStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
 
         filled: true,
-        fillColor: const Color(0xFFF1F1F1),
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
 
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 10,
@@ -272,8 +272,8 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
 
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Color(0xFFD8D8D8),
+          borderSide: BorderSide(
+            color: Theme.of(context).colorScheme.outline,
             width: 1,
           ),
         ),

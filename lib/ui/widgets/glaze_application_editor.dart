@@ -1,6 +1,7 @@
 import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:collection/collection.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
 
 class GlazeApplicationEditor extends StatelessWidget {
@@ -31,13 +32,15 @@ class GlazeApplicationEditor extends StatelessWidget {
     return Column(
       children: [
         if (ordered.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(bottom: 12),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 12),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'No glaze applications yet.',
-                style: TextStyle(color: Colors.black54),
+                context.l10n.noGlazeApplications,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
@@ -46,10 +49,9 @@ class GlazeApplicationEditor extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 9),
             child: ListTile(
               leading: CircleAvatar(radius: 15, child: Text('${index + 1}')),
-              title: Text(_glazeName(ordered[index].glazeId)),
+              title: Text(_glazeName(context, ordered[index].glazeId)),
               subtitle: Text(
-                '${ordered[index].coatCount} ${ordered[index].coatCount == 1 ? 'coat' : 'coats'}'
-                '${ordered[index].note.isEmpty ? '' : ' · ${ordered[index].note}'}',
+                _summary(context, ordered[index]),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -58,21 +60,21 @@ class GlazeApplicationEditor extends StatelessWidget {
                 spacing: 0,
                 children: [
                   IconButton(
-                    tooltip: 'Move up',
+                    tooltip: context.l10n.moveUp,
                     onPressed: index == 0
                         ? null
                         : () => onMove(ordered[index].id, -1),
                     icon: const Icon(Icons.arrow_upward, size: 19),
                   ),
                   IconButton(
-                    tooltip: 'Move down',
+                    tooltip: context.l10n.moveDown,
                     onPressed: index == ordered.length - 1
                         ? null
                         : () => onMove(ordered[index].id, 1),
                     icon: const Icon(Icons.arrow_downward, size: 19),
                   ),
                   IconButton(
-                    tooltip: 'Remove application',
+                    tooltip: context.l10n.removeApplication,
                     onPressed: () => onDelete(ordered[index].id),
                     icon: const Icon(Icons.close, size: 19),
                   ),
@@ -99,12 +101,12 @@ class GlazeApplicationEditor extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.add, size: 18),
-                  SizedBox(width: 8),
-                  Text('Add glaze application'),
+                  const Icon(Icons.add, size: 18),
+                  const SizedBox(width: 8),
+                  Text(context.l10n.addGlazeApplication),
                 ],
               ),
             ),
@@ -114,18 +116,23 @@ class GlazeApplicationEditor extends StatelessWidget {
     );
   }
 
-  String _glazeName(int glazeId) =>
+  String _glazeName(BuildContext context, int glazeId) =>
       glazes
           .where((glaze) => glaze.id == glazeId)
           .map((glaze) => glaze.title)
           .firstOrNull ??
-      'Unknown glaze';
+      context.l10n.unknownGlaze;
+
+  String _summary(BuildContext context, CeramicGlazeEntryDto entry) {
+    final coats = context.l10n.coatCount(entry.coatCount);
+    return entry.note.isEmpty ? coats : '$coats · ${entry.note}';
+  }
 
   Future<void> _edit(BuildContext context, CeramicGlazeEntryDto entry) async {
     await showDialog<void>(
       context: context,
       builder: (_) => GlazeApplicationEditDialog(
-        title: _glazeName(entry.glazeId),
+        title: _glazeName(context, entry.glazeId),
         initialNote: entry.note,
         initialCoatCount: entry.coatCount,
         onSave: (note, coatCount) => onEdit(entry.id, note, coatCount),
@@ -180,7 +187,7 @@ class _GlazeApplicationEditDialogState
     final coatCount = int.tryParse(_coats.text.trim());
     if (coatCount == null || coatCount < 1) {
       setState(() {
-        _coatError = 'Enter at least one coat.';
+        _coatError = context.l10n.coatMinimum;
         _saveError = null;
       });
       return;
@@ -192,6 +199,7 @@ class _GlazeApplicationEditDialogState
       _coatError = null;
       _saveError = null;
     });
+    final saveFailed = context.l10n.glazeApplicationSaveFailed;
     final saved = await widget.onSave(_note.text, coatCount);
     if (!mounted) return;
     if (saved) {
@@ -200,8 +208,7 @@ class _GlazeApplicationEditDialogState
     }
     setState(() {
       _saving = false;
-      _saveError =
-          'The glaze application could not be saved. Please try again.';
+      _saveError = saveFailed;
     });
   }
 
@@ -220,7 +227,7 @@ class _GlazeApplicationEditDialogState
                 enabled: !_saving,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Coat count',
+                  labelText: context.l10n.coatCountLabel,
                   errorText: _coatError,
                 ),
               ),
@@ -229,8 +236,8 @@ class _GlazeApplicationEditDialogState
                 enabled: !_saving,
                 maxLength: 255,
                 maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'Application note',
+                decoration: InputDecoration(
+                  labelText: context.l10n.applicationNote,
                 ),
               ),
               if (_saveError != null)
@@ -249,7 +256,7 @@ class _GlazeApplicationEditDialogState
         actions: [
           TextButton(
             onPressed: _saving ? null : () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: _saving ? null : _save,
@@ -258,7 +265,7 @@ class _GlazeApplicationEditDialogState
                     dimension: 18,
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
-                : const Text('Save'),
+                : Text(context.l10n.save),
           ),
         ],
       ),

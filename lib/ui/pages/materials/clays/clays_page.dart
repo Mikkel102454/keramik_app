@@ -6,6 +6,7 @@ import 'package:ceramic_app/ui/widgets/v2/divider_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class ClaysPage extends StatefulWidget {
   const ClaysPage({super.key});
@@ -33,7 +34,7 @@ class _ClaysPageState extends State<ClaysPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Clays"),
+        title: Text(context.l10n.clays),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -51,8 +52,13 @@ class _ClaysPageState extends State<ClaysPage> {
 
             if (_controller.error != null) {
               return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text("Error: ${_controller.error}"),
-                FilledButton(onPressed: _controller.load, child: const Text('Retry')),
+                Text(
+                  context.l10n.errorWithDetails('${_controller.error}'),
+                ),
+                FilledButton(
+                  onPressed: _controller.load,
+                  child: Text(context.l10n.retry),
+                ),
               ]));
             }
 
@@ -73,7 +79,11 @@ class _ClaysPageState extends State<ClaysPage> {
       padding: const EdgeInsets.all(16),
 
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        TextWidget(text: "Clay Bodies", fontSize: 20, fontWeight: FontWeight.bold,),
+        TextWidget(
+          text: context.l10n.clayBodies,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
         const SizedBox(height: 16),
 
         DividerWidget(),
@@ -85,10 +95,10 @@ class _ClaysPageState extends State<ClaysPage> {
               SquareWidget(
                 width: 80,
                 height: 80,
-                backgroundColor: Colors.grey.shade300,
+                backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                 imageUri: clay.images.isNotEmpty ? clay.images[0].uri : null,
                 icon: clay.images.isEmpty ? Icons.image_not_supported : null,
-                iconColor: Colors.grey.shade500,
+                iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
                 iconSize: 38,
               ),
               const SizedBox(width: 16),
@@ -117,8 +127,8 @@ class _ClaysPageState extends State<ClaysPage> {
           height: 60,
           icon: Icons.add,
           iconSize: 30,
-          backgroundColor: Colors.grey.shade300,
-          iconColor: Colors.black,
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+          iconColor: Theme.of(context).colorScheme.onSurface,
           onPressed: () async {
             final result = await Navigator.push<bool>(
               context,

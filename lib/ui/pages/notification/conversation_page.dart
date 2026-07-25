@@ -5,6 +5,8 @@ import 'package:ceramic_app/ui/pages/notification/conversation_page_controller.d
 import 'package:ceramic_app/ui/pages/notification/report_message_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:intl/intl.dart';
 
 class ConversationPage extends StatefulWidget {
   const ConversationPage({required this.initialConversation, super.key});
@@ -68,7 +70,7 @@ class _ConversationPageState extends State<ConversationPage> {
   void _comingLater() {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(const SnackBar(content: Text('Coming later')));
+    ).showSnackBar(SnackBar(content: Text(context.l10n.comingLater)));
   }
 
   Future<void> _archive() async {
@@ -89,16 +91,16 @@ class _ConversationPageState extends State<ConversationPage> {
     final value = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Rename group'),
+        title: Text(context.l10n.renameGroup),
         content: TextField(controller: name, autofocus: true, maxLength: 100),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, name.text.trim()),
-            child: const Text('Save'),
+            child: Text(context.l10n.save),
           ),
         ],
       ),
@@ -131,18 +133,16 @@ class _ConversationPageState extends State<ConversationPage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Leave group?'),
-        content: const Text(
-          'You will keep read-only history from your membership periods.',
-        ),
+        title: Text(context.l10n.leaveGroupQuestion),
+        content: Text(context.l10n.leaveGroupExplanation),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(context.l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Leave'),
+            child: Text(context.l10n.leave),
           ),
         ],
       ),
@@ -167,7 +167,7 @@ class _ConversationPageState extends State<ConversationPage> {
       builder: (context) => SafeArea(
         child: ListTile(
           leading: const Icon(Icons.flag_outlined),
-          title: const Text('Report message'),
+          title: Text(context.l10n.reportMessage),
           onTap: () => Navigator.pop(context, 'report'),
         ),
       ),
@@ -184,9 +184,7 @@ class _ConversationPageState extends State<ConversationPage> {
     );
     if (mounted && submitted == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Report submitted. Blocking is a separate action.'),
-        ),
+        SnackBar(content: Text(context.l10n.reportSubmitted)),
       );
     }
   }
@@ -237,10 +235,10 @@ class _ConversationPageState extends State<ConversationPage> {
                       ),
                       if (conversation.type == 'GROUP')
                         Text(
-                          '${conversation.memberCount} members',
-                          style: const TextStyle(
+                          context.l10n.memberCount(conversation.memberCount),
+                          style: TextStyle(
                             fontSize: 11,
-                            color: Colors.black54,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                     ],
@@ -253,14 +251,23 @@ class _ConversationPageState extends State<ConversationPage> {
                 onSelected: _selectMenu,
                 itemBuilder: (_) => [
                   if (conversation.type == 'GROUP' &&
-                      !conversation.readOnly) ...const [
-                    PopupMenuItem(value: 'rename', child: Text('Rename group')),
-                    PopupMenuItem(value: 'members', child: Text('Add members')),
-                    PopupMenuItem(value: 'leave', child: Text('Leave group')),
+                      !conversation.readOnly) ...[
+                    PopupMenuItem(
+                      value: 'rename',
+                      child: Text(context.l10n.renameGroup),
+                    ),
+                    PopupMenuItem(
+                      value: 'members',
+                      child: Text(context.l10n.addMembers),
+                    ),
+                    PopupMenuItem(
+                      value: 'leave',
+                      child: Text(context.l10n.leaveGroup),
+                    ),
                   ],
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'archive',
-                    child: Text('Archive chat'),
+                    child: Text(context.l10n.archiveChat),
                   ),
                 ],
               ),
@@ -273,12 +280,14 @@ class _ConversationPageState extends State<ConversationPage> {
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
-                  color: const Color(0xfff2f2f2),
+                  color: Theme.of(context).colorScheme.surfaceContainer,
                   child: Text(
                     conversation.readOnlyReason ??
-                        'This conversation is read-only.',
+                        context.l10n.conversationReadOnly,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.black54),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 )
               else
@@ -308,17 +317,19 @@ class _ConversationPageState extends State<ConversationPage> {
             const SizedBox(height: 12),
             FilledButton(
               onPressed: _controller.load,
-              child: const Text('Retry'),
+              child: Text(context.l10n.retry),
             ),
           ],
         ),
       );
     }
     if (_controller.messages.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
-          'Start the conversation.',
-          style: TextStyle(color: Colors.black45),
+          context.l10n.startConversation,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
@@ -339,8 +350,8 @@ class _ConversationPageState extends State<ConversationPage> {
                     : _controller.loadOlder,
                 child: Text(
                   _controller.isLoadingOlder
-                      ? 'Loading…'
-                      : 'Load earlier messages',
+                      ? context.l10n.loading
+                      : context.l10n.loadEarlierMessages,
                 ),
               ),
             );
@@ -393,13 +404,18 @@ class _MessageBubble extends StatelessWidget {
         child: Text(
           message.body,
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 12, color: Colors.black45),
+          style: TextStyle(
+            fontSize: 12,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       );
     }
     return Semantics(
       button: onLongPress != null,
-      hint: onLongPress == null ? null : 'Long-press for message actions',
+      hint: onLongPress == null
+          ? null
+          : context.l10n.messageActionsHint,
       child: GestureDetector(
         onLongPress: onLongPress,
         child: Align(
@@ -413,7 +429,9 @@ class _MessageBubble extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 7),
             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             decoration: BoxDecoration(
-              color: message.mine ? Colors.black : const Color(0xffeeeeee),
+              color: message.mine
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(18).copyWith(
                 bottomRight: message.mine ? const Radius.circular(5) : null,
                 bottomLeft: message.mine ? null : const Radius.circular(5),
@@ -427,9 +445,9 @@ class _MessageBubble extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 3),
                     child: Text(
                       message.senderUsername!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: Colors.black54,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -437,7 +455,9 @@ class _MessageBubble extends StatelessWidget {
                 Text(
                   message.body,
                   style: TextStyle(
-                    color: message.mine ? Colors.white : Colors.black,
+                    color: message.mine
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onSurface,
                     height: 1.25,
                   ),
                 ),
@@ -460,13 +480,18 @@ class _DateSeparator extends StatelessWidget {
     final today =
         now.year == date.year && now.month == date.month && now.day == date.day;
     final label = today
-        ? 'Today'
-        : '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
+        ? context.l10n.today
+        : DateFormat.yMd(
+            Localizations.localeOf(context).toLanguageTag(),
+          ).format(date);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: Text(
         label,
-        style: const TextStyle(fontSize: 12, color: Colors.black45),
+        style: TextStyle(
+          fontSize: 12,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
       ),
     );
   }
@@ -494,7 +519,7 @@ class _Composer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             IconButton(
-              tooltip: 'Voice message — coming later',
+              tooltip: context.l10n.voiceMessageComingLater,
               onPressed: onFutureFeature,
               icon: const Icon(Icons.mic_none),
             ),
@@ -513,9 +538,9 @@ class _Composer extends StatelessWidget {
                     }) => null,
                 textCapitalization: TextCapitalization.sentences,
                 decoration: InputDecoration(
-                  hintText: 'Message…',
+                  hintText: context.l10n.messageHint,
                   filled: true,
-                  fillColor: const Color(0xfff2f2f2),
+                  fillColor: Theme.of(context).colorScheme.surfaceContainer,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 10,
@@ -528,14 +553,14 @@ class _Composer extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        tooltip: 'Emoji — coming later',
+                        tooltip: context.l10n.emojiComingLater,
                         onPressed: onFutureFeature,
                         icon: const Icon(
                           Icons.sentiment_satisfied_alt_outlined,
                         ),
                       ),
                       IconButton(
-                        tooltip: 'Image — coming later',
+                        tooltip: context.l10n.imageComingLater,
                         onPressed: onFutureFeature,
                         icon: const Icon(Icons.image_outlined),
                       ),
@@ -546,14 +571,17 @@ class _Composer extends StatelessWidget {
               ),
             ),
             IconButton(
-              tooltip: 'Send',
+              tooltip: context.l10n.send,
               onPressed: sending ? null : onSend,
               icon: sending
                   ? const SizedBox.square(
                       dimension: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.send, color: Colors.black),
+                  : Icon(
+                      Icons.send,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
             ),
           ],
         ),

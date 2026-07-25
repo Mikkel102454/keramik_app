@@ -6,6 +6,7 @@ import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
 import 'package:ceramic_app/ui/pages/notification/message_request_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class BlockedAccountResult {
   const BlockedAccountResult(this.userId, this.username);
@@ -42,11 +43,19 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Remove friend?'),
-        content: Text('You and ${_profile.username} will no longer be friends.'),
+        title: Text(context.l10n.removeFriendQuestion),
+        content: Text(
+          context.l10n.removeFriendExplanation(_profile.username),
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Remove')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(context.l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(context.l10n.remove),
+          ),
         ],
       ),
     );
@@ -67,13 +76,17 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Block ${_profile.username}?'),
-        content: const Text(
-          'You will disappear from each other’s search, profiles, friend lists, and requests. Existing friendship and requests are cancelled.',
-        ),
+        title: Text(context.l10n.blockUserQuestion(_profile.username)),
+        content: Text(context.l10n.blockExplanation),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Block')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(context.l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(context.l10n.block),
+          ),
         ],
       ),
     );
@@ -128,7 +141,7 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(title: Text(context.l10n.profile)),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
@@ -148,9 +161,11 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
           ),
           const SizedBox(height: 8),
           Text(
-            _relationshipLabel(_profile.relationshipState),
+            _relationshipLabel(context, _profile.relationshipState),
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 28),
           if (_busy) const Center(child: CircularProgressIndicator()),
@@ -159,41 +174,44 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
               FilledButton.icon(
                 onPressed: () => _perform(() => SocialRepository.sendFriendRequest(_profile.userId)),
                 icon: const Icon(Icons.person_add_alt_1),
-                label: const Text('Send friend request'),
+                label: Text(context.l10n.sendFriendRequest),
               ),
             if (_profile.actions.contains('ACCEPT_FRIEND_REQUEST'))
               FilledButton(
                 onPressed: _profile.friendRequestId == null
                     ? null
                     : () => _perform(() => SocialRepository.acceptFriendRequest(_profile.friendRequestId!)),
-                child: const Text('Accept request'),
+                child: Text(context.l10n.acceptRequest),
               ),
             if (_profile.actions.contains('DECLINE_FRIEND_REQUEST'))
               OutlinedButton(
                 onPressed: _profile.friendRequestId == null
                     ? null
                     : () => _perform(() => SocialRepository.declineFriendRequest(_profile.friendRequestId!)),
-                child: const Text('Decline request'),
+                child: Text(context.l10n.declineRequest),
               ),
             if (_profile.actions.contains('MESSAGE'))
               OutlinedButton.icon(
                 onPressed: () => _openMessage(request: false),
                 icon: const Icon(Icons.chat_bubble_outline),
-                label: const Text('Message'),
+                label: Text(context.l10n.message),
               ),
             if (_profile.actions.contains('MESSAGE_REQUEST'))
               OutlinedButton.icon(
                 onPressed: () => _openMessage(request: true),
                 icon: const Icon(Icons.mark_chat_unread_outlined),
-                label: const Text('Send message request'),
+                label: Text(context.l10n.sendMessageRequest),
               ),
             if (_profile.actions.contains('UNFRIEND'))
-              TextButton(onPressed: _unfriend, child: const Text('Remove friend')),
+              TextButton(
+                onPressed: _unfriend,
+                child: Text(context.l10n.removeFriend),
+              ),
             if (_profile.actions.contains('BLOCK'))
               TextButton(
                 onPressed: _block,
                 style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
-                child: const Text('Block account'),
+                child: Text(context.l10n.blockAccount),
               ),
           ],
         ],
@@ -201,14 +219,14 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
     );
   }
 
-  static String _relationshipLabel(String state) {
+  static String _relationshipLabel(BuildContext context, String state) {
     return switch (state) {
-      'FRIENDS' => 'Friends',
-      'OUTGOING_PENDING' => 'Friend request sent',
-      'INCOMING_PENDING' => 'Wants to be friends',
-      'DECLINED_BY_YOU' => 'You previously declined this request',
-      'DECLINED_BY_THEM' => 'Friend request declined',
-      _ => 'Account',
+      'FRIENDS' => context.l10n.relationshipFriends,
+      'OUTGOING_PENDING' => context.l10n.friendRequestSent,
+      'INCOMING_PENDING' => context.l10n.wantsToBeFriends,
+      'DECLINED_BY_YOU' => context.l10n.previouslyDeclined,
+      'DECLINED_BY_THEM' => context.l10n.friendRequestDeclined,
+      _ => context.l10n.account,
     };
   }
 }

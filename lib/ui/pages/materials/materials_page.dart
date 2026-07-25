@@ -4,6 +4,7 @@ import 'package:ceramic_app/ui/pages/materials/glazes/glazes_page.dart';
 import 'package:ceramic_app/ui/widgets/v2/divider_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_row_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
@@ -14,13 +15,13 @@ class MaterialsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Materials"),
+        title: Text(context.l10n.materials),
         actions: [
         ],
       ),
 
       body: SafeArea(
-        child: _pageContent()
+        child: _pageContent(context)
       ),
 
       bottomNavigationBar:
@@ -30,7 +31,7 @@ class MaterialsPage extends StatelessWidget {
     );
   }
 
-  SingleChildScrollView _pageContent() {
+  SingleChildScrollView _pageContent(BuildContext context) {
     return SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
 
@@ -43,11 +44,11 @@ class MaterialsPage extends StatelessWidget {
               DividerWidget(),
 
               NavigationRowWidget(
-                text: "Clays",
+                text: context.l10n.clays,
                 navigation: const ClaysPage(),
               ),
               NavigationRowWidget(
-                text: "Glazes",
+                text: context.l10n.glazes,
                 navigation: const GlazesPage(),
               ),
             ]

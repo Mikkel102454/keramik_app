@@ -1,0 +1,548 @@
+{
+  "@@locale": "en",
+  "languageName": "English",
+  "@languageName": {
+    "description": "The native name of this language, shown in the language selector."
+  },
+  "appTitle": "Keramik",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "retry": "Retry",
+  "tryAgain": "Try again",
+  "add": "Add",
+  "create": "Create",
+  "edit": "Edit",
+  "remove": "Remove",
+  "send": "Send",
+  "accept": "Accept",
+  "decline": "Decline",
+  "restore": "Restore",
+  "clear": "Clear",
+  "ok": "OK",
+  "loading": "Loading…",
+  "loadMore": "Load more",
+  "pleaseWait": "Please wait…",
+  "noMessages": "No messages",
+  "errorWithDetails": "Error: {details}",
+  "@errorWithDetails": {
+    "placeholders": {
+      "details": {
+        "type": "String"
+      }
+    }
+  },
+  "stageIdeas": "Ideas",
+  "stageThrown": "Thrown",
+  "stageTrimmed": "Trimmed",
+  "stageBisqued": "Bisqued",
+  "stageGlazed": "Glazed",
+  "stageFinished": "Finished",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "measurementMetric": "Metric",
+  "measurementImperial": "Imperial",
+  "privacyEveryone": "Everyone",
+  "privacyFriends": "Friends",
+  "privacyFriendsOfFriends": "Friends of friends",
+  "privacyNoOne": "No one",
+  "settingsLoadFailed": "Settings could not be loaded. Check your connection and retry.",
+  "settingSaveFailed": "That setting could not be saved. Your previous choice was restored.",
+  "settingsAndPrivacy": "Settings and privacy",
+  "settingsAccount": "Account",
+  "editProfile": "Edit profile",
+  "accountInformation": "Account information",
+  "passwordAndSecurity": "Password and security",
+  "downloadYourData": "Download your data",
+  "deleteAccount": "Delete account",
+  "settingsPrivacy": "Privacy",
+  "discoverability": "Discoverability",
+  "whoCanDiscover": "Who can discover your account?",
+  "friendRequests": "Friend requests",
+  "whoCanSendFriendRequests": "Who can send friend requests?",
+  "messages": "Messages",
+  "whoCanSendMessageRequests": "Who can send message requests?",
+  "blockedAccounts": "Blocked accounts",
+  "contentAndDisplay": "Content and display",
+  "notifications": "Notifications",
+  "appearance": "Appearance",
+  "units": "Units",
+  "language": "Language",
+  "supportAndAbout": "Support and about",
+  "websiteHelpCenter": "Website help center",
+  "privacyInformation": "Privacy information",
+  "aboutKeramik": "About Keramik",
+  "loginSection": "Login",
+  "logOut": "Log out",
+  "loggingOut": "Logging out…",
+  "logOutQuestion": "Log out?",
+  "logOutExplanation": "You can sign back in with your email or username.",
+  "logoutFailed": "Logout failed. Your session is still active; please retry.",
+  "linkOpenFailed": "The link could not be opened.",
+  "currentLanguage": "Current language",
+  "languageSaveFailed": "The language could not be saved. Your previous language was restored.",
+  "username": "Username",
+  "name": "Name",
+  "publicUserId": "Public user ID",
+  "accountInformationPrivacyNote": "Your public user ID is used for profile links and cannot be changed.",
+  "accountInformationLoadFailed": "Account information could not be loaded.",
+  "accountEmailPrivacyNote": "Your email address is private. For security, account email changes are handled through support.",
+  "notSet": "Not set",
+  "currentPassword": "Current password",
+  "newPassword": "New password",
+  "confirmNewPassword": "Confirm new password",
+  "passwordLengthHelp": "Use 8–128 characters.",
+  "changePassword": "Change password",
+  "websitePasswordPage": "Use the website password page",
+  "passwordsDoNotMatch": "The new passwords do not match.",
+  "passwordChanged": "Password changed. Other sessions have been signed out.",
+  "passwordChangeFailed": "Password could not be changed. Please retry.",
+  "dataExportDescription": "Your ZIP includes JSON/CSV records, preferences, relationships, accessible conversation data, and server-stored profile, ceramic, and clay images.",
+  "dataExportLimit": "Only one export can run at a time. Completed packages expire after seven days.",
+  "exportRequestFailed": "The export could not be requested.",
+  "exportRefreshFailed": "Export status could not be refreshed.",
+  "exportDownloadFailed": "The ZIP could not be downloaded or opened.",
+  "availableUntil": "Available until {date}",
+  "@availableUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "refreshStatus": "Refresh status",
+  "downloadZip": "Download ZIP",
+  "createExport": "Create export",
+  "exportQueued": "Export queued",
+  "exportCreating": "Creating your export",
+  "exportReady": "Export ready",
+  "exportExpired": "Export expired",
+  "exportFailed": "Export failed",
+  "deletionScheduleFailed": "Deletion could not be scheduled. Please retry.",
+  "deletionCancellationPeriod": "Deletion starts a 30-day cancellation period.",
+  "deletionSignOutExplanation": "You will be signed out everywhere immediately and cannot use ordinary app features. Sign in again during the next 30 days to cancel deletion or sign out.",
+  "deletionRetentionExplanation": "After 30 days, private identity, journal and material data, and owned media are erased. A disabled pseudonymous account shell and shared chat, report, audit, and safety records are retained indefinitely. Other members will see “Deleted member.”",
+  "deletionUnderstand": "I understand what is erased and retained.",
+  "typeDeleteToConfirm": "Type DELETE to confirm",
+  "scheduleAccountDeletion": "Schedule account deletion",
+  "directMessages": "Direct messages",
+  "messageRequests": "Message requests",
+  "groupActivity": "Group activity",
+  "pushNotifications": "Push notifications",
+  "pushNotificationsComingLater": "Coming later. Keramik does not deliver notifications while the app is suspended.",
+  "blockedAccountsLoadFailed": "Blocked accounts could not be loaded.",
+  "accountUnblockFailed": "{username} could not be unblocked.",
+  "@accountUnblockFailed": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "noBlockedAccounts": "You have not blocked any accounts.",
+  "unblock": "Unblock",
+  "welcomeBack": "Welcome back",
+  "signInToAccount": "Sign in to your account",
+  "emailOrUsername": "Email or username",
+  "password": "Password",
+  "forgotPassword": "Forgot password",
+  "logIn": "Log in",
+  "accountDeletionPending": "Account deletion pending",
+  "accountDeletionPendingExplanation": "Ordinary activity is restricted during the 30-day grace period. Cancel deletion to restore the account, or sign out.",
+  "cancelDeletion": "Cancel deletion",
+  "signOut": "Sign out",
+  "or": "OR",
+  "noAccountQuestion": "Don’t have an account? ",
+  "signUp": "Sign up",
+  "materials": "Materials",
+  "clays": "Clays",
+  "glazes": "Glazes",
+  "navigationHome": "Home",
+  "navigationMaterials": "Materials",
+  "navigationShop": "Shop",
+  "navigationChats": "Chats",
+  "navigationProfile": "Profile",
+  "ceramicJournal": "Ceramic journal",
+  "journalLoadFailed": "We could not load your ceramic journal.",
+  "createCeramic": "Create ceramic",
+  "journalSearchHint": "Search titles, notes, tags, clay, or glaze",
+  "clearSearch": "Clear search",
+  "filters": "Filters",
+  "descending": "Descending",
+  "ascending": "Ascending",
+  "pieceCount": "{count, plural, =0 {No pieces} =1 {1 piece} other {{count} pieces}}",
+  "@pieceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "unknownStage": "Unknown stage",
+  "filterJournal": "Filter journal",
+  "stage": "Stage",
+  "clay": "Clay",
+  "glaze": "Glaze",
+  "minimumRating": "Minimum rating",
+  "tags": "Tags",
+  "sortRecentlyUpdated": "Recently updated",
+  "title": "Title",
+  "rating": "Rating",
+  "creationDate": "Creation date",
+  "startCeramicJournal": "Start your ceramic journal",
+  "emptyJournalDescription": "Capture your first piece, materials, process, and results.",
+  "createFirstPiece": "Create your first piece",
+  "noMatchingPieces": "No matching pieces",
+  "clearSearchAndFilters": "Clear search and filters",
+  "ceramic": "Ceramic",
+  "progress": "Progress",
+  "information": "Information",
+  "clayType": "Clay type",
+  "select": "Select",
+  "weight": "Weight",
+  "dimensions": "Dimensions",
+  "optionalMeasurementSystem": "Optional · {system}",
+  "@optionalMeasurementSystem": {
+    "placeholders": {
+      "system": {
+        "type": "String"
+      }
+    }
+  },
+  "height": "Height",
+  "width": "Width",
+  "depth": "Depth",
+  "diameter": "Diameter",
+  "glazeApplications": "Glaze applications",
+  "rate": "Rate",
+  "notes": "Notes",
+  "projectNotes": "Project notes",
+  "outcome": "Outcome",
+  "optionalResultNotes": "Optional result notes",
+  "outcomeHint": "How did the piece turn out?",
+  "selectFromGallery": "Select from gallery",
+  "takePicture": "Take a picture",
+  "titleValidation": "Enter a title up to 255 characters",
+  "invalidStage": "Invalid stage selected",
+  "ceramicFieldsInvalid": "Check rating, weight, and note lengths before saving.",
+  "addFiring": "Add firing",
+  "editFiring": "Edit firing",
+  "status": "Status",
+  "planned": "Planned",
+  "completed": "Completed",
+  "firingType": "Firing type",
+  "firingBisque": "Bisque",
+  "firingGlaze": "Glaze",
+  "firingSingle": "Single",
+  "firingOverglaze": "Overglaze / luster",
+  "other": "Other",
+  "firingDate": "Firing date",
+  "targetCone": "Target cone",
+  "targetTemperature": "Target temperature",
+  "observedCone": "Observed cone",
+  "peakTemperature": "Peak temperature",
+  "kiln": "Kiln",
+  "program": "Program",
+  "firingNote": "Firing note",
+  "firingSaveFailed": "The firing could not be saved. Please try again.",
+  "noGlazeApplications": "No glaze applications yet.",
+  "coatCount": "{count, plural, =1 {1 coat} other {{count} coats}}",
+  "@coatCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "moveUp": "Move up",
+  "moveDown": "Move down",
+  "removeApplication": "Remove application",
+  "addGlazeApplication": "Add glaze application",
+  "unknownGlaze": "Unknown glaze",
+  "coatCountLabel": "Coat count",
+  "applicationNote": "Application note",
+  "coatMinimum": "Enter at least one coat.",
+  "glazeApplicationSaveFailed": "The glaze application could not be saved. Please try again.",
+  "deleteCeramic": "Delete ceramic",
+  "deleteCeramicQuestion": "Are you sure you want to delete this ceramic?",
+  "deleteCeramicFailed": "Could not delete ceramic.",
+  "firings": "Firings",
+  "firingRecordCount": "{count, plural, =0 {No records} =1 {1 record} other {{count} records}}",
+  "@firingRecordCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noFiringRecords": "No firing records yet.",
+  "coneValue": "Cone {cone}",
+  "@coneValue": {
+    "placeholders": {
+      "cone": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFiring": "Delete firing",
+  "history": "History",
+  "stageEventCount": "{count, plural, =0 {No stage events} =1 {1 stage event} other {{count} stage events}}",
+  "@stageEventCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "updatedOn": "Updated {date}",
+  "@updatedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "historyStartedAt": "History started at {stage}",
+  "@historyStartedAt": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "startedAtStage": "Started at {stage}",
+  "@startedAtStage": {
+    "placeholders": {
+      "stage": {
+        "type": "String"
+      }
+    }
+  },
+  "stageTransition": "{fromStage} → {toStage}",
+  "@stageTransition": {
+    "placeholders": {
+      "fromStage": {
+        "type": "String"
+      },
+      "toStage": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFiringQuestion": "Delete firing record?",
+  "deleteFiringExplanation": "This will permanently remove the {type} record.",
+  "@deleteFiringExplanation": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteFiringFailed": "The firing record could not be deleted.",
+  "bisqueFiring": "Bisque firing",
+  "glazeFiring": "Glaze firing",
+  "singleFiring": "Single firing",
+  "overglazeFiring": "Overglaze / luster firing",
+  "otherFiring": "Other firing",
+  "clayBodies": "Clay bodies",
+  "clayBody": "Clay body",
+  "supplier": "Supplier",
+  "clayNotes": "Clay notes",
+  "materialFieldsTooLong": "Supplier and notes must be at most 255 characters.",
+  "deleteClay": "Delete clay",
+  "deleteClayQuestion": "Are you sure you want to delete this clay?",
+  "deleteClayFailed": "Could not delete clay.",
+  "enterTitle": "Enter a title",
+  "deleteGlaze": "Delete glaze",
+  "deleteGlazeQuestion": "Are you sure you want to delete this glaze?",
+  "glazeCannotDelete": "Glaze cannot be deleted",
+  "deleteImageQuestion": "Delete image?",
+  "cannotUndo": "This action cannot be undone.",
+  "tag": "Tag",
+  "chats": "Chats",
+  "searchAccounts": "Search accounts",
+  "newGroup": "New group",
+  "archivedChats": "Archived chats",
+  "noArchivedChats": "No archived chats.",
+  "requests": "Requests",
+  "waitingCount": "{count, plural, =0 {None waiting} =1 {1 waiting} other {{count} waiting}}",
+  "@waitingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noMessageRequests": "No message requests.",
+  "messageUser": "Message {username}",
+  "@messageUser": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "messageRequestPreviewExplanation": "You can send one preview. You can send more messages after they accept.",
+  "writeMessageRequest": "Write a message request…",
+  "sendRequest": "Send request",
+  "groupName": "Group name",
+  "selectFriendsMemberCount": "Select friends · {count}/50 members",
+  "@selectFriendsMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "addFriendBeforeGroup": "Add a friend before creating a group.",
+  "addMembers": "Add members",
+  "chooseFriendsLimit": "Choose up to {count} of your friends. Existing members are rejected safely.",
+  "@chooseFriendsLimit": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "reportMessage": "Report message",
+  "reportReasonQuestion": "Why are you reporting this message?",
+  "reportSpam": "Spam",
+  "reportHarassment": "Harassment",
+  "reportHate": "Hate",
+  "reportSexualContent": "Sexual content",
+  "reportViolence": "Violence",
+  "reportChooseReason": "Choose a reason for this report.",
+  "reportOtherExplanationRequired": "Add an explanation when choosing Other.",
+  "reportExplanationTooLong": "The explanation must contain at most 1000 characters.",
+  "reportExplanationOptional": "Explanation (optional)",
+  "reportExplanationHint": "Add details that may help a future review.",
+  "messageBeingReported": "Message being reported",
+  "reportEvidenceDisclosure": "The selected message and up to two nearby messages on each side will be securely included for review. Reporting does not block this account or change the conversation.",
+  "submitReport": "Submit report",
+  "all": "All",
+  "unread": "Unread",
+  "groups": "Groups",
+  "noGroupChats": "No group chats yet.",
+  "noUnreadChats": "No unread chats.",
+  "noConversations": "No conversations yet. Search for an account to get started.",
+  "noMessagesYet": "No messages yet",
+  "now": "now",
+  "relativeMinutes": "{count}m",
+  "@relativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeHours": "{count}h",
+  "@relativeHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeDays": "{count}d",
+  "@relativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "accountBlocked": "{username} blocked",
+  "@accountBlocked": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "Undo",
+  "received": "Received",
+  "sent": "Sent",
+  "noReceivedRequests": "No received requests.",
+  "noSentRequests": "No sent requests.",
+  "requestSent": "Request sent",
+  "wantsToBeFriends": "Wants to be friends",
+  "comingLater": "Coming later",
+  "renameGroup": "Rename group",
+  "leaveGroupQuestion": "Leave group?",
+  "leaveGroupExplanation": "You will keep read-only history from your membership periods.",
+  "leave": "Leave",
+  "leaveGroup": "Leave group",
+  "reportSubmitted": "Report submitted. Blocking is a separate action.",
+  "memberCount": "{count, plural, =1 {1 member} other {{count} members}}",
+  "@memberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "archiveChat": "Archive chat",
+  "conversationReadOnly": "This conversation is read-only.",
+  "startConversation": "Start the conversation.",
+  "loadEarlierMessages": "Load earlier messages",
+  "messageActionsHint": "Long-press for message actions",
+  "today": "Today",
+  "voiceMessageComingLater": "Voice message — coming later",
+  "messageHint": "Message…",
+  "emojiComingLater": "Emoji — coming later",
+  "imageComingLater": "Image — coming later",
+  "profile": "Profile",
+  "removeFriendQuestion": "Remove friend?",
+  "removeFriendExplanation": "You and {username} will no longer be friends.",
+  "@removeFriendExplanation": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "blockUserQuestion": "Block {username}?",
+  "@blockUserQuestion": {
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+  "blockExplanation": "You will disappear from each other’s search, profiles, friend lists, and requests. Existing friendship and requests are cancelled.",
+  "block": "Block",
+  "sendFriendRequest": "Send friend request",
+  "acceptRequest": "Accept request",
+  "declineRequest": "Decline request",
+  "message": "Message",
+  "sendMessageRequest": "Send message request",
+  "removeFriend": "Remove friend",
+  "blockAccount": "Block account",
+  "relationshipFriends": "Friends",
+  "friendRequestSent": "Friend request sent",
+  "previouslyDeclined": "You previously declined this request",
+  "friendRequestDeclined": "Friend request declined",
+  "account": "Account",
+  "friend": "Friend",
+  "incomingRequest": "Incoming request",
+  "searchFriends": "Search friends",
+  "noFriendsFound": "No friends found.",
+  "searchMinimumCharacters": "Enter at least 3 characters to search accounts.",
+  "noAccountsFound": "No accounts found.",
+  "accounts": "Accounts",
+  "finishedPieces": "Finished pieces",
+  "finishedPiecesEmpty": "Pieces moved to Finished will appear here.",
+  "viewPhoto": "View photo",
+  "takePhoto": "Take photo",
+  "uploadPhoto": "Upload photo",
+  "chooseFromGallery": "Choose from gallery",
+  "removePhoto": "Remove photo",
+  "changePhoto": "Change photo",
+  "profilePhotoPrivacy": "Profile photos are public. Cached copies may remain after removal.",
+  "forename": "Forename",
+  "surname": "Surname",
+  "readOnlyFields": "These fields are read-only for now.",
+  "profilePhoto": "Profile photo",
+  "photoLoadFailed": "Unable to load photo"
+}

@@ -4,6 +4,7 @@ import 'package:ceramic_app/ui/pages/profile/basic_profile_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class FriendsPage extends StatefulWidget {
   const FriendsPage({required this.controller, super.key});
@@ -26,9 +27,9 @@ class _FriendsPageState extends State<FriendsPage> {
     if (!mounted || blocked == null) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${blocked.username} blocked'),
+        content: Text(context.l10n.accountBlocked(blocked.username)),
         action: SnackBarAction(
-          label: 'Undo',
+          label: context.l10n.undo,
           onPressed: () async {
             try {
               await SocialRepository.unblock(blocked.userId);
@@ -45,7 +46,13 @@ class _FriendsPageState extends State<FriendsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text('Friends', style: TextStyle(fontWeight: FontWeight.w700))),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          context.l10n.relationshipFriends,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
       body: AnimatedBuilder(
         animation: widget.controller,
         builder: (context, _) {
@@ -61,18 +68,24 @@ class _FriendsPageState extends State<FriendsPage> {
                 TextField(
                   onChanged: (value) => setState(() => _filter = value.trim()),
                   decoration: InputDecoration(
-                    hintText: 'Search friends',
+                    hintText: context.l10n.searchFriends,
                     prefixIcon: const Icon(Icons.search),
                     filled: true,
-                    fillColor: const Color(0xfff2f2f2),
+                    fillColor: Theme.of(context).colorScheme.surfaceContainer,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(24), borderSide: BorderSide.none),
                   ),
                 ),
                 const SizedBox(height: 14),
                 if (visible.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 70),
-                    child: Text('No friends found.', textAlign: TextAlign.center, style: TextStyle(color: Colors.black54)),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 70),
+                    child: Text(
+                      context.l10n.noFriendsFound,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                 ...visible.map(
                   (friend) => ListTile(
@@ -90,7 +103,7 @@ class _FriendsPageState extends State<FriendsPage> {
                 if (widget.controller.friendsCursor != null && _filter.isEmpty)
                   OutlinedButton(
                     onPressed: widget.controller.loadMoreFriends,
-                    child: const Text('Load more'),
+                    child: Text(context.l10n.loadMore),
                   ),
               ],
             ),

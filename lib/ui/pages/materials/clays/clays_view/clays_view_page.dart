@@ -7,6 +7,7 @@ import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ClaysViewPage extends StatefulWidget {
@@ -47,7 +48,7 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
         },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text("Clay body"),
+          title: Text(context.l10n.clayBody),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
@@ -62,18 +63,16 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
                 final confirmed = await showDialog<bool>(
                   context: context,
                   builder: (_) => AlertDialog(
-                    title: const Text("Delete clay"),
-                    content: const Text(
-                      "Are you sure you want to delete this clay?",
-                    ),
+                    title: Text(context.l10n.deleteClay),
+                    content: Text(context.l10n.deleteClayQuestion),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(context, false),
-                        child: const Text("Cancel"),
+                        child: Text(context.l10n.cancel),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(context, true),
-                        child: const Text("Delete"),
+                        child: Text(context.l10n.delete),
                       ),
                     ],
                   ),
@@ -87,7 +86,7 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
                   Navigator.of(context).pop(true);
                 } else if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Could not delete clay.')),
+                    SnackBar(content: Text(context.l10n.deleteClayFailed)),
                   );
                 }
               },
@@ -109,10 +108,12 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
 
               if (_controller.error != null) {
                 return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Text("Error: ${_controller.error}"),
+                  Text(
+                    context.l10n.errorWithDetails('${_controller.error}'),
+                  ),
                   FilledButton(
                     onPressed: () => _controller.load(null),
-                    child: const Text('Retry'),
+                    child: Text(context.l10n.retry),
                   ),
                 ]));
               }
@@ -177,11 +178,11 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
 
                 SquareWidget(
                   icon: Icons.add,
-                  iconColor: Colors.grey.shade500,
+                  iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   iconSize: 42,
                   width: 92,
                   height: 92,
-                  backgroundColor: Colors.grey.shade300,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   onPressed: () async {
                     final source = await showModalBottomSheet<ImageSource>(
                       context: context,
@@ -191,14 +192,14 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
                             children: [
                               ListTile(
                                 leading: const Icon(Icons.photo_library),
-                                title: const Text('Select from gallery'),
+                                title: Text(context.l10n.selectFromGallery),
                                 onTap: () {
                                   Navigator.pop(context, ImageSource.gallery);
                                 },
                               ),
                               ListTile(
                                 leading: const Icon(Icons.camera_alt),
-                                title: const Text('Take a picture'),
+                                title: Text(context.l10n.takePicture),
                                 onTap: () {
                                   Navigator.pop(context, ImageSource.camera);
                                 },
@@ -229,20 +230,20 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
           // Information
           // =========================
           TextWidget(
-            text: "Information",
+            text: context.l10n.information,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
           const SizedBox(height: 8),
           TextWidget(
-            text: "Title",
+            text: context.l10n.title,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
           TextFieldWidget(
-            placeholder: "Title",
+            placeholder: context.l10n.title,
             initialValue: controller.clay.title,
             debounceDuration: Duration(milliseconds: 300),
 
@@ -255,14 +256,14 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
           const SizedBox(height: 12),
 
           TextWidget(
-            text: "Supplier",
+            text: context.l10n.supplier,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
           TextFieldWidget(
-            placeholder: "Supplier",
+            placeholder: context.l10n.supplier,
             initialValue: controller.clay.title,
             debounceDuration: Duration(milliseconds: 300),
 
@@ -276,11 +277,15 @@ class _ClaysViewPageState extends State<ClaysViewPage> {
           // =========================
           // Notes
           // =========================
-          TextWidget(text: "Notes", fontSize: 18, fontWeight: FontWeight.w700),
+          TextWidget(
+            text: context.l10n.notes,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
           const SizedBox(height: 8),
 
           TextFieldWidget(
-            placeholder: "Clay notes",
+            placeholder: context.l10n.clayNotes,
             initialValue: controller.clay.note,
             debounceDuration: Duration(milliseconds: 300),
             minLines: 3,

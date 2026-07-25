@@ -12,6 +12,12 @@ enum ChatReportCategory {
   final String label;
 }
 
+enum ChatReportValidationError {
+  chooseReason,
+  otherExplanationRequired,
+  explanationTooLong,
+}
+
 class ChatReportReceiptDto {
   const ChatReportReceiptDto({required this.reportId, required this.createdAt});
 
@@ -26,14 +32,17 @@ class ChatReportReceiptDto {
   }
 }
 
-String? validateChatReport(ChatReportCategory? category, String explanation) {
-  if (category == null) return 'Choose a reason for this report.';
+ChatReportValidationError? validateChatReport(
+  ChatReportCategory? category,
+  String explanation,
+) {
+  if (category == null) return ChatReportValidationError.chooseReason;
   final trimmed = explanation.trim();
   if (category == ChatReportCategory.other && trimmed.isEmpty) {
-    return 'Add an explanation when choosing Other.';
+    return ChatReportValidationError.otherExplanationRequired;
   }
   if (trimmed.runes.length > 1000) {
-    return 'The explanation must contain at most 1000 characters.';
+    return ChatReportValidationError.explanationTooLong;
   }
   return null;
 }

@@ -1,6 +1,7 @@
 import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/objects/chat_report_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
 
 typedef SubmitChatReport =
@@ -30,7 +31,7 @@ class ReportMessagePage extends StatefulWidget {
 class _ReportMessagePageState extends State<ReportMessagePage> {
   final TextEditingController _explanation = TextEditingController();
   ChatReportCategory? _category;
-  String? _validationError;
+  ChatReportValidationError? _validationError;
   String? _submitError;
   bool _submitting = false;
 
@@ -70,13 +71,13 @@ class _ReportMessagePageState extends State<ReportMessagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Report message')),
+      appBar: AppBar(title: Text(context.l10n.reportMessage)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
           children: [
-            const Text(
-              'Why are you reporting this message?',
+            Text(
+              context.l10n.reportReasonQuestion,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 12),
@@ -86,7 +87,9 @@ class _ReportMessagePageState extends State<ReportMessagePage> {
               children: ChatReportCategory.values
                   .map(
                     (category) => ChoiceChip(
-                      label: Text(category.label),
+                      label: Text(
+                        category.localizedLabel(context.l10n),
+                      ),
                       selected: _category == category,
                       onSelected: (_) => setState(() {
                         _category = category;
@@ -99,7 +102,7 @@ class _ReportMessagePageState extends State<ReportMessagePage> {
             if (_validationError != null) ...[
               const SizedBox(height: 8),
               Text(
-                _validationError!,
+                _validationError!.localizedMessage(context.l10n),
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
               ),
             ],
@@ -109,25 +112,28 @@ class _ReportMessagePageState extends State<ReportMessagePage> {
               minLines: 3,
               maxLines: 6,
               maxLength: 1000,
-              decoration: const InputDecoration(
-                labelText: 'Explanation (optional)',
-                hintText: 'Add details that may help a future review.',
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                labelText: context.l10n.reportExplanationOptional,
+                hintText: context.l10n.reportExplanationHint,
+                border: const OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xfff2f2f2),
+                color: Theme.of(context).colorScheme.surfaceContainer,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Message being reported',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                  Text(
+                    context.l10n.messageBeingReported,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 5),
                   Text(
@@ -139,11 +145,12 @@ class _ReportMessagePageState extends State<ReportMessagePage> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'The selected message and up to two nearby messages on each side '
-              'will be securely included for review. Reporting does not block '
-              'this account or change the conversation.',
-              style: TextStyle(color: Colors.black54, height: 1.35),
+            Text(
+              context.l10n.reportEvidenceDisclosure,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.35,
+              ),
             ),
             if (_submitError != null) ...[
               const SizedBox(height: 12),
@@ -160,7 +167,7 @@ class _ReportMessagePageState extends State<ReportMessagePage> {
                       dimension: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text('Submit report'),
+                  : Text(context.l10n.submitReport),
             ),
           ],
         ),

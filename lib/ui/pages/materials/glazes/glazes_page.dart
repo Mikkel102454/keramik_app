@@ -6,6 +6,7 @@ import 'package:ceramic_app/ui/widgets/v2/divider_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class GlazesPage extends StatefulWidget {
   const GlazesPage({super.key});
@@ -33,7 +34,7 @@ class _GlazesPageState extends State<GlazesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Glazes'),
+        title: Text(context.l10n.glazes),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -48,8 +49,13 @@ class _GlazesPageState extends State<GlazesPage> {
             }
             if (_controller.error != null) {
               return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text('Error: ${_controller.error}'),
-                FilledButton(onPressed: _controller.load, child: const Text('Retry')),
+                Text(
+                  context.l10n.errorWithDetails('${_controller.error}'),
+                ),
+                FilledButton(
+                  onPressed: _controller.load,
+                  child: Text(context.l10n.retry),
+                ),
               ]));
             }
             return RefreshIndicator(
@@ -69,8 +75,8 @@ class _GlazesPageState extends State<GlazesPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const TextWidget(
-            text: 'Glazes',
+          TextWidget(
+            text: context.l10n.glazes,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -92,9 +98,9 @@ class _GlazesPageState extends State<GlazesPage> {
                 SquareWidget(
                   width: 80,
                   height: 80,
-                  backgroundColor: Colors.grey.shade300,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   icon: Icons.opacity,
-                  iconColor: Colors.grey.shade500,
+                  iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   iconSize: 38,
                 ),
                 const SizedBox(width: 16),
@@ -111,8 +117,8 @@ class _GlazesPageState extends State<GlazesPage> {
             height: 60,
             icon: Icons.add,
             iconSize: 30,
-            backgroundColor: Colors.grey.shade300,
-            iconColor: Colors.black,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+            iconColor: Theme.of(context).colorScheme.onSurface,
             onPressed: () async {
               final created = await Navigator.push<bool>(
                 context,

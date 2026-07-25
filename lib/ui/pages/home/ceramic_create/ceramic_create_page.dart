@@ -14,6 +14,8 @@ import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ceramic_app/app/app_settings_controller.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 import 'ceramic_create_page_controller.dart';
 
@@ -52,7 +54,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Ceramic"),
+        title: Text(context.l10n.ceramic),
 
         actions: [IconButton(icon: const Icon(Icons.check), onPressed: () {_createCeramic();})],
       ),
@@ -66,7 +68,11 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             }
 
             if (_controller.error != null) {
-              return Center(child: Text("Error: ${_controller.error}"));
+              return Center(
+                child: Text(
+                  context.l10n.errorWithDetails('${_controller.error}'),
+                ),
+              );
             }
 
             return RefreshIndicator(
@@ -135,11 +141,11 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
                 SquareWidget(
                   icon: Icons.add,
-                  iconColor: Colors.grey.shade500,
+                  iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   iconSize: 42,
                   width: 92,
                   height: 92,
-                  backgroundColor: Colors.grey.shade300,
+                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
                   onPressed: () async {
                     final source = await showModalBottomSheet<ImageSource>(
                       context: context,
@@ -149,14 +155,14 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
                             children: [
                               ListTile(
                                 leading: const Icon(Icons.photo_library),
-                                title: const Text('Select from gallery'),
+                                title: Text(context.l10n.selectFromGallery),
                                 onTap: () {
                                   Navigator.pop(context, ImageSource.gallery);
                                 },
                               ),
                               ListTile(
                                 leading: const Icon(Icons.camera_alt),
-                                title: const Text('Take a picture'),
+                                title: Text(context.l10n.takePicture),
                                 onTap: () {
                                   Navigator.pop(context, ImageSource.camera);
                                 },
@@ -187,7 +193,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           // Progress
           // =========================
           TextWidget(
-            text: "Progress",
+            text: context.l10n.progress,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
@@ -199,7 +205,10 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             size: 40,
             entries: [
               for (final stage in widget.stages)
-                MapEntry(stage.title, stage.id.toString()),
+                MapEntry(
+                  localizedStageName(context.l10n, stage.title),
+                  stage.id.toString(),
+                ),
             ],
 
             onChanged: (value) async {
@@ -213,20 +222,20 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           // Information
           // =========================
           TextWidget(
-            text: "Information",
+            text: context.l10n.information,
             fontSize: 18,
             fontWeight: FontWeight.w700,
           ),
           const SizedBox(height: 8),
           TextWidget(
-            text: "Title",
+            text: context.l10n.title,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
           TextFieldWidget(
-              placeholder: "Title",
+              placeholder: context.l10n.title,
             onChanged: (value) async {
               controller.setTitle(value);
               return true;
@@ -236,15 +245,15 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           const SizedBox(height: 12),
 
           TextWidget(
-            text: "Clay Type",
+            text: context.l10n.clayType,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
 
           DropdownWidget(
-            placeholder: "Select",
+            placeholder: context.l10n.select,
 
             entries: [
               for (final clayType in widget.clayTypes)
@@ -260,10 +269,10 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           const SizedBox(height: 12),
 
           TextWidget(
-            text: "Weight",
+            text: context.l10n.weight,
             fontSize: 16,
             fontWeight: FontWeight.normal,
-            color: Colors.grey.shade500,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 4),
 
@@ -284,19 +293,48 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text('Dimensions', style: TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: const Text('Optional · centimeters'),
+            title: Text(
+              context.l10n.dimensions,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            subtitle: Text(
+              context.l10n.optionalMeasurementSystem(
+                AppSettingsController.instance.measurementSystem
+                    .localizedLabel(context.l10n)
+                    .toLowerCase(),
+              ),
+            ),
             children: [
               Row(children: [
-                Expanded(child: _dimensionField('Height', (value) => controller.setDimension('height', value))),
+                Expanded(
+                  child: _dimensionField(
+                    context.l10n.height,
+                    (value) => controller.setDimension('height', value),
+                  ),
+                ),
                 const SizedBox(width: 10),
-                Expanded(child: _dimensionField('Width', (value) => controller.setDimension('width', value))),
+                Expanded(
+                  child: _dimensionField(
+                    context.l10n.width,
+                    (value) => controller.setDimension('width', value),
+                  ),
+                ),
               ]),
               const SizedBox(height: 10),
               Row(children: [
-                Expanded(child: _dimensionField('Depth', (value) => controller.setDimension('depth', value))),
+                Expanded(
+                  child: _dimensionField(
+                    context.l10n.depth,
+                    (value) => controller.setDimension('depth', value),
+                  ),
+                ),
                 const SizedBox(width: 10),
-                Expanded(child: _dimensionField('Diameter', (value) => controller.setDimension('diameter', value))),
+                Expanded(
+                  child: _dimensionField(
+                    context.l10n.diameter,
+                    (value) => controller.setDimension('diameter', value),
+                  ),
+                ),
               ]),
               const SizedBox(height: 12),
             ],
@@ -307,7 +345,10 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           // =========================
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text('Glaze applications', style: TextStyle(fontWeight: FontWeight.w700)),
+            title: Text(
+              context.l10n.glazeApplications,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
             children: [
               GlazeApplicationEditor(
                 entries: controller.glazes,
@@ -329,7 +370,11 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           // =========================
           // Rating
           // =========================
-          TextWidget(text: "Rate", fontSize: 18, fontWeight: FontWeight.w700),
+          TextWidget(
+            text: context.l10n.rate,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
           StarStepperSelectWidget(
             initialValue: 0,
 
@@ -346,7 +391,11 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           // =========================
           // Tags
           // =========================
-          TextWidget(text: "Tags", fontSize: 18, fontWeight: FontWeight.w700),
+          TextWidget(
+            text: context.l10n.tags,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
           const SizedBox(height: 8),
 
           TagInputWidget(
@@ -358,8 +407,8 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             fontSize: 16,
             fontWeight: FontWeight.normal,
 
-            borderColor: Colors.black,
-            backgroundColor: Colors.grey.shade300,
+            borderColor: Theme.of(context).colorScheme.outline,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
 
             removeIconSize: 20,
             removeIconColor: Colors.red,
@@ -378,11 +427,15 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           // =========================
           // Notes
           // =========================
-          TextWidget(text: "Notes", fontSize: 18, fontWeight: FontWeight.w700),
+          TextWidget(
+            text: context.l10n.notes,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
           const SizedBox(height: 8),
 
           TextFieldWidget(
-            placeholder: "Project notes",
+            placeholder: context.l10n.projectNotes,
 
             minLines: 3,
             maxLines: 5,
@@ -396,11 +449,14 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           const SizedBox(height: 12),
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
-            title: const Text('Outcome', style: TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: const Text('Optional result notes'),
+            title: Text(
+              context.l10n.outcome,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            subtitle: Text(context.l10n.optionalResultNotes),
             children: [
               TextFieldWidget(
-                placeholder: 'How did the piece turn out?',
+                placeholder: context.l10n.outcomeHint,
                 minLines: 3,
                 maxLines: 6,
                 onChanged: (value) async {
@@ -422,20 +478,20 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
     if (_controller.title.trim().isEmpty || _controller.title.length > 255) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Enter a title up to 255 characters")));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.titleValidation)));
       return;
     }
     if (_controller.stageId <= 0 || _controller.clayTypeId < 0) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Invalid stage selected")));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.invalidStage)));
       return;
     }
     if (_controller.rating < 0 || _controller.rating > 5 ||
         _controller.weight < 0 || _controller.notes.length > 255 ||
         _controller.outcomeNote.length > 2000) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Check rating, weight, and note lengths before saving.'),
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(context.l10n.ceramicFieldsInvalid),
       ));
       return;
     }
@@ -455,9 +511,10 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
   }
 
   Widget _dimensionField(String label, ValueChanged<String> onChanged) {
+    final units = AppSettingsController.instance.measurementSystem;
     return TextFieldWidget(
       placeholder: label,
-      suffix: 'cm',
+      suffix: units.lengthSymbol,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),

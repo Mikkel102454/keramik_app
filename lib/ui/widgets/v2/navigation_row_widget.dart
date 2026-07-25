@@ -36,7 +36,7 @@ class NavigationRowWidget extends StatelessWidget {
         if (showTopDivider)
           Container(
             height: 1,
-            color: const Color(0xFFE0E0E0),
+            color: Theme.of(context).dividerColor,
           ),
 
         InkWell(

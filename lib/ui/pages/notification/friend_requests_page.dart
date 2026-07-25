@@ -4,6 +4,7 @@ import 'package:ceramic_app/ui/pages/notification/notification_controller_page.d
 import 'package:ceramic_app/ui/pages/profile/basic_profile_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class FriendRequestsPage extends StatefulWidget {
   const FriendRequestsPage({required this.controller, super.key});
@@ -24,9 +25,9 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
     if (!mounted || blocked == null) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('${blocked.username} blocked'),
+        content: Text(context.l10n.accountBlocked(blocked.username)),
         action: SnackBarAction(
-          label: 'Undo',
+          label: context.l10n.undo,
           onPressed: () async {
             try {
               await SocialRepository.unblock(blocked.userId);
@@ -51,8 +52,16 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Friend requests', style: TextStyle(fontWeight: FontWeight.w700)),
-          bottom: const TabBar(tabs: [Tab(text: 'Received'), Tab(text: 'Sent')]),
+          title: Text(
+            context.l10n.friendRequests,
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: context.l10n.received),
+              Tab(text: context.l10n.sent),
+            ],
+          ),
         ),
         body: AnimatedBuilder(
           animation: widget.controller,
@@ -60,7 +69,7 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
             children: [
               _RequestList(
                 requests: widget.controller.incoming,
-                emptyMessage: 'No received requests.',
+                emptyMessage: context.l10n.noReceivedRequests,
                 onOpen: _openProfile,
                 onRefresh: widget.controller.load,
                 onAccept: (request) async {
@@ -83,7 +92,7 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
               ),
               _RequestList(
                 requests: widget.controller.outgoing,
-                emptyMessage: 'No sent requests.',
+                emptyMessage: context.l10n.noSentRequests,
                 onOpen: _openProfile,
                 onRefresh: widget.controller.load,
                 onLoadMore: widget.controller.outgoingCursor == null
@@ -119,7 +128,16 @@ class _RequestList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (requests.isEmpty) return Center(child: Text(emptyMessage, style: const TextStyle(color: Colors.black54)));
+    if (requests.isEmpty) {
+      return Center(
+        child: Text(
+          emptyMessage,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      );
+    }
     return RefreshIndicator(
       onRefresh: onRefresh,
       child: ListView(
@@ -134,20 +152,36 @@ class _RequestList extends StatelessWidget {
                 imageUrl: request.user.avatarUrl,
               ),
               title: Text(request.user.username, style: const TextStyle(fontWeight: FontWeight.w600)),
-              subtitle: Text(onAccept == null ? 'Request sent' : 'Wants to be friends'),
+              subtitle: Text(
+                onAccept == null
+                    ? context.l10n.requestSent
+                    : context.l10n.wantsToBeFriends,
+              ),
               onTap: () => onOpen(request.user),
               trailing: onAccept == null
                   ? const Icon(Icons.chevron_right)
                   : Wrap(
                       spacing: 3,
                       children: [
-                        IconButton(tooltip: 'Decline', onPressed: () => onDecline?.call(request), icon: const Icon(Icons.close)),
-                        IconButton(tooltip: 'Accept', onPressed: () => onAccept?.call(request), icon: const Icon(Icons.check)),
+                        IconButton(
+                          tooltip: context.l10n.decline,
+                          onPressed: () => onDecline?.call(request),
+                          icon: const Icon(Icons.close),
+                        ),
+                        IconButton(
+                          tooltip: context.l10n.accept,
+                          onPressed: () => onAccept?.call(request),
+                          icon: const Icon(Icons.check),
+                        ),
                       ],
                     ),
             ),
           ),
-          if (onLoadMore != null) OutlinedButton(onPressed: onLoadMore, child: const Text('Load more')),
+          if (onLoadMore != null)
+            OutlinedButton(
+              onPressed: onLoadMore,
+              child: Text(context.l10n.loadMore),
+            ),
         ],
       ),
     );
