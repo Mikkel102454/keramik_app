@@ -1,6 +1,7 @@
 import 'package:ceramic_app/api/api_client.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/objects/public_ceramic_card_dto.dart';
+import 'package:ceramic_app/objects/publication_dto.dart';
 import 'package:ceramic_app/utils/web.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
@@ -43,6 +44,27 @@ class SocialRepository {
         .map(
           (item) => PublicCeramicCardDto.fromJson(
             item as Map<String, dynamic>,
+          ),
+        )
+        .toList();
+  }
+
+  static Future<List<PublicCeramicCardDto>> getPublishedCeramics(
+    String userId,
+  ) async {
+    final response = await ApiClient.dio.get('/api/users/$userId/publications');
+    checkSuccess(response);
+    return (response.data['data'] as List)
+        .map((item) => PublicationCardDto.fromJson(item as Map<String, dynamic>))
+        .map(
+          (item) => PublicCeramicCardDto(
+            publicationId: item.publicationId,
+            imageUrl: item.primaryImage?.uri,
+            title: item.title,
+            stage: 'Finished',
+            clayTitle: item.clay,
+            rating: 0,
+            likeCount: item.likeCount,
           ),
         )
         .toList();

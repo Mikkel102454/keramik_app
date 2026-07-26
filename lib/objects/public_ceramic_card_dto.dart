@@ -5,6 +5,8 @@ class PublicCeramicCardDto {
     required this.rating,
     this.imageUrl,
     this.clayTitle,
+    this.publicationId,
+    this.likeCount = 0,
   });
 
   final String? imageUrl;
@@ -12,6 +14,8 @@ class PublicCeramicCardDto {
   final String stage;
   final String? clayTitle;
   final int rating;
+  final String? publicationId;
+  final int likeCount;
 
   factory PublicCeramicCardDto.fromJson(Map<String, dynamic> json) {
     return PublicCeramicCardDto(
@@ -20,6 +24,8 @@ class PublicCeramicCardDto {
       stage: json['stage'] as String,
       clayTitle: json['clayTitle'] as String?,
       rating: (json['rating'] as num).toInt(),
+      publicationId: json['publicationId'] as String?,
+      likeCount: (json['likeCount'] as num?)?.toInt() ?? 0,
     );
   }
 }

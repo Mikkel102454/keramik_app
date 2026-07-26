@@ -6,6 +6,7 @@ import 'package:ceramic_app/repositories/social_repository.dart';
 import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
 import 'package:ceramic_app/ui/pages/notification/message_request_page.dart';
 import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
+import 'package:ceramic_app/ui/pages/discover/publication_detail_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
@@ -53,7 +54,7 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
     });
     try {
       final loader =
-          widget.loadFinishedCeramics ?? SocialRepository.getFinishedCeramics;
+          widget.loadFinishedCeramics ?? SocialRepository.getPublishedCeramics;
       final ceramics = await loader(_profile.userId);
       if (mounted) setState(() => _finishedCeramics = ceramics);
     } catch (exception) {
@@ -314,15 +315,41 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
               ),
               itemBuilder: (context, index) {
                 final ceramic = _finishedCeramics[index];
-                return CeramicJournalCard.public(
-                  publicTitle: ceramic.title,
-                  publicRating: ceramic.rating,
-                  publicImageUrl: ceramic.imageUrl,
-                  stageTitle: localizedStageName(
-                    context.l10n,
-                    ceramic.stage,
+                return GestureDetector(
+                  onTap: ceramic.publicationId == null
+                      ? null
+                      : () => Navigator.push<void>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PublicationDetailPage(
+                                publicationId: ceramic.publicationId!,
+                              ),
+                            ),
+                          ),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CeramicJournalCard.public(
+                        publicTitle: ceramic.title,
+                        publicRating: ceramic.rating,
+                        publicImageUrl: ceramic.imageUrl,
+                        stageTitle: localizedStageName(
+                          context.l10n,
+                          ceramic.stage,
+                        ),
+                        clayTitle: ceramic.clayTitle,
+                      ),
+                      if (ceramic.likeCount > 0)
+                        Positioned(
+                          right: 8,
+                          bottom: 8,
+                          child: Chip(
+                            avatar: const Icon(Icons.favorite, size: 15),
+                            label: Text('${ceramic.likeCount}'),
+                          ),
+                        ),
+                    ],
                   ),
-                  clayTitle: ceramic.clayTitle,
                 );
               },
             ),

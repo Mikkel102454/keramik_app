@@ -63,3 +63,33 @@ flutter build apk --debug --dart-define=API_BASE_URL=http://10.0.2.2:8080
 ```
 
 These automated checks validate analysis, unit/widget behavior, and debug packaging. Two-client on-device acceptance against real MariaDB, MinIO, Redis, and multiple backend instances remains an external release gate; see the backend operations guide.
+# Discover and publication
+
+The former Shop navigation item is presented as Discover. Authenticated members can
+browse For You and Latest publication feeds, refresh and paginate them, like other
+members' publications, mark an episode Not interested with a five-second Undo, and
+submit publication reports. Duplicate cards are removed by publication UUID and an
+expired recommendation session replaces—rather than appends to—the old list.
+
+Ceramics are never published automatically. After creating a Finished ceramic or
+moving one into Finished, the app offers an explicit publication prompt. A missing
+image leaves the journal mutation intact and explains why publication is unavailable.
+Private journal details remain private; profiles request only currently authorized
+publication episodes.
+
+The feed uses a social-post layout for continuous vertical scrolling:
+creator and publication time above a reserved, height-bounded image frame with
+loading progress and uncropped content, like/share actions directly below,
+and the creator/title caption and clay metadata at the bottom. Tapping a post opens
+its curated detail; tapping the creator header opens their live profile, and
+double-tapping an unliked image likes it.
+
+Discover cards and published profile cards open a server-authorized curated detail
+view with a height-bounded swipeable image gallery, creator identity, clay, tags, dimensions, outcome, rating,
+and like count; private notes, weight, glaze/firing data, and history are not
+requested. Publications can be shared through the existing direct/group picker.
+Chat renders a live-authorized publication card, refreshes the message-scoped detail
+before opening it, and shows a localized unavailable placeholder after authorization
+or lifecycle changes. The report dialog localizes every category, validates required
+explanations, and explains the immutable evidence copy and permanent episode
+suppression.

@@ -2401,6 +2401,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updated'**
   String get updated;
+
+  /// No description provided for @navigationDiscover.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover'**
+  String get navigationDiscover;
+
+  /// No description provided for @discoverForYou.
+  ///
+  /// In en, this message translates to:
+  /// **'For You'**
+  String get discoverForYou;
+
+  /// No description provided for @discoverLatest.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest'**
+  String get discoverLatest;
+
+  /// No description provided for @discoverEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No published ceramics are available yet.'**
+  String get discoverEmpty;
+
+  /// No description provided for @notInterestedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Not interested'**
+  String get notInterestedAction;
+
+  /// No description provided for @likeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Like'**
+  String get likeAction;
+
+  /// No description provided for @publishFinishedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish this finished piece?'**
+  String get publishFinishedTitle;
+
+  /// No description provided for @publishFinishedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Published pieces can appear in Discover and on your profile. Up to 20 images and the listed public details will be visible.'**
+  String get publishFinishedBody;
+
+  /// No description provided for @publicationAudienceEveryone.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone: Visible to all active members, except people you have blocked or who have blocked you.'**
+  String get publicationAudienceEveryone;
+
+  /// No description provided for @publicationAudienceFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends only: Your current privacy setting limits this piece to accepted friends. Blocking and account rules still apply.'**
+  String get publicationAudienceFriends;
+
+  /// No description provided for @publishAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish'**
+  String get publishAction;
+
+  /// No description provided for @notNowAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notNowAction;
+
+  /// No description provided for @unpublishAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpublish'**
+  String get unpublishAction;
+
+  /// No description provided for @publicationTemporarilyUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Published, but hidden until the piece is Finished and has an image.'**
+  String get publicationTemporarilyUnavailable;
+
+  /// No description provided for @publicationModerationRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed by moderation. You cannot republish this piece while the moderation lock is active.'**
+  String get publicationModerationRemoved;
+
+  /// No description provided for @discoverSessionRefreshed.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations refreshed.'**
+  String get discoverSessionRefreshed;
+
+  /// No description provided for @publicationUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Published ceramic unavailable'**
+  String get publicationUnavailable;
+
+  /// No description provided for @publicationReportEvidenceDisclosure.
+  ///
+  /// In en, this message translates to:
+  /// **'The current public details and up to 20 visible images will be securely preserved for moderator review. Reporting permanently hides this publication episode from you.'**
+  String get publicationReportEvidenceDisclosure;
+
+  /// No description provided for @undoAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undoAction;
+
+  /// No description provided for @reportPublication.
+  ///
+  /// In en, this message translates to:
+  /// **'Report publication'**
+  String get reportPublication;
+
+  /// No description provided for @reportReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get reportReason;
+
+  /// No description provided for @reportExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get reportExplanation;
 }
 
 class _AppLocalizationsDelegate

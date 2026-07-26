@@ -115,9 +115,15 @@ class ShareCeramicConversationPickerPage extends StatefulWidget {
   const ShareCeramicConversationPickerPage({
     required this.ceramicId,
     super.key,
-  });
+  }) : publicationId = null;
 
-  final int ceramicId;
+  const ShareCeramicConversationPickerPage.publication({
+    required this.publicationId,
+    super.key,
+  }) : ceramicId = null;
+
+  final int? ceramicId;
+  final String? publicationId;
 
   @override
   State<ShareCeramicConversationPickerPage> createState() =>
@@ -172,11 +178,19 @@ class _ShareCeramicConversationPickerPageState
     });
     try {
       final clientId = _clientIds.putIfAbsent(conversation.id, createClientUuid);
-      await ChatRepository.sendCeramic(
-        conversation.id,
-        clientId,
-        widget.ceramicId,
-      );
+      if (widget.publicationId case final publicationId?) {
+        await ChatRepository.sendPublication(
+          conversation.id,
+          clientId,
+          publicationId,
+        );
+      } else {
+        await ChatRepository.sendCeramic(
+          conversation.id,
+          clientId,
+          widget.ceramicId!,
+        );
+      }
       _clientIds.remove(conversation.id);
       if (mounted) Navigator.pop(context, true);
     } catch (exception) {

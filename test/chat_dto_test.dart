@@ -96,6 +96,53 @@ void main() {
     expect(unavailable.ceramic!.title, isNull);
   });
 
+  test('parses live publication cards and unavailable placeholders', () {
+    final available = ChatMessageDto.fromJson({
+      'id': '11111111-1111-4111-8111-111111111111',
+      'senderUserId': '22222222-2222-4222-8222-222222222222',
+      'body': '',
+      'createdAt': '2026-07-25T10:30:00Z',
+      'sequence': 11,
+      'mine': false,
+      'type': 'PUBLICATION',
+      'publication': {
+        'available': true,
+        'publication': {
+          'publicationId': '44444444-4444-4444-8444-444444444444',
+          'creator': {
+            'userId': '22222222-2222-4222-8222-222222222222',
+            'username': 'potter',
+            'avatarUrl': null,
+            'avatarInitials': 'PO',
+            'avatarColor': '#355070',
+          },
+          'primaryImage': null,
+          'title': 'Published bowl',
+          'clay': 'Stoneware',
+          'likeCount': 3,
+          'likedByMe': false,
+          'ownedByMe': false,
+          'publishedAt': '2026-07-25T10:00:00Z',
+        },
+      },
+    });
+    final unavailable = ChatMessageDto.fromJson({
+      'id': '33333333-3333-4333-8333-333333333333',
+      'senderUserId': '22222222-2222-4222-8222-222222222222',
+      'body': '',
+      'createdAt': '2026-07-25T10:31:00Z',
+      'sequence': 12,
+      'mine': false,
+      'type': 'PUBLICATION',
+      'publication': {'available': false, 'publication': null},
+    });
+
+    expect(available.publication!.available, isTrue);
+    expect(available.publication!.publication!.title, 'Published bowl');
+    expect(unavailable.publication!.available, isFalse);
+    expect(unavailable.publication!.publication, isNull);
+  });
+
   test('creates RFC 4122 version 4 client IDs', () {
     final first = createClientUuid();
     final second = createClientUuid();

@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:ceramic_app/repositories/publication_repository.dart';
 import 'package:image_picker/image_picker.dart';
 import 'ceramic_create_page_controller.dart';
 
@@ -498,13 +499,46 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
     }
 
     try {
-      await _controller.create();
+      final created = await _controller.create();
       if (!mounted) return;
 
+      final finished = widget.stages
+          .where((stage) => stage.id == created.stageId)
+          .any((stage) => stage.title.toLowerCase() == 'finished');
+      if (finished) {
+        final publish = await showDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(context.l10n.publishFinishedTitle),
+            content: Text(
+              created.images.isEmpty
+                  ? '${context.l10n.publishFinishedBody}\n\n'
+                      '${context.l10n.publicationTemporarilyUnavailable}'
+                  : context.l10n.publishFinishedBody,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: Text(context.l10n.notNowAction),
+              ),
+              if (created.images.isNotEmpty)
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: Text(context.l10n.publishAction),
+                ),
+            ],
+          ),
+        );
+        if (publish == true) {
+          await PublicationRepository.publish(created.id);
+        }
+      }
+
+      if (!mounted) return;
       Navigator.pop(context, true);
     } catch (e) {
       debugPrint("Create failed: $e");
-
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
       );

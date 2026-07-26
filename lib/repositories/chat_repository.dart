@@ -166,6 +166,22 @@ class ChatRepository {
     return ChatMessageDto.fromJson(response.data['data']);
   }
 
+  static Future<ChatMessageDto> sendPublication(
+    String conversationId,
+    String clientMessageId,
+    String publicationId,
+  ) async {
+    final response = await ApiClient.dio.post(
+      '/api/chat/conversations/$conversationId/publications',
+      data: {
+        'clientMessageId': clientMessageId,
+        'publicationId': publicationId,
+      },
+    );
+    checkSuccess(response);
+    return ChatMessageDto.fromJson(response.data['data'] as Map<String, dynamic>);
+  }
+
   static Future<SharedCeramicDetailDto> getSharedCeramic(
     String conversationId,
     String messageId,
@@ -177,6 +193,17 @@ class ChatRepository {
     return SharedCeramicDetailDto.fromJson(
       response.data['data'] as Map<String, dynamic>,
     );
+  }
+
+  static Future<Map<String, dynamic>> getSharedPublication(
+    String conversationId,
+    String messageId,
+  ) async {
+    final response = await ApiClient.dio.get(
+      '/api/chat/conversations/$conversationId/messages/$messageId/publication',
+    );
+    checkSuccess(response);
+    return response.data['data'] as Map<String, dynamic>;
   }
 
   static Future<void> markRead(String id, String messageId) async {

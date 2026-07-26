@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 enum NavigationPage {
   home,
   materials,
-  shop,
+  discover,
   notifications,
   profile,
 }
@@ -52,7 +52,7 @@ class _NavigationWidgetState extends State<NavigationWidget> {
         );
         break;
 
-      case NavigationPage.shop:
+      case NavigationPage.discover:
         context.router.replace(
           const ShopRoute(),
           onFailure: (failure) {},
@@ -138,21 +138,20 @@ class _NavigationWidgetState extends State<NavigationWidget> {
 
               Expanded(
                 child: _NavigationItem(
-                  label: context.l10n.navigationShop,
-                  icon: Icons
-                      .shopping_cart_outlined,
+                  label: context.l10n.navigationDiscover,
+                  icon: Icons.explore_outlined,
 
                   selectedIcon:
-                  Icons.shopping_cart,
+                  Icons.explore,
 
                   isSelected:
                   widget.currentPage ==
-                      NavigationPage.shop,
+                      NavigationPage.discover,
 
                   onTap: () {
                     _navigate(
                       context,
-                      NavigationPage.shop,
+                      NavigationPage.discover,
                     );
                   },
                 ),

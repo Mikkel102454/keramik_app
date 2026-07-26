@@ -214,7 +214,7 @@ class CeramicCreatePageController extends ChangeNotifier{
     }
   }
 
-  Future<void> create() async{
+  Future<CeramicDto> create() async{
     CeramicDto ceramicDto = CeramicDto(
       title: title,
       clayTypeId: clayTypeId,
@@ -232,8 +232,10 @@ class CeramicCreatePageController extends ChangeNotifier{
       diameterCm: diameterCm,
       outcomeNote: outcomeNote,
     );
-    await CeramicRepository.createCeramic(ceramic: ceramicDto, images: images);
+    final created =
+        await CeramicRepository.createCeramic(ceramic: ceramicDto, images: images);
     await cleanupImages();
+    return created;
   }
 
   Future<void> cleanupImages() async {

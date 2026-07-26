@@ -974,7 +974,7 @@ class AppLocalizationsDa extends AppLocalizations {
       'Den valgte besked og op til to nærliggende beskeder på hver side inkluderes sikkert til gennemgang. Rapportering blokerer ikke kontoen og ændrer ikke samtalen.';
 
   @override
-  String get submitReport => 'Indsend rapport';
+  String get submitReport => 'Send rapport';
 
   @override
   String get all => 'Alle';
@@ -1296,4 +1296,77 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get updated => 'Opdateret';
+
+  @override
+  String get navigationDiscover => 'Opdag';
+
+  @override
+  String get discoverForYou => 'Til dig';
+
+  @override
+  String get discoverLatest => 'Nyeste';
+
+  @override
+  String get discoverEmpty => 'Der er endnu ingen udgivne keramikemner.';
+
+  @override
+  String get notInterestedAction => 'Ikke interesseret';
+
+  @override
+  String get likeAction => 'Synes godt om';
+
+  @override
+  String get publishFinishedTitle => 'Vil du udgive dette færdige emne?';
+
+  @override
+  String get publishFinishedBody =>
+      'Udgivne emner kan vises under Opdag og på din profil. Op til 20 billeder og de angivne offentlige oplysninger bliver synlige.';
+
+  @override
+  String get publicationAudienceEveryone =>
+      'Alle: Synligt for alle aktive medlemmer undtagen personer, du har blokeret, eller som har blokeret dig.';
+
+  @override
+  String get publicationAudienceFriends =>
+      'Kun venner: Din nuværende privatlivsindstilling begrænser dette emne til accepterede venner. Blokering og kontoregler gælder stadig.';
+
+  @override
+  String get publishAction => 'Udgiv';
+
+  @override
+  String get notNowAction => 'Ikke nu';
+
+  @override
+  String get unpublishAction => 'Fjern udgivelse';
+
+  @override
+  String get publicationTemporarilyUnavailable =>
+      'Udgivet, men skjult indtil emnet er Færdigt og har et billede.';
+
+  @override
+  String get publicationModerationRemoved =>
+      'Fjernet af moderation. Du kan ikke udgive emnet igen, mens moderationslåsen er aktiv.';
+
+  @override
+  String get discoverSessionRefreshed => 'Anbefalingerne er opdateret.';
+
+  @override
+  String get publicationUnavailable =>
+      'Det udgivne keramikemne er ikke tilgængeligt';
+
+  @override
+  String get publicationReportEvidenceDisclosure =>
+      'De nuværende offentlige oplysninger og op til 20 synlige billeder gemmes sikkert til moderatorgennemgang. Rapportering skjuler denne udgivelse permanent for dig.';
+
+  @override
+  String get undoAction => 'Fortryd';
+
+  @override
+  String get reportPublication => 'Rapportér udgivelse';
+
+  @override
+  String get reportReason => 'Årsag';
+
+  @override
+  String get reportExplanation => 'Forklaring';
 }

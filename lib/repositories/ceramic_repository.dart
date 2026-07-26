@@ -36,7 +36,7 @@ class CeramicRepository {
     checkSuccess(response);
   }
 
-  static Future<void> createCeramic({
+  static Future<CeramicDto> createCeramic({
     required CeramicDto ceramic,
     required List<XFile> images,
   }) async {
@@ -92,6 +92,9 @@ class CeramicRepository {
     );
 
     checkSuccess(response);
+    return CeramicDto.fromJson(
+      response.data['data'] as Map<String, dynamic>,
+    );
   }
 
   static Future<void> updateCeramic({

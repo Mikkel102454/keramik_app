@@ -6,7 +6,10 @@ import 'package:ceramic_app/ui/pages/notification/conversation_page_controller.d
 import 'package:ceramic_app/ui/pages/notification/ceramic_sharing_pages.dart';
 import 'package:ceramic_app/ui/pages/notification/report_message_page.dart';
 import 'package:ceramic_app/ui/pages/notification/shared_ceramic_detail_page.dart';
+import 'package:ceramic_app/ui/pages/discover/publication_detail_page.dart';
+import 'package:ceramic_app/objects/publication_dto.dart';
 import 'package:ceramic_app/ui/widgets/chat_ceramic_card.dart';
+import 'package:ceramic_app/ui/widgets/chat_publication_card.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
@@ -100,6 +103,31 @@ class _ConversationPageState extends State<ConversationPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _openPublication(ChatMessageDto message) async {
+    try {
+      final detail = await ChatRepository.getSharedPublication(
+        _controller.conversation.id,
+        message.id,
+      );
+      if (!mounted) return;
+      final parsed = PublicationDetailDto.fromJson(detail);
+      await Navigator.push<void>(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PublicationDetailPage(
+            publicationId: parsed.publicationId,
+            initialDetail: parsed,
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.publicationUnavailable)),
+      );
+    }
   }
 
   void _comingLater() {
@@ -408,11 +436,16 @@ class _ConversationPageState extends State<ConversationPage> {
                 message: message,
                 isGroup: _controller.conversation.type == 'GROUP',
                 onLongPress: !message.mine &&
-                        (message.type == 'TEXT' || message.type == 'CERAMIC')
+                        (message.type == 'TEXT' ||
+                            message.type == 'CERAMIC' ||
+                            message.type == 'PUBLICATION')
                     ? () => _showMessageActions(message)
                     : null,
                 onCeramicTap: message.ceramic?.available == true
                     ? () => _openCeramic(message)
+                    : null,
+                onPublicationTap: message.publication?.available == true
+                    ? () => _openPublication(message)
                     : null,
               ),
             ],
@@ -431,12 +464,14 @@ class _MessageBubble extends StatelessWidget {
     required this.message,
     required this.isGroup,
     this.onCeramicTap,
+    this.onPublicationTap,
     this.onLongPress,
   });
   final ChatMessageDto message;
   final bool isGroup;
   final VoidCallback? onLongPress;
   final VoidCallback? onCeramicTap;
+  final VoidCallback? onPublicationTap;
 
   @override
   Widget build(BuildContext context) {
@@ -474,6 +509,35 @@ class _MessageBubble extends StatelessWidget {
               ChatCeramicCard(
                 card: message.ceramic ?? const ChatCeramicCardDto(available: false),
                 onTap: onCeramicTap,
+                onLongPress: onLongPress,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    if (message.type == 'PUBLICATION') {
+      return Align(
+        alignment: message.mine ? Alignment.centerRight : Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 9),
+          child: Column(
+            crossAxisAlignment: message.mine
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: [
+              if (isGroup && !message.mine && message.senderUsername != null)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, bottom: 4),
+                  child: Text(
+                    message.senderUsername!,
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ),
+              ChatPublicationCard(
+                card: message.publication ??
+                    const ChatPublicationCardDto(available: false),
+                onTap: onPublicationTap,
                 onLongPress: onLongPress,
               ),
             ],

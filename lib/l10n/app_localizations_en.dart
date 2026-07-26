@@ -1294,4 +1294,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updated => 'Updated';
+
+  @override
+  String get navigationDiscover => 'Discover';
+
+  @override
+  String get discoverForYou => 'For You';
+
+  @override
+  String get discoverLatest => 'Latest';
+
+  @override
+  String get discoverEmpty => 'No published ceramics are available yet.';
+
+  @override
+  String get notInterestedAction => 'Not interested';
+
+  @override
+  String get likeAction => 'Like';
+
+  @override
+  String get publishFinishedTitle => 'Publish this finished piece?';
+
+  @override
+  String get publishFinishedBody =>
+      'Published pieces can appear in Discover and on your profile. Up to 20 images and the listed public details will be visible.';
+
+  @override
+  String get publicationAudienceEveryone =>
+      'Everyone: Visible to all active members, except people you have blocked or who have blocked you.';
+
+  @override
+  String get publicationAudienceFriends =>
+      'Friends only: Your current privacy setting limits this piece to accepted friends. Blocking and account rules still apply.';
+
+  @override
+  String get publishAction => 'Publish';
+
+  @override
+  String get notNowAction => 'Not now';
+
+  @override
+  String get unpublishAction => 'Unpublish';
+
+  @override
+  String get publicationTemporarilyUnavailable =>
+      'Published, but hidden until the piece is Finished and has an image.';
+
+  @override
+  String get publicationModerationRemoved =>
+      'Removed by moderation. You cannot republish this piece while the moderation lock is active.';
+
+  @override
+  String get discoverSessionRefreshed => 'Recommendations refreshed.';
+
+  @override
+  String get publicationUnavailable => 'Published ceramic unavailable';
+
+  @override
+  String get publicationReportEvidenceDisclosure =>
+      'The current public details and up to 20 visible images will be securely preserved for moderator review. Reporting permanently hides this publication episode from you.';
+
+  @override
+  String get undoAction => 'Undo';
+
+  @override
+  String get reportPublication => 'Report publication';
+
+  @override
+  String get reportReason => 'Reason';
+
+  @override
+  String get reportExplanation => 'Explanation';
 }

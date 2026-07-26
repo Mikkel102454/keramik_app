@@ -15,6 +15,8 @@ import 'package:ceramic_app/utils/measurement.dart';
 
 import 'package:ceramic_app/objects/stage_dto.dart';
 import 'package:ceramic_app/repositories/ceramic_repository.dart';
+import 'package:ceramic_app/repositories/publication_repository.dart';
+import 'package:ceramic_app/objects/publication_dto.dart';
 
 class CeramicViewPageController extends ChangeNotifier{
   List<StageDto> stages = [];
@@ -27,6 +29,7 @@ class CeramicViewPageController extends ChangeNotifier{
 
   bool _isLoading = false;
   String? _error;
+  PublicationStatusDto? publicationStatus;
 
   Future<void> load(CeramicDto? ceramicDto, List<StageDto>? stages) async {
     _isLoading = true;
@@ -39,10 +42,12 @@ class CeramicViewPageController extends ChangeNotifier{
         CeramicRepository.getCeramic(ceramicId),
         CeramicFiringRepository.getFirings(ceramicId),
         CeramicStageHistoryRepository.getHistory(ceramicId),
+        PublicationRepository.status(ceramicId),
       ]);
       ceramic = results[0] as CeramicDto;
       firings = results[1] as List<CeramicFiringDto>;
       stageHistory = results[2] as List<CeramicStageHistoryDto>;
+      publicationStatus = results[3] as PublicationStatusDto;
       if(stages != null) this.stages = stages;
 
       ceramic.stageId = this.stages.where((e) => e.id == ceramic.stageId,).first.id;
@@ -142,6 +147,19 @@ class CeramicViewPageController extends ChangeNotifier{
       ceramic.glazes = oldGlazes;
       notifyListeners();
       return -1;
+    }
+  }
+
+  Future<bool> togglePublication() async {
+    try {
+      publicationStatus = publicationStatus?.current == true
+          ? await PublicationRepository.unpublish(ceramic.id)
+          : await PublicationRepository.publish(ceramic.id);
+      hasChanged = true;
+      notifyListeners();
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 

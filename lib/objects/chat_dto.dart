@@ -1,4 +1,5 @@
 import 'package:ceramic_app/objects/user_profile_dto.dart';
+import 'package:ceramic_app/objects/publication_dto.dart';
 
 class DirectConversationDto {
   const DirectConversationDto({
@@ -78,6 +79,7 @@ class ChatMessageDto {
     this.senderAvatarInitials,
     this.senderAvatarColor,
     this.ceramic,
+    this.publication,
   });
 
   final String id;
@@ -92,6 +94,7 @@ class ChatMessageDto {
   final String? senderAvatarInitials;
   final String? senderAvatarColor;
   final ChatCeramicCardDto? ceramic;
+  final ChatPublicationCardDto? publication;
 
   factory ChatMessageDto.fromJson(Map<String, dynamic> json) {
     return ChatMessageDto(
@@ -109,8 +112,30 @@ class ChatMessageDto {
       ceramic: json['ceramic'] == null
           ? null
           : ChatCeramicCardDto.fromJson(json['ceramic'] as Map<String, dynamic>),
+      publication: json['publication'] == null
+          ? null
+          : ChatPublicationCardDto.fromJson(
+              json['publication'] as Map<String, dynamic>,
+            ),
     );
   }
+}
+
+class ChatPublicationCardDto {
+  const ChatPublicationCardDto({required this.available, this.publication});
+
+  final bool available;
+  final PublicationCardDto? publication;
+
+  factory ChatPublicationCardDto.fromJson(Map<String, dynamic> json) =>
+      ChatPublicationCardDto(
+        available: json['available'] as bool? ?? false,
+        publication: json['publication'] == null
+            ? null
+            : PublicationCardDto.fromJson(
+                json['publication'] as Map<String, dynamic>,
+              ),
+      );
 }
 
 class ChatCeramicCardDto {

@@ -187,6 +187,53 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
+          if (controller.publicationStatus case final status?) ...[
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (status.state == 'MODERATION_REMOVED')
+                      Text(context.l10n.publicationModerationRemoved)
+                    else if (status.current && !status.eligible)
+                      Text(context.l10n.publicationTemporarilyUnavailable)
+                    else
+                      Text(
+                        status.current
+                            ? context.l10n.navigationDiscover
+                            : context.l10n.publishFinishedBody,
+                      ),
+                    const SizedBox(height: 10),
+                    FilledButton.icon(
+                      onPressed: status.state == 'MODERATION_REMOVED'
+                          ? null
+                          : () async {
+                              final success =
+                                  await controller.togglePublication();
+                              if (!success && mounted) {
+                                ScaffoldMessenger.of(this.context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(this.context.l10n.tryAgain),
+                                  ),
+                                );
+                              }
+                            },
+                      icon: Icon(
+                        status.current ? Icons.visibility_off : Icons.public,
+                      ),
+                      label: Text(
+                        status.current
+                            ? context.l10n.unpublishAction
+                            : context.l10n.publishAction,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 14),
+          ],
           // =========================
           // Images
           // =========================
@@ -297,7 +344,18 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             ],
 
             onChanged: (value) async {
-              return controller.setStage(int.parse(value));
+              final stageId = int.parse(value);
+              final wasFinished = controller.stages
+                  .where((stage) => stage.id == controller.ceramic.stageId)
+                  .any((stage) => stage.title.toLowerCase() == 'finished');
+              final success = await controller.setStage(stageId);
+              final isFinished = controller.stages
+                  .where((stage) => stage.id == stageId)
+                  .any((stage) => stage.title.toLowerCase() == 'finished');
+              if (success && !wasFinished && isFinished && context.mounted) {
+                await _offerPublication(controller);
+              }
+              return success;
             },
           ),
           const SizedBox(height: 20),
@@ -671,6 +729,34 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
         ],
       ),
     );
+  }
+
+  Future<void> _offerPublication(CeramicViewPageController controller) async {
+    final hasImage = controller.ceramic.images.isNotEmpty;
+    final publish = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.publishFinishedTitle),
+        content: Text(
+          hasImage
+              ? context.l10n.publishFinishedBody
+              : '${context.l10n.publishFinishedBody}\n\n'
+                  '${context.l10n.publicationTemporarilyUnavailable}',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(context.l10n.notNowAction),
+          ),
+          if (hasImage)
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(context.l10n.publishAction),
+            ),
+        ],
+      ),
+    );
+    if (publish == true) await controller.togglePublication();
   }
 
   Widget _dimensionField(
