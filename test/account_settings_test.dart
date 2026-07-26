@@ -13,6 +13,7 @@ void main() {
     expect(settings.themeMode, AccountThemeMode.system);
     expect(settings.measurementSystem, MeasurementSystem.metric);
     expect(settings.languageTag, 'en');
+    expect(settings.preferredCurrency, 'AUTO');
     expect(settings.discoverability, PrivacyAudience.everyone);
     expect(settings.friendRequests, PrivacyAudience.everyone);
     expect(settings.messages, PrivacyAudience.everyone);
@@ -20,6 +21,17 @@ void main() {
     expect(settings.notifyMessageRequests, isTrue);
     expect(settings.notifyFriendRequests, isTrue);
     expect(settings.notifyGroupActivity, isTrue);
+  });
+
+  test('currency setting round-trips and automatic detection uses region', () {
+    final settings = AccountSettingsDto.fromJson(const {
+      'preferredCurrency': 'DKK',
+    });
+
+    expect(settings.preferredCurrency, 'DKK');
+    expect(settings.toJson()['preferredCurrency'], 'DKK');
+    expect(detectedCurrency(const Locale('da', 'DK')), 'DKK');
+    expect(detectedCurrency(const Locale('en', 'US')), 'USD');
   });
 
   test('failed optimistic setting save restores the previous value', () async {
@@ -58,10 +70,7 @@ void main() {
     );
     expect(fahrenheit, closeTo(1832, 0.0001));
     expect(
-      Measurement.temperatureToCelsius(
-        fahrenheit,
-        MeasurementSystem.imperial,
-      ),
+      Measurement.temperatureToCelsius(fahrenheit, MeasurementSystem.imperial),
       closeTo(1000, 0.0001),
     );
 
@@ -83,9 +92,7 @@ void main() {
     final controller = CeramicCreatePageController();
     try {
       await appSettings.applyLocalSettings(
-        const AccountSettingsDto(
-          measurementSystem: MeasurementSystem.imperial,
-        ),
+        const AccountSettingsDto(measurementSystem: MeasurementSystem.imperial),
       );
 
       controller.setWeight('22.0462');

@@ -2533,6 +2533,1247 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Explanation'**
   String get reportExplanation;
+
+  /// No description provided for @createTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create template'**
+  String get createTemplate;
+
+  /// No description provided for @editTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit template'**
+  String get editTemplate;
+
+  /// No description provided for @templateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Template name'**
+  String get templateName;
+
+  /// No description provided for @templateTitlePattern.
+  ///
+  /// In en, this message translates to:
+  /// **'Title pattern'**
+  String get templateTitlePattern;
+
+  /// No description provided for @templateTitlePatternHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Place n inside braces where the batch number should appear.'**
+  String get templateTitlePatternHelp;
+
+  /// No description provided for @noClay.
+  ///
+  /// In en, this message translates to:
+  /// **'No clay'**
+  String get noClay;
+
+  /// No description provided for @commaSeparatedTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Separate tags with commas.'**
+  String get commaSeparatedTags;
+
+  /// No description provided for @noTemplateGlazes.
+  ///
+  /// In en, this message translates to:
+  /// **'No glaze plan.'**
+  String get noTemplateGlazes;
+
+  /// No description provided for @plannedFirings.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned firings'**
+  String get plannedFirings;
+
+  /// No description provided for @noTemplateFirings.
+  ///
+  /// In en, this message translates to:
+  /// **'No firing plan.'**
+  String get noTemplateFirings;
+
+  /// No description provided for @templateGlazeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{coatCount, plural, =1{1 coat} other{{coatCount} coats}}{note, select, other{ · {note}}}'**
+  String templateGlazeSummary(int coatCount, String note);
+
+  /// No description provided for @addPlannedFiring.
+  ///
+  /// In en, this message translates to:
+  /// **'Add planned firing'**
+  String get addPlannedFiring;
+
+  /// No description provided for @tooManyTemplateTags.
+  ///
+  /// In en, this message translates to:
+  /// **'A template can contain at most 30 tags.'**
+  String get tooManyTemplateTags;
+
+  /// No description provided for @requiredField.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required.'**
+  String get requiredField;
+
+  /// No description provided for @invalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid non-negative number.'**
+  String get invalidNumber;
+
+  /// No description provided for @createFromTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create from template'**
+  String get createFromTemplate;
+
+  /// No description provided for @batchQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity: {count}'**
+  String batchQuantity(int count);
+
+  /// No description provided for @startNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting number'**
+  String get startNumber;
+
+  /// No description provided for @titlePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Title preview'**
+  String get titlePreview;
+
+  /// No description provided for @createOneCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'Create ceramic'**
+  String get createOneCeramic;
+
+  /// No description provided for @createCeramicBatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Create {count} ceramics'**
+  String createCeramicBatch(int count);
+
+  /// No description provided for @confirmBatchCreation.
+  ///
+  /// In en, this message translates to:
+  /// **'Create this batch?'**
+  String get confirmBatchCreation;
+
+  /// No description provided for @confirmBatchCreationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'This will create {count, plural, =1{one new ceramic} other{{count} new ceramics}} with fresh journal history.'**
+  String confirmBatchCreationBody(int count);
+
+  /// No description provided for @batchCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch created'**
+  String get batchCreated;
+
+  /// No description provided for @batchCreatedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{One ceramic was created.} other{{count} ceramics were created.}}'**
+  String batchCreatedBody(int count);
+
+  /// No description provided for @projectTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Project templates'**
+  String get projectTemplates;
+
+  /// No description provided for @duplicate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate'**
+  String get duplicate;
+
+  /// No description provided for @templateGlazeCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No glazes} =1{1 glaze} other{{count} glazes}}'**
+  String templateGlazeCount(int count);
+
+  /// No description provided for @templateFiringCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No firings} =1{1 firing} other{{count} firings}}'**
+  String templateFiringCount(int count);
+
+  /// No description provided for @templateMaterialMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'A referenced material is no longer available. Edit the template before using it.'**
+  String get templateMaterialMissing;
+
+  /// No description provided for @useTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Use template'**
+  String get useTemplate;
+
+  /// No description provided for @duplicateTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate template'**
+  String get duplicateTemplate;
+
+  /// No description provided for @copyOfTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy of {name}'**
+  String copyOfTemplate(String name);
+
+  /// No description provided for @deleteTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete template?'**
+  String get deleteTemplate;
+
+  /// No description provided for @deleteTemplateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete “{name}”? Existing ceramics will not be affected.'**
+  String deleteTemplateBody(String name);
+
+  /// No description provided for @noProjectTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'No project templates yet'**
+  String get noProjectTemplates;
+
+  /// No description provided for @noProjectTemplatesBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Save a reusable plan from a ceramic or create one from scratch.'**
+  String get noProjectTemplatesBody;
+
+  /// No description provided for @templatesLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not load your project templates.'**
+  String get templatesLoadFailed;
+
+  /// No description provided for @batchEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch edit'**
+  String get batchEdit;
+
+  /// No description provided for @selectedCeramics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No ceramics selected} =1{1 ceramic selected} other{{count} ceramics selected}}'**
+  String selectedCeramics(int count);
+
+  /// No description provided for @batchEditSafetyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed history is never replaced. Existing glaze work and conflicting firing plans will be skipped.'**
+  String get batchEditSafetyNote;
+
+  /// No description provided for @batchBasics.
+  ///
+  /// In en, this message translates to:
+  /// **'Basics'**
+  String get batchBasics;
+
+  /// No description provided for @batchTagChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Tag changes'**
+  String get batchTagChanges;
+
+  /// No description provided for @batchDimensionsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter only the dimensions to apply to every selected piece.'**
+  String get batchDimensionsHelp;
+
+  /// No description provided for @batchPlanningHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Planning information is added only when existing work can be preserved safely.'**
+  String get batchPlanningHelp;
+
+  /// No description provided for @changeStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Change stage'**
+  String get changeStage;
+
+  /// No description provided for @keepCurrent.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep current value'**
+  String get keepCurrent;
+
+  /// No description provided for @changeClay.
+  ///
+  /// In en, this message translates to:
+  /// **'Change clay'**
+  String get changeClay;
+
+  /// No description provided for @clearClay.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear clay'**
+  String get clearClay;
+
+  /// No description provided for @setClay.
+  ///
+  /// In en, this message translates to:
+  /// **'Set clay'**
+  String get setClay;
+
+  /// No description provided for @addTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Add tags'**
+  String get addTags;
+
+  /// No description provided for @removeTags.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove tags'**
+  String get removeTags;
+
+  /// No description provided for @applyDimensions.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply dimensions'**
+  String get applyDimensions;
+
+  /// No description provided for @applyPlanningTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply reusable planning information'**
+  String get applyPlanningTemplate;
+
+  /// No description provided for @projectTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Project template'**
+  String get projectTemplate;
+
+  /// No description provided for @none.
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get none;
+
+  /// No description provided for @applyGlazesOnlyWhenEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply glaze plan only where no glaze applications exist'**
+  String get applyGlazesOnlyWhenEmpty;
+
+  /// No description provided for @applySafeFiringPlans.
+  ///
+  /// In en, this message translates to:
+  /// **'Add firing plans that do not conflict with completed work'**
+  String get applySafeFiringPlans;
+
+  /// No description provided for @reviewBatchEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Review batch edit'**
+  String get reviewBatchEdit;
+
+  /// No description provided for @chooseClay.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a clay to apply.'**
+  String get chooseClay;
+
+  /// No description provided for @confirmBatchEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm batch edit'**
+  String get confirmBatchEdit;
+
+  /// No description provided for @batchEditTargetCount.
+  ///
+  /// In en, this message translates to:
+  /// **'This edit targets {count, plural, =1{one ceramic} other{{count} ceramics}}.'**
+  String batchEditTargetCount(int count);
+
+  /// No description provided for @protectedItemsWillBeSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Protected work will be skipped:'**
+  String get protectedItemsWillBeSkipped;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @batchEditComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch edit complete'**
+  String get batchEditComplete;
+
+  /// No description provided for @batchEditPartiallyComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch edit partially complete'**
+  String get batchEditPartiallyComplete;
+
+  /// No description provided for @batchEditResult.
+  ///
+  /// In en, this message translates to:
+  /// **'{updated} updated · {skipped} skipped or unchanged'**
+  String batchEditResult(int updated, int skipped);
+
+  /// No description provided for @selectAllVisible.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all visible'**
+  String get selectAllVisible;
+
+  /// No description provided for @selectCeramics.
+  ///
+  /// In en, this message translates to:
+  /// **'Select ceramics'**
+  String get selectCeramics;
+
+  /// No description provided for @reviewBatchDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Review deletion'**
+  String get reviewBatchDelete;
+
+  /// No description provided for @batchDeleteTargetCount.
+  ///
+  /// In en, this message translates to:
+  /// **'You are about to permanently delete {count, plural, =1{one ceramic} other{{count} ceramics}}.'**
+  String batchDeleteTargetCount(int count);
+
+  /// No description provided for @batchDeleteWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'The ceramics and their images, plans, and journal history will be removed. This cannot be undone.'**
+  String get batchDeleteWarning;
+
+  /// No description provided for @understandPermanentDeletion.
+  ///
+  /// In en, this message translates to:
+  /// **'I understand that the selected ceramics will be permanently deleted.'**
+  String get understandPermanentDeletion;
+
+  /// No description provided for @deleteSelectedCeramics.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {count}'**
+  String deleteSelectedCeramics(int count);
+
+  /// No description provided for @batchDeleteComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 ceramic deleted.} other{{count} ceramics deleted.}}'**
+  String batchDeleteComplete(int count);
+
+  /// No description provided for @batchDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Deletion failed'**
+  String get batchDeleteFailed;
+
+  /// No description provided for @batchDeleteFailedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing was deleted. A piece may have changed since review. Reload the review and try again.'**
+  String get batchDeleteFailedBody;
+
+  /// No description provided for @createBlankCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a blank ceramic'**
+  String get createBlankCeramic;
+
+  /// No description provided for @saveAsTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Save as template'**
+  String get saveAsTemplate;
+
+  /// No description provided for @templateFromCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} template'**
+  String templateFromCeramic(String title);
+
+  /// No description provided for @templateExcludesResults.
+  ///
+  /// In en, this message translates to:
+  /// **'Images, ratings, outcomes, completed firings, stage history, and publication data are not copied.'**
+  String get templateExcludesResults;
+
+  /// No description provided for @templateSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Project template saved.'**
+  String get templateSaved;
+
+  /// No description provided for @practiceAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice analytics'**
+  String get practiceAnalytics;
+
+  /// No description provided for @practiceAnalyticsPrivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Private insights from your ceramics only'**
+  String get practiceAnalyticsPrivate;
+
+  /// No description provided for @analyticsRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The latest analytics could not be loaded. Showing the previous results.'**
+  String get analyticsRefreshFailed;
+
+  /// No description provided for @incompleteHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Some timing history is incomplete'**
+  String get incompleteHistory;
+
+  /// No description provided for @incompleteHistoryBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{One older ceramic has only a baseline stage record and is excluded from duration metrics.} other{{count} older ceramics have only baseline stage records and are excluded from duration metrics.}}'**
+  String incompleteHistoryBody(int count);
+
+  /// No description provided for @last90Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 90 days'**
+  String get last90Days;
+
+  /// No description provided for @lastYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Last year'**
+  String get lastYear;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get allTime;
+
+  /// No description provided for @createdAndCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Created and completed'**
+  String get createdAndCompleted;
+
+  /// No description provided for @createdCompletedSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{created} created · {completed} completed'**
+  String createdCompletedSummary(int created, int completed);
+
+  /// No description provided for @createdCompletedExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Created uses each ceramic\'s creation date. Completed uses its first trustworthy transition into Finished. Older baseline-only stage records are not counted as completions.'**
+  String get createdCompletedExplanation;
+
+  /// No description provided for @noTrustedActivityData.
+  ///
+  /// In en, this message translates to:
+  /// **'No trustworthy activity is available in this period.'**
+  String get noTrustedActivityData;
+
+  /// No description provided for @currentStages.
+  ///
+  /// In en, this message translates to:
+  /// **'Current stages'**
+  String get currentStages;
+
+  /// No description provided for @currentStagesExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Counts the current stage of your ceramics created in the selected period. It does not include another user\'s or Discover ceramics.'**
+  String get currentStagesExplanation;
+
+  /// No description provided for @practiceTiming.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice timing'**
+  String get practiceTiming;
+
+  /// No description provided for @practiceTimingExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Creation to Finished measures creation until the first trustworthy Finished transition. Time in a stage measures closed visits between consecutive recorded transitions. Open visits and legacy baseline records are excluded.'**
+  String get practiceTimingExplanation;
+
+  /// No description provided for @creationToFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Creation to Finished'**
+  String get creationToFinished;
+
+  /// No description provided for @notEnoughHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough trustworthy history'**
+  String get notEnoughHistory;
+
+  /// No description provided for @durationWithSamples.
+  ///
+  /// In en, this message translates to:
+  /// **'{duration} · {count, plural, =1{1 sample} other{{count} samples}}'**
+  String durationWithSamples(String duration, int count);
+
+  /// No description provided for @timeInEachStage.
+  ///
+  /// In en, this message translates to:
+  /// **'Average time in each stage'**
+  String get timeInEachStage;
+
+  /// No description provided for @noData.
+  ///
+  /// In en, this message translates to:
+  /// **'No data'**
+  String get noData;
+
+  /// No description provided for @sampleCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 sample} other{{count} samples}}'**
+  String sampleCount(int count);
+
+  /// No description provided for @ratingDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating distribution'**
+  String get ratingDistribution;
+
+  /// No description provided for @ratingExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Counts the structured 1–5 rating stored on each of your ceramics in the selected period. Missing ratings are shown separately, not as zero.'**
+  String get ratingExplanation;
+
+  /// No description provided for @starRating.
+  ///
+  /// In en, this message translates to:
+  /// **'{rating, plural, =1{1 star} other{{rating} stars}}'**
+  String starRating(int rating);
+
+  /// No description provided for @unrated.
+  ///
+  /// In en, this message translates to:
+  /// **'Unrated'**
+  String get unrated;
+
+  /// No description provided for @mostUsedMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Most-used materials'**
+  String get mostUsedMaterials;
+
+  /// No description provided for @mostUsedMaterialsExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Ranks clays and glazes by the number of distinct owned ceramics using them in the selected period.'**
+  String get mostUsedMaterialsExplanation;
+
+  /// No description provided for @usedOnCeramics.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Used on 1 ceramic} other{Used on {count} ceramics}}'**
+  String usedOnCeramics(int count);
+
+  /// No description provided for @successfulCombinations.
+  ///
+  /// In en, this message translates to:
+  /// **'Successful clay–glaze combinations'**
+  String get successfulCombinations;
+
+  /// No description provided for @successfulCombinationsExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows combinations used on at least two rated ceramics with an average structured rating of 4 or higher. Every ceramic counts once per combination.'**
+  String get successfulCombinationsExplanation;
+
+  /// No description provided for @noSuccessfulCombinations.
+  ///
+  /// In en, this message translates to:
+  /// **'No combination has enough highly rated samples yet.'**
+  String get noSuccessfulCombinations;
+
+  /// No description provided for @firingTemperatureAccuracy.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned versus observed firing'**
+  String get firingTemperatureAccuracy;
+
+  /// No description provided for @firingTemperatureExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Compares the planned target with the observed peak for completed firings. Within 10°C is considered near target; incomplete pairs are omitted.'**
+  String get firingTemperatureExplanation;
+
+  /// No description provided for @noComparableFirings.
+  ///
+  /// In en, this message translates to:
+  /// **'No completed firing has both a target and an observed peak.'**
+  String get noComparableFirings;
+
+  /// No description provided for @averageTemperatureDelta.
+  ///
+  /// In en, this message translates to:
+  /// **'Average difference: {value}°C'**
+  String averageTemperatureDelta(String value);
+
+  /// No description provided for @belowTargetCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Below target: {count}'**
+  String belowTargetCount(int count);
+
+  /// No description provided for @nearTargetCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Near target (±10°C): {count}'**
+  String nearTargetCount(int count);
+
+  /// No description provided for @aboveTargetCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Above target: {count}'**
+  String aboveTargetCount(int count);
+
+  /// No description provided for @durationDaysHours.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} d {hours} h'**
+  String durationDaysHours(int days, int hours);
+
+  /// No description provided for @howCalculated.
+  ///
+  /// In en, this message translates to:
+  /// **'How this is calculated'**
+  String get howCalculated;
+
+  /// No description provided for @noPracticeData.
+  ///
+  /// In en, this message translates to:
+  /// **'No practice data yet'**
+  String get noPracticeData;
+
+  /// No description provided for @noPracticeDataBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Create ceramics and record their progress to build your private practice analytics.'**
+  String get noPracticeDataBody;
+
+  /// No description provided for @analyticsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your analytics could not be loaded.'**
+  String get analyticsLoadFailed;
+
+  /// No description provided for @materialInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Material inventory'**
+  String get materialInventory;
+
+  /// No description provided for @addInventoryMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Add inventory material'**
+  String get addInventoryMaterial;
+
+  /// No description provided for @showLowStockOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Show low-stock only'**
+  String get showLowStockOnly;
+
+  /// No description provided for @inventoryRefreshFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The inventory could not be refreshed. Previous values are shown.'**
+  String get inventoryRefreshFailed;
+
+  /// No description provided for @lowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low stock'**
+  String get lowStock;
+
+  /// No description provided for @catalogueMaterialRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Catalogue material removed; history retained'**
+  String get catalogueMaterialRemoved;
+
+  /// No description provided for @stockAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'{quantity} {unit} in stock'**
+  String stockAmount(String quantity, String unit);
+
+  /// No description provided for @materialType.
+  ///
+  /// In en, this message translates to:
+  /// **'Material type'**
+  String get materialType;
+
+  /// No description provided for @material.
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get material;
+
+  /// No description provided for @inventoryMeasurement.
+  ///
+  /// In en, this message translates to:
+  /// **'How this glaze is measured'**
+  String get inventoryMeasurement;
+
+  /// No description provided for @byWeightKilograms.
+  ///
+  /// In en, this message translates to:
+  /// **'By weight (kilograms)'**
+  String get byWeightKilograms;
+
+  /// No description provided for @byVolumeLitres.
+  ///
+  /// In en, this message translates to:
+  /// **'By volume (litres)'**
+  String get byVolumeLitres;
+
+  /// No description provided for @glazeMeasurementHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the unit used for purchases and mixed batches. It cannot be mixed with the other unit in this inventory.'**
+  String get glazeMeasurementHelp;
+
+  /// No description provided for @lowStockThresholdOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-stock threshold (optional)'**
+  String get lowStockThresholdOptional;
+
+  /// No description provided for @noInventoryYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No inventory yet'**
+  String get noInventoryYet;
+
+  /// No description provided for @noInventoryYetBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a clay or glaze, then record purchases, usage, and corrections. Stock always comes from the transaction history.'**
+  String get noInventoryYetBody;
+
+  /// No description provided for @inventoryLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your material inventory could not be loaded.'**
+  String get inventoryLoadFailed;
+
+  /// No description provided for @editLowStockThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit low-stock threshold'**
+  String get editLowStockThreshold;
+
+  /// No description provided for @recordTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Record transaction'**
+  String get recordTransaction;
+
+  /// No description provided for @currentStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Current stock'**
+  String get currentStock;
+
+  /// No description provided for @noLowStockThreshold.
+  ///
+  /// In en, this message translates to:
+  /// **'No low-stock threshold'**
+  String get noLowStockThreshold;
+
+  /// No description provided for @thresholdValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-stock threshold: {value}'**
+  String thresholdValue(String value);
+
+  /// No description provided for @transactionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction history'**
+  String get transactionHistory;
+
+  /// No description provided for @noTransactions.
+  ///
+  /// In en, this message translates to:
+  /// **'No transactions yet.'**
+  String get noTransactions;
+
+  /// No description provided for @inventoryTransactionType.
+  ///
+  /// In en, this message translates to:
+  /// **'{type, select, PURCHASE{Purchase} USAGE{Usage} ADJUSTMENT{Correction} REVERSAL{Reversal} other{{type}}}'**
+  String inventoryTransactionType(String type);
+
+  /// No description provided for @reverseTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse transaction'**
+  String get reverseTransaction;
+
+  /// No description provided for @reverse.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse'**
+  String get reverse;
+
+  /// No description provided for @correctionReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Correction reason'**
+  String get correctionReason;
+
+  /// No description provided for @reversalReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for reversal'**
+  String get reversalReason;
+
+  /// No description provided for @transactionType.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction type'**
+  String get transactionType;
+
+  /// No description provided for @signedQuantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity change (+ or −)'**
+  String get signedQuantity;
+
+  /// No description provided for @quantity.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get quantity;
+
+  /// No description provided for @totalPurchaseCostOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Total purchase cost (optional)'**
+  String get totalPurchaseCostOptional;
+
+  /// No description provided for @isoCurrencyCode.
+  ///
+  /// In en, this message translates to:
+  /// **'ISO currency code'**
+  String get isoCurrencyCode;
+
+  /// No description provided for @currency.
+  ///
+  /// In en, this message translates to:
+  /// **'Currency'**
+  String get currency;
+
+  /// No description provided for @supplierOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Supplier (optional)'**
+  String get supplierOptional;
+
+  /// No description provided for @referenceOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference (optional)'**
+  String get referenceOptional;
+
+  /// No description provided for @associatedCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'Associated ceramic'**
+  String get associatedCeramic;
+
+  /// No description provided for @ceramicIdOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Ceramic ID (optional)'**
+  String get ceramicIdOptional;
+
+  /// No description provided for @chooseCeramicOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Associated ceramic (optional)'**
+  String get chooseCeramicOptional;
+
+  /// No description provided for @noAssociatedCeramic.
+  ///
+  /// In en, this message translates to:
+  /// **'No associated ceramic'**
+  String get noAssociatedCeramic;
+
+  /// No description provided for @ceramicsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Ceramics could not be loaded.'**
+  String get ceramicsLoadFailed;
+
+  /// No description provided for @costEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost estimate'**
+  String get costEstimate;
+
+  /// No description provided for @noCostEstimate.
+  ///
+  /// In en, this message translates to:
+  /// **'Do not estimate cost'**
+  String get noCostEstimate;
+
+  /// No description provided for @weightedAverageCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase-weighted average'**
+  String get weightedAverageCost;
+
+  /// No description provided for @purchaseCostCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate currency'**
+  String get purchaseCostCurrency;
+
+  /// No description provided for @noCostedPurchaseHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Record a purchase with a total cost before using the purchase-weighted average.'**
+  String get noCostedPurchaseHistory;
+
+  /// No description provided for @costOptionsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase-history costs could not be loaded.'**
+  String get costOptionsLoadFailed;
+
+  /// No description provided for @manualCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual estimate'**
+  String get manualCost;
+
+  /// No description provided for @estimatedUsageCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated usage cost'**
+  String get estimatedUsageCost;
+
+  /// No description provided for @usageIsNeverInferred.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage is recorded only after your confirmation. Keramik never infers consumption from dimensions or weight.'**
+  String get usageIsNeverInferred;
+
+  /// No description provided for @review.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get review;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @confirmInventoryTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm inventory transaction'**
+  String get confirmInventoryTransaction;
+
+  /// No description provided for @confirmInventoryTransactionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} {quantity} {unit} of {material}. This updates your stock and adds the transaction to its history.'**
+  String confirmInventoryTransactionBody(
+    String type,
+    String quantity,
+    String unit,
+    String material,
+  );
+
+  /// No description provided for @transactionSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory transaction recorded.'**
+  String get transactionSaved;
+
+  /// No description provided for @editTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit transaction'**
+  String get editTransaction;
+
+  /// No description provided for @confirmEditTransaction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save this transaction edit?'**
+  String get confirmEditTransaction;
+
+  /// No description provided for @editTransactionAuditNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The original stays in history. Saving cancels its effect and adds the corrected transaction.'**
+  String get editTransactionAuditNote;
+
+  /// No description provided for @transactionUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction updated. The previous version remains in history.'**
+  String get transactionUpdated;
+
+  /// No description provided for @materialUsageAndCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Material usage and cost'**
+  String get materialUsageAndCost;
+
+  /// No description provided for @materialUsageIsManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Record confirmed usage and view cost estimates'**
+  String get materialUsageIsManual;
+
+  /// No description provided for @estimatedMaterialCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated material cost'**
+  String get estimatedMaterialCost;
+
+  /// No description provided for @noRecordedMaterialCost.
+  ///
+  /// In en, this message translates to:
+  /// **'No costed usage has been recorded.'**
+  String get noRecordedMaterialCost;
+
+  /// No description provided for @costEstimateExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Original totals remain grouped by their recorded ISO currency. When available, Keramik also shows a converted estimate using the latest cached ECB reference rates.'**
+  String get costEstimateExplanation;
+
+  /// No description provided for @recordMaterialUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Record material usage'**
+  String get recordMaterialUsage;
+
+  /// No description provided for @chooseInventoryMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an inventory material. The usage amount and estimate are shown for confirmation before saving.'**
+  String get chooseInventoryMaterial;
+
+  /// No description provided for @noInventoryForUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure a clay or glaze inventory before recording usage.'**
+  String get noInventoryForUsage;
+
+  /// No description provided for @inventorySpendingAndUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory spending and usage'**
+  String get inventorySpendingAndUsage;
+
+  /// No description provided for @inventoryAnalyticsExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Spending is net recorded purchase cost after reversals, grouped by its original ISO currency. A converted summary uses cached ECB reference rates when available. Usage is net confirmed usage after reversals, grouped by material and canonical unit.'**
+  String get inventoryAnalyticsExplanation;
+
+  /// No description provided for @noInventoryAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'No inventory purchases or usage were recorded in this period.'**
+  String get noInventoryAnalytics;
+
+  /// No description provided for @materialSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Material spending'**
+  String get materialSpending;
+
+  /// No description provided for @recordedInventoryUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded inventory usage'**
+  String get recordedInventoryUsage;
+
+  /// No description provided for @preferredCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred currency'**
+  String get preferredCurrency;
+
+  /// No description provided for @automaticCurrency.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic ({currency})'**
+  String automaticCurrency(String currency);
+
+  /// No description provided for @currencySettingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic follows your device region. You can select a fixed currency instead.'**
+  String get currencySettingHelp;
+
+  /// No description provided for @convertedTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Converted estimate: {amount} {currency}'**
+  String convertedTotal(String amount, String currency);
+
+  /// No description provided for @convertedSpending.
+  ///
+  /// In en, this message translates to:
+  /// **'Converted spending: {amount} {currency}'**
+  String convertedSpending(String amount, String currency);
+
+  /// No description provided for @currencyConversionUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'A converted total is unavailable. Original currency totals are still shown.'**
+  String get currencyConversionUnavailable;
+
+  /// No description provided for @exchangeRateSource.
+  ///
+  /// In en, this message translates to:
+  /// **'ECB reference rates from {date} ({provider})'**
+  String exchangeRateSource(String date, String provider);
 }
 
 class _AppLocalizationsDelegate

@@ -1,4 +1,5 @@
 import 'package:ceramic_app/objects/account_settings_dto.dart';
+import 'package:intl/intl.dart';
 
 class Measurement {
   const Measurement._();
@@ -13,7 +14,8 @@ class Measurement {
   static double lengthToCentimeters(
     double displayValue,
     MeasurementSystem system,
-  ) => system == MeasurementSystem.imperial ? displayValue * 2.54 : displayValue;
+  ) =>
+      system == MeasurementSystem.imperial ? displayValue * 2.54 : displayValue;
 
   static double temperatureFromCelsius(
     double celsius,
@@ -47,4 +49,20 @@ class Measurement {
         ? rounded.substring(0, rounded.length - 2)
         : rounded;
   }
+
+  static String formatDecimalText(
+    String value, {
+    required String locale,
+    int maximumFractionDigits = 3,
+  }) {
+    final parsed = double.tryParse(value);
+    if (parsed == null) return value;
+    return (NumberFormat.decimalPattern(locale)
+          ..minimumFractionDigits = 0
+          ..maximumFractionDigits = maximumFractionDigits)
+        .format(parsed);
+  }
+
+  static String formatMoneyText(String value, {required String locale}) =>
+      formatDecimalText(value, locale: locale, maximumFractionDigits: 2);
 }

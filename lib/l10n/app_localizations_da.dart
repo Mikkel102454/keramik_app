@@ -1369,4 +1369,838 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get reportExplanation => 'Forklaring';
+
+  @override
+  String get createTemplate => 'Opret skabelon';
+
+  @override
+  String get editTemplate => 'Rediger skabelon';
+
+  @override
+  String get templateName => 'Skabelonnavn';
+
+  @override
+  String get templateTitlePattern => 'Titelmønster';
+
+  @override
+  String get templateTitlePatternHelp =>
+      'Sæt n i krøllede parenteser, hvor batchnummeret skal stå.';
+
+  @override
+  String get noClay => 'Intet ler';
+
+  @override
+  String get commaSeparatedTags => 'Adskil tags med kommaer.';
+
+  @override
+  String get noTemplateGlazes => 'Ingen glasurplan.';
+
+  @override
+  String get plannedFirings => 'Planlagte brændinger';
+
+  @override
+  String get noTemplateFirings => 'Ingen brændingsplan.';
+
+  @override
+  String templateGlazeSummary(int coatCount, String note) {
+    String _temp0 = intl.Intl.pluralLogic(
+      coatCount,
+      locale: localeName,
+      other: '$coatCount lag',
+      one: '1 lag',
+    );
+    String _temp1 = intl.Intl.selectLogic(note, {'other': ' · $note'});
+    return '$_temp0$_temp1';
+  }
+
+  @override
+  String get addPlannedFiring => 'Tilføj planlagt brænding';
+
+  @override
+  String get tooManyTemplateTags => 'En skabelon kan højst indeholde 30 tags.';
+
+  @override
+  String get requiredField => 'Feltet skal udfyldes.';
+
+  @override
+  String get invalidNumber => 'Indtast et gyldigt ikke-negativt tal.';
+
+  @override
+  String get createFromTemplate => 'Opret fra skabelon';
+
+  @override
+  String batchQuantity(int count) {
+    return 'Antal: $count';
+  }
+
+  @override
+  String get startNumber => 'Startnummer';
+
+  @override
+  String get titlePreview => 'Forhåndsvisning af titler';
+
+  @override
+  String get createOneCeramic => 'Opret keramik';
+
+  @override
+  String createCeramicBatch(int count) {
+    return 'Opret $count keramikemner';
+  }
+
+  @override
+  String get confirmBatchCreation => 'Opret denne batch?';
+
+  @override
+  String confirmBatchCreationBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nye keramikemner',
+      one: 'ét nyt keramikemne',
+    );
+    return 'Dette opretter $_temp0 med ny journalhistorik.';
+  }
+
+  @override
+  String get batchCreated => 'Batch oprettet';
+
+  @override
+  String batchCreatedBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count keramikemner blev oprettet.',
+      one: 'Ét keramikemne blev oprettet.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get projectTemplates => 'Projektskabeloner';
+
+  @override
+  String get duplicate => 'Dupliker';
+
+  @override
+  String templateGlazeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count glasurer',
+      one: '1 glasur',
+      zero: 'Ingen glasurer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String templateFiringCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count brændinger',
+      one: '1 brænding',
+      zero: 'Ingen brændinger',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get templateMaterialMissing =>
+      'Et tilknyttet materiale findes ikke længere. Rediger skabelonen, før den bruges.';
+
+  @override
+  String get useTemplate => 'Brug skabelon';
+
+  @override
+  String get duplicateTemplate => 'Dupliker skabelon';
+
+  @override
+  String copyOfTemplate(String name) {
+    return 'Kopi af $name';
+  }
+
+  @override
+  String get deleteTemplate => 'Slet skabelon?';
+
+  @override
+  String deleteTemplateBody(String name) {
+    return 'Slet “$name”? Eksisterende keramik påvirkes ikke.';
+  }
+
+  @override
+  String get noProjectTemplates => 'Ingen projektskabeloner endnu';
+
+  @override
+  String get noProjectTemplatesBody =>
+      'Gem en genbrugelig plan fra et keramikemne, eller opret en fra bunden.';
+
+  @override
+  String get templatesLoadFailed =>
+      'Vi kunne ikke indlæse dine projektskabeloner.';
+
+  @override
+  String get batchEdit => 'Batchredigering';
+
+  @override
+  String selectedCeramics(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count keramikemner valgt',
+      one: '1 keramik valgt',
+      zero: 'Ingen keramik valgt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchEditSafetyNote =>
+      'Afsluttet historik erstattes aldrig. Eksisterende glasurarbejde og modstridende brændingsplaner springes over.';
+
+  @override
+  String get batchBasics => 'Grundlæggende oplysninger';
+
+  @override
+  String get batchTagChanges => 'Tagændringer';
+
+  @override
+  String get batchDimensionsHelp =>
+      'Udfyld kun de mål, der skal anvendes på alle valgte emner.';
+
+  @override
+  String get batchPlanningHelp =>
+      'Planoplysninger tilføjes kun, når eksisterende arbejde kan bevares sikkert.';
+
+  @override
+  String get changeStage => 'Skift fase';
+
+  @override
+  String get keepCurrent => 'Behold nuværende værdi';
+
+  @override
+  String get changeClay => 'Skift ler';
+
+  @override
+  String get clearClay => 'Fjern ler';
+
+  @override
+  String get setClay => 'Vælg ler';
+
+  @override
+  String get addTags => 'Tilføj tags';
+
+  @override
+  String get removeTags => 'Fjern tags';
+
+  @override
+  String get applyDimensions => 'Anvend mål';
+
+  @override
+  String get applyPlanningTemplate => 'Anvend genbrugelige planoplysninger';
+
+  @override
+  String get projectTemplate => 'Projektskabelon';
+
+  @override
+  String get none => 'Ingen';
+
+  @override
+  String get applyGlazesOnlyWhenEmpty =>
+      'Anvend kun glasurplanen, hvor der ikke findes glasurlag';
+
+  @override
+  String get applySafeFiringPlans =>
+      'Tilføj brændingsplaner, som ikke er i konflikt med afsluttet arbejde';
+
+  @override
+  String get reviewBatchEdit => 'Gennemse batchredigering';
+
+  @override
+  String get chooseClay => 'Vælg et ler, der skal anvendes.';
+
+  @override
+  String get confirmBatchEdit => 'Bekræft batchredigering';
+
+  @override
+  String batchEditTargetCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count keramikemner',
+      one: 'ét keramikemne',
+    );
+    return 'Denne redigering omfatter $_temp0.';
+  }
+
+  @override
+  String get protectedItemsWillBeSkipped => 'Beskyttet arbejde springes over:';
+
+  @override
+  String get apply => 'Anvend';
+
+  @override
+  String get batchEditComplete => 'Batchredigering færdig';
+
+  @override
+  String get batchEditPartiallyComplete => 'Batchredigering delvist færdig';
+
+  @override
+  String batchEditResult(int updated, int skipped) {
+    return '$updated opdateret · $skipped sprunget over eller uændret';
+  }
+
+  @override
+  String get selectAllVisible => 'Vælg alle synlige';
+
+  @override
+  String get selectCeramics => 'Vælg keramik';
+
+  @override
+  String get reviewBatchDelete => 'Gennemse sletning';
+
+  @override
+  String batchDeleteTargetCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count keramikemner',
+      one: 'ét keramikemne',
+    );
+    return 'Du er ved permanent at slette $_temp0.';
+  }
+
+  @override
+  String get batchDeleteWarning =>
+      'Keramikemnerne samt deres billeder, planer og journalhistorik fjernes. Handlingen kan ikke fortrydes.';
+
+  @override
+  String get understandPermanentDeletion =>
+      'Jeg forstår, at de valgte keramikemner slettes permanent.';
+
+  @override
+  String deleteSelectedCeramics(int count) {
+    return 'Slet $count';
+  }
+
+  @override
+  String batchDeleteComplete(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count keramikemner slettet.',
+      one: '1 keramikemne slettet.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get batchDeleteFailed => 'Sletningen mislykkedes';
+
+  @override
+  String get batchDeleteFailedBody =>
+      'Intet blev slettet. Et emne kan være ændret siden gennemgangen. Genindlæs gennemgangen, og prøv igen.';
+
+  @override
+  String get createBlankCeramic => 'Opret et tomt keramikemne';
+
+  @override
+  String get saveAsTemplate => 'Gem som skabelon';
+
+  @override
+  String templateFromCeramic(String title) {
+    return '$title-skabelon';
+  }
+
+  @override
+  String get templateExcludesResults =>
+      'Billeder, bedømmelser, resultater, afsluttede brændinger, fasehistorik og udgivelsesdata kopieres ikke.';
+
+  @override
+  String get templateSaved => 'Projektskabelonen er gemt.';
+
+  @override
+  String get practiceAnalytics => 'Praksisanalyse';
+
+  @override
+  String get practiceAnalyticsPrivate =>
+      'Private indsigter kun fra din keramik';
+
+  @override
+  String get analyticsRefreshFailed =>
+      'Den nyeste analyse kunne ikke indlæses. De tidligere resultater vises.';
+
+  @override
+  String get incompleteHistory => 'Noget tidshistorik er ufuldstændig';
+
+  @override
+  String incompleteHistoryBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count ældre keramikemner har kun basisregistreringer og er udeladt fra tidsmålingerne.',
+      one:
+          'Et ældre keramikemne har kun en basisregistrering og er udeladt fra tidsmålingerne.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get last90Days => 'Seneste 90 dage';
+
+  @override
+  String get lastYear => 'Seneste år';
+
+  @override
+  String get allTime => 'Hele perioden';
+
+  @override
+  String get createdAndCompleted => 'Oprettet og færdiggjort';
+
+  @override
+  String createdCompletedSummary(int created, int completed) {
+    return '$created oprettet · $completed færdiggjort';
+  }
+
+  @override
+  String get createdCompletedExplanation =>
+      'Oprettet bruger keramikemnets oprettelsesdato. Færdiggjort bruger den første pålidelige overgang til Færdig. Ældre registreringer, der kun har et udgangspunkt, tælles ikke som færdiggørelser.';
+
+  @override
+  String get noTrustedActivityData =>
+      'Der findes ingen pålidelige aktivitetsdata i perioden.';
+
+  @override
+  String get currentStages => 'Aktuelle faser';
+
+  @override
+  String get currentStagesExplanation =>
+      'Tæller den aktuelle fase for dine keramikemner, der er oprettet i den valgte periode. Andre brugeres keramik og Opdag-indhold medtages ikke.';
+
+  @override
+  String get practiceTiming => 'Tid i praksis';
+
+  @override
+  String get practiceTimingExplanation =>
+      'Oprettelse til Færdig måler fra oprettelse til den første pålidelige overgang til Færdig. Tid i en fase måler afsluttede besøg mellem registrerede overgange. Åbne besøg og ældre basisregistreringer udelades.';
+
+  @override
+  String get creationToFinished => 'Oprettelse til Færdig';
+
+  @override
+  String get notEnoughHistory => 'Ikke nok pålidelig historik';
+
+  @override
+  String durationWithSamples(String duration, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count målinger',
+      one: '1 måling',
+    );
+    return '$duration · $_temp0';
+  }
+
+  @override
+  String get timeInEachStage => 'Gennemsnitlig tid i hver fase';
+
+  @override
+  String get noData => 'Ingen data';
+
+  @override
+  String sampleCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count målinger',
+      one: '1 måling',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ratingDistribution => 'Fordeling af bedømmelser';
+
+  @override
+  String get ratingExplanation =>
+      'Tæller den strukturerede bedømmelse fra 1–5 på hvert af dine keramikemner i den valgte periode. Manglende bedømmelser vises separat og ikke som nul.';
+
+  @override
+  String starRating(int rating) {
+    String _temp0 = intl.Intl.pluralLogic(
+      rating,
+      locale: localeName,
+      other: '$rating stjerner',
+      one: '1 stjerne',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get unrated => 'Ikke bedømt';
+
+  @override
+  String get mostUsedMaterials => 'Mest brugte materialer';
+
+  @override
+  String get mostUsedMaterialsExplanation =>
+      'Rangerer ler og glasurer efter antallet af forskellige egne keramikemner, der bruger dem i den valgte periode.';
+
+  @override
+  String usedOnCeramics(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Brugt på $count keramikemner',
+      one: 'Brugt på 1 keramikemne',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get successfulCombinations => 'Vellykkede ler–glasur-kombinationer';
+
+  @override
+  String get successfulCombinationsExplanation =>
+      'Viser kombinationer, der er brugt på mindst to bedømte keramikemner og har et gennemsnit på mindst 4. Hvert keramikemne tæller én gang pr. kombination.';
+
+  @override
+  String get noSuccessfulCombinations =>
+      'Ingen kombination har endnu nok højt bedømte målinger.';
+
+  @override
+  String get firingTemperatureAccuracy => 'Planlagt mod observeret brænding';
+
+  @override
+  String get firingTemperatureExplanation =>
+      'Sammenligner den planlagte måltemperatur med den observerede top for afsluttede brændinger. Inden for 10 °C regnes som tæt på målet; ufuldstændige par udelades.';
+
+  @override
+  String get noComparableFirings =>
+      'Ingen afsluttet brænding har både måltemperatur og observeret top.';
+
+  @override
+  String averageTemperatureDelta(String value) {
+    return 'Gennemsnitlig forskel: $value °C';
+  }
+
+  @override
+  String belowTargetCount(int count) {
+    return 'Under målet: $count';
+  }
+
+  @override
+  String nearTargetCount(int count) {
+    return 'Tæt på målet (±10 °C): $count';
+  }
+
+  @override
+  String aboveTargetCount(int count) {
+    return 'Over målet: $count';
+  }
+
+  @override
+  String durationDaysHours(int days, int hours) {
+    return '$days d $hours t';
+  }
+
+  @override
+  String get howCalculated => 'Sådan beregnes det';
+
+  @override
+  String get noPracticeData => 'Ingen praksisdata endnu';
+
+  @override
+  String get noPracticeDataBody =>
+      'Opret keramikemner, og registrer deres udvikling for at opbygge din private praksisanalyse.';
+
+  @override
+  String get analyticsLoadFailed => 'Din analyse kunne ikke indlæses.';
+
+  @override
+  String get materialInventory => 'Materialelager';
+
+  @override
+  String get addInventoryMaterial => 'Tilføj lagermateriale';
+
+  @override
+  String get showLowStockOnly => 'Vis kun lav lagerbeholdning';
+
+  @override
+  String get inventoryRefreshFailed =>
+      'Lageret kunne ikke opdateres. De tidligere værdier vises.';
+
+  @override
+  String get lowStock => 'Lav lagerbeholdning';
+
+  @override
+  String get catalogueMaterialRemoved =>
+      'Katalogmaterialet er fjernet; historikken er bevaret';
+
+  @override
+  String stockAmount(String quantity, String unit) {
+    return '$quantity $unit på lager';
+  }
+
+  @override
+  String get materialType => 'Materialetype';
+
+  @override
+  String get material => 'Materiale';
+
+  @override
+  String get inventoryMeasurement => 'Sådan måles denne glasur';
+
+  @override
+  String get byWeightKilograms => 'Efter vægt (kilogram)';
+
+  @override
+  String get byVolumeLitres => 'Efter volumen (liter)';
+
+  @override
+  String get glazeMeasurementHelp =>
+      'Vælg den enhed, der bruges til køb og blandinger. Den kan ikke blandes med den anden enhed i dette lager.';
+
+  @override
+  String get lowStockThresholdOptional => 'Grænse for lav beholdning (valgfri)';
+
+  @override
+  String get noInventoryYet => 'Intet lager endnu';
+
+  @override
+  String get noInventoryYetBody =>
+      'Tilføj ler eller glasur, og registrer derefter køb, forbrug og rettelser. Beholdningen kommer altid fra transaktionshistorikken.';
+
+  @override
+  String get inventoryLoadFailed => 'Dit materialelager kunne ikke indlæses.';
+
+  @override
+  String get editLowStockThreshold => 'Rediger grænse for lav beholdning';
+
+  @override
+  String get recordTransaction => 'Registrer transaktion';
+
+  @override
+  String get currentStock => 'Aktuel beholdning';
+
+  @override
+  String get noLowStockThreshold => 'Ingen grænse for lav beholdning';
+
+  @override
+  String thresholdValue(String value) {
+    return 'Grænse for lav beholdning: $value';
+  }
+
+  @override
+  String get transactionHistory => 'Transaktionshistorik';
+
+  @override
+  String get noTransactions => 'Ingen transaktioner endnu.';
+
+  @override
+  String inventoryTransactionType(String type) {
+    String _temp0 = intl.Intl.selectLogic(type, {
+      'PURCHASE': 'Køb',
+      'USAGE': 'Forbrug',
+      'ADJUSTMENT': 'Rettelse',
+      'REVERSAL': 'Tilbageførsel',
+      'other': '$type',
+    });
+    return '$_temp0';
+  }
+
+  @override
+  String get reverseTransaction => 'Tilbagefør transaktion';
+
+  @override
+  String get reverse => 'Tilbagefør';
+
+  @override
+  String get correctionReason => 'Årsag til rettelse';
+
+  @override
+  String get reversalReason => 'Årsag til tilbageførsel';
+
+  @override
+  String get transactionType => 'Transaktionstype';
+
+  @override
+  String get signedQuantity => 'Ændring i mængde (+ eller −)';
+
+  @override
+  String get quantity => 'Mængde';
+
+  @override
+  String get totalPurchaseCostOptional => 'Samlet købspris (valgfri)';
+
+  @override
+  String get isoCurrencyCode => 'ISO-valutakode';
+
+  @override
+  String get currency => 'Valuta';
+
+  @override
+  String get supplierOptional => 'Leverandør (valgfri)';
+
+  @override
+  String get referenceOptional => 'Reference (valgfri)';
+
+  @override
+  String get associatedCeramic => 'Tilknyttet keramik';
+
+  @override
+  String get ceramicIdOptional => 'Keramik-ID (valgfrit)';
+
+  @override
+  String get chooseCeramicOptional => 'Tilknyttet keramik (valgfrit)';
+
+  @override
+  String get noAssociatedCeramic => 'Ingen tilknyttet keramik';
+
+  @override
+  String get ceramicsLoadFailed => 'Keramik kunne ikke indlæses.';
+
+  @override
+  String get costEstimate => 'Prisoverslag';
+
+  @override
+  String get noCostEstimate => 'Beregn ikke pris';
+
+  @override
+  String get weightedAverageCost => 'Købsvægtet gennemsnit';
+
+  @override
+  String get purchaseCostCurrency => 'Valuta for prisoverslag';
+
+  @override
+  String get noCostedPurchaseHistory =>
+      'Registrer først et køb med en samlet pris for at bruge det købsvægtede gennemsnit.';
+
+  @override
+  String get costOptionsLoadFailed =>
+      'Købshistorikkens priser kunne ikke indlæses.';
+
+  @override
+  String get manualCost => 'Manuelt overslag';
+
+  @override
+  String get estimatedUsageCost => 'Anslået forbrugspris';
+
+  @override
+  String get usageIsNeverInferred =>
+      'Forbrug registreres kun efter din bekræftelse. Keramik udleder aldrig forbrug fra mål eller vægt.';
+
+  @override
+  String get review => 'Gennemse';
+
+  @override
+  String get confirm => 'Bekræft';
+
+  @override
+  String get confirmInventoryTransaction => 'Bekræft lagertransaktion';
+
+  @override
+  String confirmInventoryTransactionBody(
+    String type,
+    String quantity,
+    String unit,
+    String material,
+  ) {
+    return '$type af $quantity $unit $material. Dette opdaterer lageret og føjer transaktionen til historikken.';
+  }
+
+  @override
+  String get transactionSaved => 'Lagertransaktionen er registreret.';
+
+  @override
+  String get editTransaction => 'Rediger transaktion';
+
+  @override
+  String get confirmEditTransaction => 'Gem denne transaktionsændring?';
+
+  @override
+  String get editTransactionAuditNote =>
+      'Originalen bliver i historikken. Når du gemmer, ophæves dens virkning, og den rettede transaktion tilføjes.';
+
+  @override
+  String get transactionUpdated =>
+      'Transaktionen er opdateret. Den tidligere version bliver i historikken.';
+
+  @override
+  String get materialUsageAndCost => 'Materialeforbrug og pris';
+
+  @override
+  String get materialUsageIsManual =>
+      'Registrer bekræftet forbrug, og se prisoverslag';
+
+  @override
+  String get estimatedMaterialCost => 'Anslået materialepris';
+
+  @override
+  String get noRecordedMaterialCost =>
+      'Der er ikke registreret forbrug med pris.';
+
+  @override
+  String get costEstimateExplanation =>
+      'Oprindelige totaler forbliver grupperet efter deres registrerede ISO-valuta. Når det er muligt, viser Keramik også et omregnet overslag med de seneste gemte ECB-referencekurser.';
+
+  @override
+  String get recordMaterialUsage => 'Registrer materialeforbrug';
+
+  @override
+  String get chooseInventoryMaterial =>
+      'Vælg et lagermateriale. Forbrug og prisoverslag vises til bekræftelse før lagring.';
+
+  @override
+  String get noInventoryForUsage =>
+      'Konfigurer et ler- eller glasurlager, før du registrerer forbrug.';
+
+  @override
+  String get inventorySpendingAndUsage => 'Lagerudgifter og forbrug';
+
+  @override
+  String get inventoryAnalyticsExplanation =>
+      'Udgifter er nettobeløbet for registrerede køb efter tilbageførsler, grupperet efter oprindelig ISO-valuta. Et omregnet sammendrag bruger gemte ECB-referencekurser, når de er tilgængelige. Forbrug er nettobeløbet for bekræftet forbrug efter tilbageførsler, grupperet efter materiale og standardenhed.';
+
+  @override
+  String get noInventoryAnalytics =>
+      'Der blev ikke registreret lagerkøb eller forbrug i perioden.';
+
+  @override
+  String get materialSpending => 'Materialeudgifter';
+
+  @override
+  String get recordedInventoryUsage => 'Registreret lagerforbrug';
+
+  @override
+  String get preferredCurrency => 'Foretrukken valuta';
+
+  @override
+  String automaticCurrency(String currency) {
+    return 'Automatisk ($currency)';
+  }
+
+  @override
+  String get currencySettingHelp =>
+      'Automatisk følger din enheds region. Du kan vælge en fast valuta i stedet.';
+
+  @override
+  String convertedTotal(String amount, String currency) {
+    return 'Omregnet overslag: $amount $currency';
+  }
+
+  @override
+  String convertedSpending(String amount, String currency) {
+    return 'Omregnede udgifter: $amount $currency';
+  }
+
+  @override
+  String get currencyConversionUnavailable =>
+      'En omregnet total er ikke tilgængelig. Oprindelige valutatal vises stadig.';
+
+  @override
+  String exchangeRateSource(String date, String provider) {
+    return 'ECB-referencekurser fra $date ($provider)';
+  }
 }

@@ -23,6 +23,8 @@ import 'package:flutter/services.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/utils/measurement.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:ceramic_app/repositories/project_template_repository.dart';
+import 'package:ceramic_app/ui/pages/materials/inventory/ceramic_material_cost_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -80,6 +82,11 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           ),
 
           actions: [
+            IconButton(
+              tooltip: context.l10n.saveAsTemplate,
+              icon: const Icon(Icons.content_copy_outlined),
+              onPressed: _saveAsTemplate,
+            ),
             IconButton(
               icon: const Icon(Icons.delete),
               color: Colors.red,
@@ -150,9 +157,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        context.l10n.errorWithDetails(
-                          '${_controller.error}',
-                        ),
+                        context.l10n.errorWithDetails('${_controller.error}'),
                       ),
                       FilledButton(
                         onPressed: () => _controller.load(null, null),
@@ -209,12 +214,12 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                       onPressed: status.state == 'MODERATION_REMOVED'
                           ? null
                           : () async {
-                              final success =
-                                  await controller.togglePublication();
+                              final success = await controller
+                                  .togglePublication();
                               if (!success && mounted) {
-                                ScaffoldMessenger.of(this.context).showSnackBar(
+                                ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(this.context.l10n.tryAgain),
+                                    content: Text(context.l10n.tryAgain),
                                   ),
                                 );
                               }
@@ -277,7 +282,9 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                   iconSize: 42,
                   width: 92,
                   height: 92,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                   onPressed: () async {
                     final source = await showModalBottomSheet<ImageSource>(
                       context: context,
@@ -588,6 +595,26 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             ],
           ),
 
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.inventory_2_outlined),
+            title: Text(
+              context.l10n.materialUsageAndCost,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            subtitle: Text(context.l10n.materialUsageIsManual),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => CeramicMaterialCostPage(
+                  ceramicId: controller.ceramic.id,
+                  ceramicTitle: controller.ceramic.title,
+                ),
+              ),
+            ),
+          ),
+
           const SizedBox(height: 20),
 
           // =========================
@@ -630,7 +657,9 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             fontWeight: FontWeight.normal,
 
             borderColor: Theme.of(context).colorScheme.outline,
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest,
 
             removeIconSize: 20,
             removeIconColor: Colors.red,
@@ -699,9 +728,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             ),
             subtitle: Text(
               controller.ceramic.updatedAt == null
-                  ? context.l10n.stageEventCount(
-                      controller.stageHistory.length,
-                    )
+                  ? context.l10n.stageEventCount(controller.stageHistory.length)
                   : context.l10n.updatedOn(
                       _formatDateTime(
                         context,
@@ -714,9 +741,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.timeline),
-                  title: Text(
-                    _historyTitle(context, event),
-                  ),
+                  title: Text(_historyTitle(context, event)),
                   subtitle: Text(
                     _formatDateTime(context, event.changedAt.toLocal()),
                   ),
@@ -731,6 +756,85 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
     );
   }
 
+  Future<void> _saveAsTemplate() async {
+    final name = TextEditingController(
+      text: context.l10n.templateFromCeramic(widget.ceramic.title),
+    );
+    final pattern = TextEditingController(text: widget.ceramic.title);
+    final accepted = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.l10n.saveAsTemplate),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: name,
+                maxLength: 100,
+                decoration: InputDecoration(
+                  labelText: context.l10n.templateName,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                ),
+              ),
+              TextField(
+                controller: pattern,
+                maxLength: 220,
+                decoration: InputDecoration(
+                  labelText: context.l10n.templateTitlePattern,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                  suffixIcon: Tooltip(
+                    message: localizedTemplateTitlePatternHelp(context.l10n),
+                    child: const Icon(Icons.info_outline),
+                  ),
+                ),
+              ),
+              Text(
+                context.l10n.templateExcludesResults,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(context.l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (name.text.trim().isNotEmpty &&
+                  pattern.text.trim().isNotEmpty) {
+                Navigator.pop(dialogContext, true);
+              }
+            },
+            child: Text(context.l10n.save),
+          ),
+        ],
+      ),
+    );
+    if (accepted == true) {
+      try {
+        await ProjectTemplateRepository.fromCeramic(
+          ceramicId: widget.ceramic.id,
+          name: name.text.trim(),
+          titlePattern: pattern.text.trim(),
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(context.l10n.templateSaved)));
+        }
+      } catch (value) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(value.toString())));
+        }
+      }
+    }
+  }
+
   Future<void> _offerPublication(CeramicViewPageController controller) async {
     final hasImage = controller.ceramic.images.isNotEmpty;
     final publish = await showDialog<bool>(
@@ -741,7 +845,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           hasImage
               ? context.l10n.publishFinishedBody
               : '${context.l10n.publishFinishedBody}\n\n'
-                  '${context.l10n.publicationTemporarilyUnavailable}',
+                    '${context.l10n.publicationTemporarilyUnavailable}',
         ),
         actions: [
           TextButton(
@@ -834,10 +938,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
     _ => context.l10n.otherFiring,
   };
 
-  String _historyTitle(
-    BuildContext context,
-    CeramicStageHistoryDto event,
-  ) {
+  String _historyTitle(BuildContext context, CeramicStageHistoryDto event) {
     final toStage = localizedStageName(context.l10n, event.toStageTitle);
     if (event.baseline) return context.l10n.historyStartedAt(toStage);
     final from = event.fromStageTitle;

@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/ui/pages/materials/clays/clays_page.dart';
 import 'package:ceramic_app/ui/pages/materials/glazes/glazes_page.dart';
+import 'package:ceramic_app/ui/pages/materials/inventory/material_inventory_page.dart';
 import 'package:ceramic_app/ui/widgets/v2/divider_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_row_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
@@ -14,18 +15,11 @@ class MaterialsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.materials),
-        actions: [
-        ],
-      ),
+      appBar: AppBar(title: Text(context.l10n.materials), actions: []),
 
-      body: SafeArea(
-        child: _pageContent(context)
-      ),
+      body: SafeArea(child: _pageContent(context)),
 
-      bottomNavigationBar:
-      const NavigationWidget(
+      bottomNavigationBar: const NavigationWidget(
         currentPage: NavigationPage.materials,
       ),
     );
@@ -33,26 +27,30 @@ class MaterialsPage extends StatelessWidget {
 
   SingleChildScrollView _pageContent(BuildContext context) {
     return SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
+      physics: const AlwaysScrollableScrollPhysics(),
 
-        padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
 
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
 
-            children: [
-              DividerWidget(),
+        children: [
+          DividerWidget(),
 
-              NavigationRowWidget(
-                text: context.l10n.clays,
-                navigation: const ClaysPage(),
-              ),
-              NavigationRowWidget(
-                text: context.l10n.glazes,
-                navigation: const GlazesPage(),
-              ),
-            ]
-        )
+          NavigationRowWidget(
+            text: context.l10n.clays,
+            navigation: const ClaysPage(),
+          ),
+          NavigationRowWidget(
+            text: context.l10n.glazes,
+            navigation: const GlazesPage(),
+          ),
+          NavigationRowWidget(
+            text: context.l10n.materialInventory,
+            navigation: const MaterialInventoryPage(),
+          ),
+        ],
+      ),
     );
   }
 }

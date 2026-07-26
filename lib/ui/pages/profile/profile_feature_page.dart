@@ -1,6 +1,7 @@
 import 'package:ceramic_app/ui/pages/profile/friends_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_edit_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
+import 'package:ceramic_app/ui/pages/analytics/practice_analytics_page.dart';
 import 'package:ceramic_app/ui/pages/settings/settings_page.dart';
 import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page.dart';
 import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
@@ -59,7 +60,10 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (_controller.error != null && _controller.account == null) {
-              return _Retry(message: _controller.error!, onRetry: _controller.load);
+              return _Retry(
+                message: _controller.error!,
+                onRetry: _controller.load,
+              );
             }
             final account = _controller.account;
             if (account == null) return const SizedBox.shrink();
@@ -81,22 +85,30 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                   Text(
                     account.username,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 9),
                   Center(
                     child: SizedBox(
                       height: 34,
                       child: FilledButton(
-                        onPressed: () => _open(ProfileEditPage(controller: _controller)),
+                        onPressed: () =>
+                            _open(ProfileEditPage(controller: _controller)),
                         style: FilledButton.styleFrom(
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                          foregroundColor: Theme.of(context).colorScheme.onSurface,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceContainerHighest,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onSurface,
                           elevation: 0,
                           padding: const EdgeInsets.symmetric(horizontal: 22),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(7),
+                          ),
                         ),
                         child: Text(
                           context.l10n.editProfile,
@@ -114,21 +126,29 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                       borderRadius: BorderRadius.circular(8),
                       onTap: () => _open(FriendsPage(controller: _controller)),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 28,
+                          vertical: 8,
+                        ),
                         child: Column(
                           children: [
                             Text(
                               _controller.friendsCursor == null
                                   ? '${_controller.friends.length}'
                                   : '${_controller.friends.length}+',
-                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               context.l10n.relationshipFriends,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -137,36 +157,58 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                     ),
                   ),
                   const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      child: ListTile(
+                        leading: const Icon(Icons.insights_outlined),
+                        title: Text(context.l10n.practiceAnalytics),
+                        subtitle: Text(context.l10n.practiceAnalyticsPrivate),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () => _open(const PracticeAnalyticsPage()),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 15),
                   const Divider(height: 1),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 18, 16, 10),
-                    child: Row(children: [
-                      Text(
-                        context.l10n.finishedPieces,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const Spacer(),
-                      Text('${_controller.finishedCeramics.length}'),
-                    ]),
+                    child: Row(
+                      children: [
+                        Text(
+                          context.l10n.finishedPieces,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const Spacer(),
+                        Text('${_controller.finishedCeramics.length}'),
+                      ],
+                    ),
                   ),
                   if (_controller.finishedCeramics.isEmpty)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(24, 28, 24, 70),
-                      child: Column(children: [
-                        Icon(
-                          Icons.auto_awesome_outlined,
-                          size: 40,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          context.l10n.finishedPiecesEmpty,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.auto_awesome_outlined,
+                            size: 40,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
-                        ),
-                      ]),
+                          const SizedBox(height: 10),
+                          Text(
+                            context.l10n.finishedPiecesEmpty,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                   else
                     Padding(
@@ -175,12 +217,13 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: _controller.finishedCeramics.length,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: .72,
-                        ),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 12,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: .72,
+                            ),
                         itemBuilder: (_, index) {
                           final ceramic = _controller.finishedCeramics[index];
                           final stage = _controller.stages
@@ -197,12 +240,14 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
                               stage.title,
                             ),
                             clayTitle: clay,
-                            onTap: () => _open(CeramicViewPage(
-                              ceramic: ceramic,
-                              stages: _controller.stages,
-                              clayTypes: _controller.clays,
-                              glazes: _controller.glazes,
-                            )),
+                            onTap: () => _open(
+                              CeramicViewPage(
+                                ceramic: ceramic,
+                                stages: _controller.stages,
+                                clayTypes: _controller.clays,
+                                glazes: _controller.glazes,
+                              ),
+                            ),
                           );
                         },
                       ),
@@ -213,7 +258,9 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
           },
         ),
       ),
-      bottomNavigationBar: const NavigationWidget(currentPage: NavigationPage.profile),
+      bottomNavigationBar: const NavigationWidget(
+        currentPage: NavigationPage.profile,
+      ),
     );
   }
 }

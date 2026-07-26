@@ -280,6 +280,25 @@ class _SettingsPageState extends State<SettingsPage> {
                 onTap: () =>
                     _open(LanguageSettingsPage(controller: _controller)),
               ),
+              _SettingsRow(
+                icon: Icons.currency_exchange,
+                label: context.l10n.preferredCurrency,
+                value: settings.preferredCurrency == 'AUTO'
+                    ? context.l10n.automaticCurrency(
+                        detectedCurrency(
+                          WidgetsBinding.instance.platformDispatcher.locale,
+                        ),
+                      )
+                    : settings.preferredCurrency,
+                onTap: () async {
+                  final value = await _currencySelection(settings);
+                  if (value != null) {
+                    await _controller.save(
+                      _controller.settings.copyWith(preferredCurrency: value),
+                    );
+                  }
+                },
+              ),
               _Heading(context.l10n.supportAndAbout),
               _SettingsRow(
                 icon: Icons.help_outline,
@@ -368,14 +387,58 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
+  Future<String?> _currencySelection(AccountSettingsDto settings) {
+    final automatic = detectedCurrency(
+      WidgetsBinding.instance.platformDispatcher.locale,
+    );
+    return showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => SafeArea(
+        child: SizedBox(
+          height: MediaQuery.sizeOf(context).height * .72,
+          child: ListView(
+            children: [
+              ListTile(
+                title: Text(
+                  context.l10n.preferredCurrency,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                subtitle: Text(context.l10n.currencySettingHelp),
+              ),
+              RadioGroup<String>(
+                groupValue: settings.preferredCurrency,
+                onChanged: (value) => Navigator.pop(context, value),
+                child: Column(
+                  children: [
+                    RadioListTile<String>(
+                      value: 'AUTO',
+                      title: Text(context.l10n.automaticCurrency(automatic)),
+                    ),
+                    for (final currency in supportedExchangeCurrencies)
+                      RadioListTile<String>(
+                        value: currency,
+                        title: Text(currency),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _openLink(String path) async {
     try {
       await openWebPage('${AppConstants.api.apiDomain}$path');
     } catch (_) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.linkOpenFailed)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.linkOpenFailed)));
     }
   }
 }

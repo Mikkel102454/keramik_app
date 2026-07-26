@@ -1,4 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+const supportedExchangeCurrencies = <String>[
+  'EUR',
+  'DKK',
+  'USD',
+  'GBP',
+  'SEK',
+  'NOK',
+  'CHF',
+  'ISK',
+  'AUD',
+  'BRL',
+  'CAD',
+  'CNY',
+  'CZK',
+  'HKD',
+  'HUF',
+  'IDR',
+  'ILS',
+  'INR',
+  'JPY',
+  'KRW',
+  'MXN',
+  'MYR',
+  'NZD',
+  'PHP',
+  'PLN',
+  'RON',
+  'SGD',
+  'THB',
+  'TRY',
+  'ZAR',
+];
+
+String detectedCurrency(Locale locale) {
+  final detected = NumberFormat.simpleCurrency(
+    locale: locale.toString(),
+  ).currencyName;
+  return supportedExchangeCurrencies.contains(detected) ? detected! : 'EUR';
+}
 
 enum AccountThemeMode {
   system('SYSTEM', 'System'),
@@ -59,6 +100,7 @@ class AccountSettingsDto {
     this.themeMode = AccountThemeMode.system,
     this.measurementSystem = MeasurementSystem.metric,
     this.languageTag = 'en',
+    this.preferredCurrency = 'AUTO',
     this.discoverability = PrivacyAudience.everyone,
     this.friendRequests = PrivacyAudience.everyone,
     this.messages = PrivacyAudience.everyone,
@@ -71,6 +113,7 @@ class AccountSettingsDto {
   final AccountThemeMode themeMode;
   final MeasurementSystem measurementSystem;
   final String languageTag;
+  final String preferredCurrency;
   final PrivacyAudience discoverability;
   final PrivacyAudience friendRequests;
   final PrivacyAudience messages;
@@ -86,12 +129,11 @@ class AccountSettingsDto {
         json['measurementSystem'] as String?,
       ),
       languageTag: json['languageTag'] as String? ?? 'en',
+      preferredCurrency: json['preferredCurrency'] as String? ?? 'AUTO',
       discoverability: PrivacyAudience.parse(
         json['discoverability'] as String?,
       ),
-      friendRequests: PrivacyAudience.parse(
-        json['friendRequests'] as String?,
-      ),
+      friendRequests: PrivacyAudience.parse(json['friendRequests'] as String?),
       messages: PrivacyAudience.parse(json['messages'] as String?),
       notifyDirectMessages: json['notifyDirectMessages'] as bool? ?? true,
       notifyMessageRequests: json['notifyMessageRequests'] as bool? ?? true,
@@ -104,6 +146,7 @@ class AccountSettingsDto {
     'themeMode': themeMode.apiValue,
     'measurementSystem': measurementSystem.apiValue,
     'languageTag': languageTag,
+    'preferredCurrency': preferredCurrency,
     'discoverability': discoverability.apiValue,
     'friendRequests': friendRequests.apiValue,
     'messages': messages.apiValue,
@@ -117,6 +160,7 @@ class AccountSettingsDto {
     AccountThemeMode? themeMode,
     MeasurementSystem? measurementSystem,
     String? languageTag,
+    String? preferredCurrency,
     PrivacyAudience? discoverability,
     PrivacyAudience? friendRequests,
     PrivacyAudience? messages,
@@ -129,15 +173,14 @@ class AccountSettingsDto {
       themeMode: themeMode ?? this.themeMode,
       measurementSystem: measurementSystem ?? this.measurementSystem,
       languageTag: languageTag ?? this.languageTag,
+      preferredCurrency: preferredCurrency ?? this.preferredCurrency,
       discoverability: discoverability ?? this.discoverability,
       friendRequests: friendRequests ?? this.friendRequests,
       messages: messages ?? this.messages,
-      notifyDirectMessages:
-          notifyDirectMessages ?? this.notifyDirectMessages,
+      notifyDirectMessages: notifyDirectMessages ?? this.notifyDirectMessages,
       notifyMessageRequests:
           notifyMessageRequests ?? this.notifyMessageRequests,
-      notifyFriendRequests:
-          notifyFriendRequests ?? this.notifyFriendRequests,
+      notifyFriendRequests: notifyFriendRequests ?? this.notifyFriendRequests,
       notifyGroupActivity: notifyGroupActivity ?? this.notifyGroupActivity,
     );
   }

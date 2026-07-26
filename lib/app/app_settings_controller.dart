@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:ceramic_app/l10n/app_localizations.dart';
 import 'package:ceramic_app/objects/account_settings_dto.dart';
@@ -62,6 +63,9 @@ class AppSettingsController extends ChangeNotifier {
   AccountSettingsDto get settings => _settings;
   ThemeMode get themeMode => _settings.themeMode.themeMode;
   MeasurementSystem get measurementSystem => _settings.measurementSystem;
+  String get preferredCurrency => _settings.preferredCurrency == 'AUTO'
+      ? detectedCurrency(PlatformDispatcher.instance.locale)
+      : _settings.preferredCurrency;
   Locale get locale => _locale;
 
   Future<void> initializeLocale() async {
