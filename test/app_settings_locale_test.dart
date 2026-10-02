@@ -9,56 +9,81 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('first launch is English and cached locale restores before the app', () async {
-    final first = AppSettingsController(localeCache: _MemoryLocaleCache());
-    await first.initializeLocale();
-    expect(first.locale, const Locale('en'));
-    expect(first.settings.languageTag, 'en');
+  test(
+    'first launch is English and cached locale restores before the app',
+    () async {
+      final first = AppSettingsController(localeCache: _MemoryLocaleCache());
+      await first.initializeLocale();
+      expect(first.locale, const Locale('en'));
+      expect(first.settings.languageTag, 'en');
 
-    final restored = AppSettingsController(
-      localeCache: _MemoryLocaleCache('da'),
-    );
-    await restored.initializeLocale();
-    expect(restored.locale, const Locale('da'));
-    expect(restored.settings.languageTag, 'da');
-  });
+      final restored = AppSettingsController(
+        localeCache: _MemoryLocaleCache('da'),
+      );
+      await restored.initializeLocale();
+      expect(restored.locale, const Locale('da'));
+      expect(restored.settings.languageTag, 'da');
+    },
+  );
 
-  test('unsupported tags display English without losing the original tag',
-      () async {
-    final cache = _MemoryLocaleCache('zz-ZZ');
-    final controller = AppSettingsController(localeCache: cache);
-    await controller.initializeLocale();
+  test(
+    'unsupported tags display English without losing the original tag',
+    () async {
+      final cache = _MemoryLocaleCache('zz-ZZ');
+      final controller = AppSettingsController(localeCache: cache);
+      await controller.initializeLocale();
 
-    expect(controller.locale, const Locale('en'));
-    expect(controller.settings.languageTag, 'zz-ZZ');
-    expect(cache.value, 'zz-ZZ');
+      expect(controller.locale, const Locale('en'));
+      expect(controller.settings.languageTag, 'zz-ZZ');
+      expect(cache.value, 'zz-ZZ');
 
-    await controller.applyAccountSettings(
-      const AccountSettingsDto(languageTag: 'future-Latn'),
-    );
-    expect(controller.locale, const Locale('en'));
-    expect(controller.settings.languageTag, 'future-Latn');
-    expect(cache.value, 'future-Latn');
-  });
+      await controller.applyAccountSettings(
+        const AccountSettingsDto(languageTag: 'future-Latn'),
+      );
+      expect(controller.locale, const Locale('en'));
+      expect(controller.settings.languageTag, 'future-Latn');
+      expect(cache.value, 'future-Latn');
+    },
+  );
 
-  test('authenticated account overrides cache and logout retains language',
-      () async {
-    final cache = _MemoryLocaleCache('en');
-    final controller = AppSettingsController(
-      localeCache: cache,
-      settingsLoader: () async =>
-          const AccountSettingsDto(languageTag: 'da'),
-    );
-    await controller.initializeLocale();
-    await controller.load();
+  test(
+    'authenticated account overrides cache and logout retains language',
+    () async {
+      final cache = _MemoryLocaleCache('en');
+      final controller = AppSettingsController(
+        localeCache: cache,
+        settingsLoader: () async => const AccountSettingsDto(languageTag: 'da'),
+      );
+      await controller.initializeLocale();
+      await controller.load();
 
-    expect(controller.locale, const Locale('da'));
-    expect(cache.value, 'da');
+      expect(controller.locale, const Locale('da'));
+      expect(cache.value, 'da');
 
-    controller.resetForLogout();
-    expect(controller.locale, const Locale('da'));
-    expect(controller.settings.languageTag, 'da');
-  });
+      controller.resetForLogout();
+      expect(controller.locale, const Locale('da'));
+      expect(controller.settings.languageTag, 'da');
+    },
+  );
+
+  test(
+    'non-language setting changes do not rewrite the locale cache',
+    () async {
+      final cache = _MemoryLocaleCache('en');
+      final controller = AppSettingsController(localeCache: cache);
+      await controller.initializeLocale();
+
+      await controller.applyLocalSettings(
+        const AccountSettingsDto(
+          languageTag: 'en',
+          measurementSystem: MeasurementSystem.imperial,
+        ),
+      );
+
+      expect(controller.measurementSystem, MeasurementSystem.imperial);
+      expect(cache.writeCount, 0);
+    },
+  );
 
   test('DTO preserves unknown language tags through JSON round trips', () {
     final settings = AccountSettingsDto.fromJson(const {
@@ -67,14 +92,12 @@ void main() {
 
     expect(settings.languageTag, 'fr-CA');
     expect(settings.toJson()['languageTag'], 'fr-CA');
-    expect(
-      AccountSettingsDto.fromJson(settings.toJson()).languageTag,
-      'fr-CA',
-    );
+    expect(AccountSettingsDto.fromJson(settings.toJson()).languageTag, 'fr-CA');
   });
 
-  testWidgets('selector discovers native names and switches immediately',
-      (tester) async {
+  testWidgets('selector discovers native names and switches immediately', (
+    tester,
+  ) async {
     final cache = _MemoryLocaleCache('en');
     final appSettings = AppSettingsController(localeCache: cache);
     await appSettings.initializeLocale();
@@ -104,9 +127,7 @@ void main() {
     expect(appSettings.locale, const Locale('da'));
     expect(cache.value, 'da');
 
-    saveCompleter.complete(
-      const AccountSettingsDto(languageTag: 'da'),
-    );
+    saveCompleter.complete(const AccountSettingsDto(languageTag: 'da'));
     await tester.pumpAndSettle();
     expect(find.text('Nuværende sprog'), findsOneWidget);
   });
@@ -139,15 +160,15 @@ void main() {
     await tester.pumpAndSettle();
     expect(appSettings.locale, const Locale('en'));
     expect(cache.value, 'en');
-    expect(find.textContaining('previous language was restored'), findsOneWidget);
+    expect(
+      find.textContaining('previous language was restored'),
+      findsOneWidget,
+    );
     expect(find.text('Current language'), findsOneWidget);
   });
 }
 
-Widget _localizedHarness(
-  AppSettingsController settings,
-  Widget home,
-) {
+Widget _localizedHarness(AppSettingsController settings, Widget home) {
   return AnimatedBuilder(
     animation: settings,
     builder: (context, _) => MaterialApp(
@@ -163,12 +184,14 @@ class _MemoryLocaleCache implements LocaleCache {
   _MemoryLocaleCache([this.value]);
 
   String? value;
+  int writeCount = 0;
 
   @override
   Future<String?> read() async => value;
 
   @override
   Future<void> write(String languageTag) async {
+    writeCount++;
     value = languageTag;
   }
 }

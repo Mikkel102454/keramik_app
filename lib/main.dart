@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/app/entitlement_controller.dart';
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
@@ -19,6 +21,19 @@ void main() async {
   await ApiClient.init();
   final authenticationCubit = AuthenticationCubit();
   ApiClient.onUnauthorized = authenticationCubit.sessionExpired;
+  ApiClient.onSubscriptionError = (error) {
+    EntitlementController.instance.refresh();
+    final context = appRouter.navigatorKey.currentContext;
+    if (context != null && context.mounted) {
+      showFeatureLock(
+        context,
+        error['featureKey'] as String? ?? '',
+        limit: (error['limit'] as num?)?.toInt(),
+        currentUsage: (error['currentUsage'] as num?)?.toInt(),
+        offerMaker: error['requiredPlan'] == 'Maker',
+      );
+    }
+  };
   ChatEventService.instance.onInvalidated =
       NavigationBadgeController.instance.refresh;
 
@@ -45,16 +60,19 @@ class MyApp extends StatelessWidget {
       listener: (context, state) {
         state.whenOrNull(
           authenticated: () {
+            EntitlementController.instance.start();
             ChatEventService.instance.start();
             NavigationBadgeController.instance.refresh();
             AppSettingsController.instance.load();
           },
           unauthenticated: () {
+            EntitlementController.instance.reset();
             ChatEventService.instance.stop();
             NavigationBadgeController.instance.setCount(0);
             AppSettingsController.instance.resetForLogout();
           },
           logout: () {
+            EntitlementController.instance.reset();
             ChatEventService.instance.stop();
             NavigationBadgeController.instance.setCount(0);
             AppSettingsController.instance.resetForLogout();

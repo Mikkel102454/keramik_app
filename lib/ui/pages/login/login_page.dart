@@ -5,10 +5,35 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:ceramic_app/config/constants/app_constants.dart';
+import 'package:ceramic_app/utils/web.dart';
 
 @RoutePage()
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _openingWebsite = false;
+
+  Future<void> _openAccountPage(String Function() url) async {
+    if (_openingWebsite) return;
+    setState(() => _openingWebsite = true);
+    try {
+      await openWebPage(url());
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.accountWebsiteOpenFailed)),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _openingWebsite = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,8 +114,12 @@ class LoginPage extends StatelessWidget {
 
                       Align(
                         alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () {},
+                        child: TextButton(
+                          onPressed: _openingWebsite || isLoading
+                              ? null
+                              : () => _openAccountPage(
+                                  () => AppConstants.api.forgotPasswordUrl,
+                                ),
                           child: Text(
                             context.l10n.forgotPassword,
                             style: TextStyle(
@@ -133,7 +162,8 @@ class LoginPage extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  context.l10n
+                                  context
+                                      .l10n
                                       .accountDeletionPendingExplanation,
                                 ),
                                 const SizedBox(height: 12),
@@ -169,12 +199,18 @@ class LoginPage extends StatelessWidget {
 
                       const SizedBox(height: 24),
 
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 4,
                         children: [
                           Text(context.l10n.noAccountQuestion),
-                          GestureDetector(
-                            onTap: () {},
+                          TextButton(
+                            onPressed: _openingWebsite || isLoading
+                                ? null
+                                : () => _openAccountPage(
+                                    () => AppConstants.api.signupUrl,
+                                  ),
                             child: Text(
                               context.l10n.signUp,
                               style: TextStyle(

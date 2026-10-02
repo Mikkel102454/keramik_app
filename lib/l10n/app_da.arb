@@ -1,4 +1,6 @@
 {
+  "accountWebsiteOpenFailed": "Kunne ikke ?bne kontowebstedet. Pr?v igen.",
+  "@accountWebsiteOpenFailed": {"description": "Feedback when signup or password recovery cannot open in the browser"},
   "@@locale": "da",
   "languageName": "Dansk",
   "@languageName": {
@@ -120,9 +122,9 @@
   "exportExpired": "Eksporten er udløbet",
   "exportFailed": "Eksporten mislykkedes",
   "deletionScheduleFailed": "Sletningen kunne ikke planlægges. Prøv igen.",
-  "deletionCancellationPeriod": "Sletning starter en annulleringsperiode på 30 dage.",
-  "deletionSignOutExplanation": "Du bliver straks logget ud overalt og kan ikke bruge appens almindelige funktioner. Log ind igen inden for de næste 30 dage for at annullere sletningen eller logge ud.",
-  "deletionRetentionExplanation": "Efter 30 dage slettes privat identitet, journal- og materialedata samt ejede medier. En deaktiveret pseudonym konto og delte chat-, rapport-, revisions- og sikkerhedsdata bevares på ubestemt tid. Andre medlemmer vil se “Slettet medlem”.",
+  "deletionCancellationPeriod": "Sletning starter en annulleringsperiode på mindst 30 dage. Et betalt medlemskab kan forlænge perioden, indtil den betalte periode slutter.",
+  "deletionSignOutExplanation": "Du bliver straks logget ud overalt og kan ikke bruge appens almindelige funktioner. Log ind igen før den planlagte sletningsdato for at annullere sletningen eller logge ud.",
+  "deletionRetentionExplanation": "Når annulleringsperioden og en eventuel betalt medlemskabsperiode er udløbet, slettes privat identitet, journal- og materialedata samt ejede medier. En deaktiveret pseudonym konto og delte chat-, rapport-, revisions- og sikkerhedsdata bevares på ubestemt tid. Andre medlemmer vil se “Slettet medlem”.",
   "deletionUnderstand": "Jeg forstår, hvad der slettes og bevares.",
   "typeDeleteToConfirm": "Skriv DELETE for at bekræfte",
   "scheduleAccountDeletion": "Planlæg sletning af konto",
@@ -149,7 +151,7 @@
   "forgotPassword": "Glemt adgangskode",
   "logIn": "Log ind",
   "accountDeletionPending": "Kontosletning afventer",
-  "accountDeletionPendingExplanation": "Almindelig aktivitet er begrænset i perioden på 30 dage. Annuller sletningen for at gendanne kontoen, eller log ud.",
+  "accountDeletionPendingExplanation": "Almindelig aktivitet er begrænset frem til den planlagte sletningsdato. Annuller sletningen for at gendanne kontoen, eller log ud.",
   "cancelDeletion": "Annuller sletning",
   "signOut": "Log ud",
   "or": "ELLER",
@@ -845,5 +847,77 @@
   "@convertedSpending": {"placeholders": {"amount": {"type": "String"}, "currency": {"type": "String"}}},
   "currencyConversionUnavailable": "En omregnet total er ikke tilgængelig. Oprindelige valutatal vises stadig.",
   "exchangeRateSource": "ECB-referencekurser fra {date} ({provider})",
-  "@exchangeRateSource": {"placeholders": {"date": {"type": "String"}, "provider": {"type": "String"}}}
+  "@exchangeRateSource": {"placeholders": {"date": {"type": "String"}, "provider": {"type": "String"}}},
+  "membership": "Medlemskab",
+  "membershipFree": "Gratis",
+  "membershipMaker": "Maker",
+  "viewMakerMembership": "Se Maker-medlemskab",
+  "refreshMembership": "Opdater medlemskab",
+  "membershipLoading": "Indlæser medlemskab…",
+  "membershipLoadFailed": "Medlemskabet kunne ikke opdateres. Det seneste resultat vises, hvis det findes. Prøv igen.",
+  "membershipRequired": "Maker giver adgang til denne funktion. Dine gemte data er stadig tilgængelige, når medlemskabet slutter.",
+  "membershipLimitReached": "Du har brugt {used} af {limit}. Fjern en eksisterende registrering for at tilføje en ny, eller se Maker for en større grænse, hvor det er muligt.",
+  "membershipQuota": "{feature}: {used} af {limit}",
+  "membershipUnlimitedUsage": "{feature}: {used} · Ubegrænset",
+  "membershipAllowance": "Grænse: {limit}",
+  "membershipIncluded": "Inkluderet",
+  "membershipReadOnly": "Gemte registreringer kan læses; ændringer kræver Maker",
+  "membershipPreview": "Forhåndsvisning: planbegrænsninger er slået fra.",
+  "membershipOverdue": "Betalingen er forsinket. Maker-adgang fortsætter, mens du opdaterer betalingen på hjemmesiden.",
+  "membershipEnds": "Medlemsperioden slutter {date}.",
+  "membershipDataPreserved": "Gemte data bevares, når Maker slutter. Skabeloner og lager kan stadig læses. Sletning, afpublicering, eksport, almindelige ændringer af brændinger og tilladte tilbageførsler af lager er stadig tilgængelige.",
+  "membershipBrowserSignIn": "Hjemmesiden kan bede dig om at logge ind. Appens loginoplysninger overføres ikke.",
+  "membershipOpenFailed": "Hjemmesiden for medlemskab kunne ikke åbnes.",
+  "membershipImages": "Billeder af keramik",
+  "membershipPublications": "Aktuelle publiceringer",
+  "membershipCoats": "Tilpassede antal glasurlag",
+  "membershipBatchEditing": "Masseredigering",
+  "@membershipLimitReached": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@membershipQuota": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      },
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@membershipUnlimitedUsage": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      },
+      "used": {
+        "type": "int"
+      }
+    }
+  },
+  "@membershipAllowance": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@membershipEnds": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "publicationChatShareDisclosure": "Kun de udvalgte offentlige Discover-oplysninger deles. Modtageren skal stadig have adgang til publiceringen."
 }

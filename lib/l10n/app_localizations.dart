@@ -98,6 +98,12 @@ abstract class AppLocalizations {
     Locale('en'),
   ];
 
+  /// Feedback when signup or password recovery cannot open in the browser
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open the account website. Please try again.'**
+  String get accountWebsiteOpenFailed;
+
   /// The native name of this language, shown in the language selector.
   ///
   /// In en, this message translates to:
@@ -719,19 +725,19 @@ abstract class AppLocalizations {
   /// No description provided for @deletionCancellationPeriod.
   ///
   /// In en, this message translates to:
-  /// **'Deletion starts a 30-day cancellation period.'**
+  /// **'Deletion starts a cancellation period of at least 30 days. A paid membership can extend it until the paid period ends.'**
   String get deletionCancellationPeriod;
 
   /// No description provided for @deletionSignOutExplanation.
   ///
   /// In en, this message translates to:
-  /// **'You will be signed out everywhere immediately and cannot use ordinary app features. Sign in again during the next 30 days to cancel deletion or sign out.'**
+  /// **'You will be signed out everywhere immediately and cannot use ordinary app features. Sign in again before the scheduled deletion date to cancel deletion or sign out.'**
   String get deletionSignOutExplanation;
 
   /// No description provided for @deletionRetentionExplanation.
   ///
   /// In en, this message translates to:
-  /// **'After 30 days, private identity, journal and material data, and owned media are erased. A disabled pseudonymous account shell and shared chat, report, audit, and safety records are retained indefinitely. Other members will see “Deleted member.”'**
+  /// **'After the cancellation period and any paid membership period have ended, private identity, journal and material data, and owned media are erased. A disabled pseudonymous account shell and shared chat, report, audit, and safety records are retained indefinitely. Other members will see “Deleted member.”'**
   String get deletionRetentionExplanation;
 
   /// No description provided for @deletionUnderstand.
@@ -851,7 +857,7 @@ abstract class AppLocalizations {
   /// No description provided for @accountDeletionPendingExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Ordinary activity is restricted during the 30-day grace period. Cancel deletion to restore the account, or sign out.'**
+  /// **'Ordinary activity is restricted until the scheduled deletion date. Cancel deletion to restore the account, or sign out.'**
   String get accountDeletionPendingExplanation;
 
   /// No description provided for @cancelDeletion.
@@ -3774,6 +3780,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ECB reference rates from {date} ({provider})'**
   String exchangeRateSource(String date, String provider);
+
+  /// No description provided for @membership.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership'**
+  String get membership;
+
+  /// No description provided for @membershipFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get membershipFree;
+
+  /// No description provided for @membershipMaker.
+  ///
+  /// In en, this message translates to:
+  /// **'Maker'**
+  String get membershipMaker;
+
+  /// No description provided for @viewMakerMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'View Maker membership'**
+  String get viewMakerMembership;
+
+  /// No description provided for @refreshMembership.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh membership'**
+  String get refreshMembership;
+
+  /// No description provided for @membershipLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading membership…'**
+  String get membershipLoading;
+
+  /// No description provided for @membershipLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership could not be refreshed. Your last result is shown if available. Try again.'**
+  String get membershipLoadFailed;
+
+  /// No description provided for @membershipRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Maker unlocks this feature. Your saved data stays available when membership ends.'**
+  String get membershipRequired;
+
+  /// No description provided for @membershipLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You have used {used} of {limit}. Remove an existing record to add another, or view Maker for a larger allowance where available.'**
+  String membershipLimitReached(int used, int limit);
+
+  /// No description provided for @membershipQuota.
+  ///
+  /// In en, this message translates to:
+  /// **'{feature}: {used} of {limit}'**
+  String membershipQuota(String feature, int used, int limit);
+
+  /// No description provided for @membershipUnlimitedUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'{feature}: {used} · Unlimited'**
+  String membershipUnlimitedUsage(String feature, int used);
+
+  /// No description provided for @membershipAllowance.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowance: {limit}'**
+  String membershipAllowance(int limit);
+
+  /// No description provided for @membershipIncluded.
+  ///
+  /// In en, this message translates to:
+  /// **'Included'**
+  String get membershipIncluded;
+
+  /// No description provided for @membershipReadOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved records readable; changes require Maker'**
+  String get membershipReadOnly;
+
+  /// No description provided for @membershipPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview: plan restrictions are currently disabled.'**
+  String get membershipPreview;
+
+  /// No description provided for @membershipOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment overdue. Maker access continues while you update billing on the website.'**
+  String get membershipOverdue;
+
+  /// No description provided for @membershipEnds.
+  ///
+  /// In en, this message translates to:
+  /// **'Membership period ends {date}.'**
+  String membershipEnds(String date);
+
+  /// No description provided for @membershipDataPreserved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved data is preserved after Maker ends. Templates and inventory remain readable. Deletion, unpublishing, export, ordinary firing edits, and eligible inventory reversals stay available.'**
+  String get membershipDataPreserved;
+
+  /// No description provided for @membershipBrowserSignIn.
+  ///
+  /// In en, this message translates to:
+  /// **'The website may ask you to sign in. App credentials are not transferred.'**
+  String get membershipBrowserSignIn;
+
+  /// No description provided for @membershipOpenFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The membership website could not be opened.'**
+  String get membershipOpenFailed;
+
+  /// No description provided for @membershipImages.
+  ///
+  /// In en, this message translates to:
+  /// **'Ceramic images'**
+  String get membershipImages;
+
+  /// No description provided for @membershipPublications.
+  ///
+  /// In en, this message translates to:
+  /// **'Current publications'**
+  String get membershipPublications;
+
+  /// No description provided for @membershipCoats.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom glaze coat counts'**
+  String get membershipCoats;
+
+  /// No description provided for @membershipBatchEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Batch editing'**
+  String get membershipBatchEditing;
+
+  /// No description provided for @publicationChatShareDisclosure.
+  ///
+  /// In en, this message translates to:
+  /// **'Only the curated public Discover details are shared. The recipient must still have access to the publication.'**
+  String get publicationChatShareDisclosure;
 }
 
 class _AppLocalizationsDelegate

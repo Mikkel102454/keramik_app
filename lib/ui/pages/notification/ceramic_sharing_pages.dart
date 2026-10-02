@@ -1,8 +1,11 @@
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/stage_dto.dart';
+import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/repositories/ceramic_repository.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/repositories/clay_repository.dart';
@@ -12,12 +15,26 @@ import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:ceramic_app/utils/client_uuid.dart';
 import 'package:flutter/material.dart';
 
-Future<bool> confirmCeramicShare(BuildContext context) async {
+Future<bool> confirmCeramicShare(
+  BuildContext context, {
+  bool checkMembership = true,
+  bool publicPublication = false,
+}) async {
+  if (checkMembership &&
+      !publicPublication &&
+      (!await requireFeature(context, Features.privateCeramicSharing) ||
+          !context.mounted)) {
+    return false;
+  }
   return await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
           title: Text(context.l10n.shareCeramic),
-          content: Text(context.l10n.shareCeramicDisclosure),
+          content: Text(
+            publicPublication
+                ? context.l10n.publicationChatShareDisclosure
+                : context.l10n.shareCeramicDisclosure,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -32,6 +49,22 @@ Future<bool> confirmCeramicShare(BuildContext context) async {
       ) ??
       false;
 }
+
+typedef ConversationPageLoader =
+    Future<CursorPage<DirectConversationDto>> Function({String? cursor});
+typedef PublicationConversationSender =
+    Future<void> Function(
+      String conversationId,
+      String clientMessageId,
+      String publicationId,
+    );
+typedef CeramicConversationSender =
+    Future<void> Function(
+      String conversationId,
+      String clientMessageId,
+      int ceramicId,
+    );
+typedef ShareConfirmation = Future<bool> Function(BuildContext context);
 
 class CeramicPickerPage extends StatefulWidget {
   const CeramicPickerPage({super.key});
@@ -114,16 +147,28 @@ class _CeramicPickerPageState extends State<CeramicPickerPage> {
 class ShareCeramicConversationPickerPage extends StatefulWidget {
   const ShareCeramicConversationPickerPage({
     required this.ceramicId,
+    this.loadConversations,
+    this.sendPublication,
+    this.sendCeramic,
+    this.confirmShare,
     super.key,
   }) : publicationId = null;
 
   const ShareCeramicConversationPickerPage.publication({
     required this.publicationId,
+    this.loadConversations,
+    this.sendPublication,
+    this.sendCeramic,
+    this.confirmShare,
     super.key,
   }) : ceramicId = null;
 
   final int? ceramicId;
   final String? publicationId;
+  final ConversationPageLoader? loadConversations;
+  final PublicationConversationSender? sendPublication;
+  final CeramicConversationSender? sendCeramic;
+  final ShareConfirmation? confirmShare;
 
   @override
   State<ShareCeramicConversationPickerPage> createState() =>
@@ -146,21 +191,29 @@ class _ShareCeramicConversationPickerPageState
   }
 
   Future<void> _load() async {
-    if (_loading) return;
+    if (_loading) {
+      return;
+    }
     setState(() {
       _loading = true;
       _error = null;
     });
     try {
-      final page = await ChatRepository.getConversations(cursor: _cursor);
+      final loader =
+          widget.loadConversations ?? ChatRepository.getConversations;
+      final page = await loader(cursor: _cursor);
       final writable = page.items.where(
         (item) => !item.archived && !item.readOnly && item.status == 'ACTIVE',
       );
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
-        _items.addAll(writable.where(
-          (item) => _items.every((existing) => existing.id != item.id),
-        ));
+        _items.addAll(
+          writable.where(
+            (item) => _items.every((existing) => existing.id != item.id),
+          ),
+        );
         _cursor = page.nextCursor;
       });
     } catch (exception) {
@@ -171,25 +224,31 @@ class _ShareCeramicConversationPickerPageState
   }
 
   Future<void> _share(DirectConversationDto conversation) async {
-    if (_sending || !await confirmCeramicShare(context)) return;
+    final confirmation =
+        widget.confirmShare ??
+        (BuildContext context) => confirmCeramicShare(
+          context,
+          checkMembership: !_clientIds.containsKey(conversation.id),
+          publicPublication: widget.publicationId != null,
+        );
+    if (_sending || !await confirmation(context)) {
+      return;
+    }
     setState(() {
       _sending = true;
       _error = null;
     });
     try {
-      final clientId = _clientIds.putIfAbsent(conversation.id, createClientUuid);
+      final clientId = _clientIds.putIfAbsent(
+        conversation.id,
+        createClientUuid,
+      );
       if (widget.publicationId case final publicationId?) {
-        await ChatRepository.sendPublication(
-          conversation.id,
-          clientId,
-          publicationId,
-        );
+        final sender = widget.sendPublication ?? ChatRepository.sendPublication;
+        await sender(conversation.id, clientId, publicationId);
       } else {
-        await ChatRepository.sendCeramic(
-          conversation.id,
-          clientId,
-          widget.ceramicId!,
-        );
+        final sender = widget.sendCeramic ?? ChatRepository.sendCeramic;
+        await sender(conversation.id, clientId, widget.ceramicId!);
       }
       _clientIds.remove(conversation.id);
       if (mounted) Navigator.pop(context, true);
@@ -245,7 +304,9 @@ class _ShareCeramicConversationPickerPageState
             if (_cursor != null)
               TextButton(
                 onPressed: _loading ? null : _load,
-                child: Text(_loading ? context.l10n.loading : context.l10n.loadMore),
+                child: Text(
+                  _loading ? context.l10n.loading : context.l10n.loadMore,
+                ),
               ),
           ],
         ),

@@ -19,14 +19,14 @@ AutoRoute provides navigation. A shared Dio client and persistent cookie jar com
 ## Working rules
 
 - Follow the existing feature and layer boundaries unless an approved task changes the architecture.
-- Do not introduce another state-management or dependency-injection approach without explicit approval for the dependency and architecture change.
+- Keep the established state-management and dependency-injection approach. Ask before replacing it as a substantial architecture change unless that change is already explicitly requested.
 - Keep widgets focused; place network access in repositories and coordination/state in the established controller or Cubit layer.
 - Preserve authentication redirects, cookie persistence, and unauthenticated-response handling unless an approved task changes them.
 - Treat DTO field names, enum values, multipart fields, endpoint paths, and response handling as shared API contracts. Inspect the backend implementation before changing API-consuming code.
 - Do not assume all generated platform targets are supported. Avoid platform-specific behavior unless the target platform is part of the task.
-- Do not edit generated files manually. Update the source declaration and use the established generator when generation is required and approved.
-- Do not run code generation, `flutter pub get`, or dependency-changing commands if they may update resolved or generated files without first applying the shared approval rules.
-- Do not hide or complete placeholder screens unless the requested, approved scope explicitly includes their visible behavior.
+- Do not edit generated files manually. Update the source declaration and use the established generator when generation is required, observing the shared timeout rules.
+- Run necessary code generation, `flutter pub get`, and routine dependency updates within the requested scope; inspect resulting changes and apply the shared risk-based approval rules.
+- Complete or change placeholder screens when the requested scope includes their visible behavior; avoid unrelated product changes.
 
 ## Validation
 

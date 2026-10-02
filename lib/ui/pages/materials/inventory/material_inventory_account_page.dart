@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/account_settings_dto.dart';
@@ -221,6 +223,10 @@ class _MaterialInventoryAccountPageState
   }
 
   Future<void> _editThreshold() async {
+    if (!await requireFeature(context, Features.materialInventory) ||
+        !mounted) {
+      return;
+    }
     final controller = TextEditingController(
       text: _account.lowStockThreshold ?? '',
     );
@@ -253,7 +259,9 @@ class _MaterialInventoryAccountPageState
         ],
       ),
     );
-    if (value == null) return;
+    if (value == null) {
+      return;
+    }
     try {
       _account = await MaterialInventoryRepository.updateThreshold(
         _account,
@@ -270,6 +278,10 @@ class _MaterialInventoryAccountPageState
   }
 
   Future<void> _record() async {
+    if (!await requireFeature(context, Features.materialInventory) ||
+        !mounted) {
+      return;
+    }
     final result = await showDialog<_TransactionInput>(
       context: context,
       builder: (_) => _TransactionDialog(
@@ -279,12 +291,20 @@ class _MaterialInventoryAccountPageState
         ceramicTitle: widget.ceramicTitle,
       ),
     );
-    if (result == null || !mounted) return;
-    if (!await _confirmInput(result)) return;
+    if (result == null || !mounted) {
+      return;
+    }
+    if (!await _confirmInput(result)) {
+      return;
+    }
     await _saveInput(result);
   }
 
   Future<void> _edit(MaterialInventoryTransactionDto transaction) async {
+    if (!await requireFeature(context, Features.materialInventory) ||
+        !mounted) {
+      return;
+    }
     final result = await showDialog<_TransactionInput>(
       context: context,
       builder: (_) => _TransactionDialog(
@@ -295,8 +315,12 @@ class _MaterialInventoryAccountPageState
         transaction: transaction,
       ),
     );
-    if (result == null || !mounted) return;
-    if (!await _confirmInput(result, editing: true)) return;
+    if (result == null || !mounted) {
+      return;
+    }
+    if (!await _confirmInput(result, editing: true)) {
+      return;
+    }
     await _saveInput(result, original: transaction);
   }
 
@@ -429,7 +453,9 @@ class _MaterialInventoryAccountPageState
         ],
       ),
     );
-    if (value == null || value.trim().isEmpty) return;
+    if (value == null || value.trim().isEmpty) {
+      return;
+    }
     try {
       await MaterialInventoryRepository.reverseTransaction(
         _account.id,
@@ -605,7 +631,9 @@ class _TransactionDialogState extends State<_TransactionDialog> {
       final values = await MaterialInventoryRepository.getCostOptions(
         widget.account.id,
       );
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       setState(() {
         weightedCostOptions = values;
       });

@@ -42,6 +42,12 @@ void main() {
               stage: 'Finished',
               clayTitle: 'Porcelain',
               rating: 5,
+              publicationId: 'publication-id',
+            ),
+            PublicCeramicCardDto(
+              title: 'Unpublished draft',
+              stage: 'Finished',
+              rating: 3,
             ),
           ],
         ),
@@ -53,5 +59,6 @@ void main() {
     expect(find.text('Finished pieces'), findsOneWidget);
     expect(find.text('Public vase'), findsOneWidget);
     expect(find.text('Porcelain'), findsOneWidget);
+    expect(find.text('Unpublished draft'), findsNothing);
   });
 }

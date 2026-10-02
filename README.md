@@ -15,6 +15,16 @@ flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
 
 Debug builds use `http://10.0.2.2:8080` when `API_BASE_URL` is omitted. Always pass an explicit URL for a physical device, desktop/web debugging, staging, and release builds.
 
+For the existing local Android emulator, start the backend and its Docker services using the [backend setup guide](../keramik_app_backend/README.md), then run:
+
+```powershell
+flutter emulators --launch Medium_Phone
+flutter devices
+flutter run -d emulator-5554 --no-pub --dart-define=API_BASE_URL=http://10.0.2.2:8080
+```
+
+Use the device ID reported by `flutter devices` if it differs. `--no-pub` assumes packages are already resolved; otherwise run `flutter pub get` first. Backend readiness is available at `http://localhost:8080/actuator/health/readiness` on the host and through `http://10.0.2.2:8080/actuator/health/readiness` from the emulator.
+
 ```powershell
 flutter build apk --release --dart-define=API_BASE_URL=https://api.example.com
 ```
@@ -23,7 +33,7 @@ Signing credentials are intentionally not stored in this repository. The current
 
 ## Current MVP boundary
 
-Ceramics, clays, glazes, images, session login by email or username, profiles, profile photos, account search, friend requests, friendships, blocking, unblocking, encrypted direct messaging, encrypted group chat, message-scoped ceramic sharing, message reporting, authenticated WebSocket invalidations, REST backfill, category-aware request/unread badges, account settings, and English/Danish localization are functional. The ceramic journal has a unified grid with client-side search across titles, notes, outcomes, tags, clay, and glaze names; multi-category filters; title/rating/stage/created/updated sorting; improved empty/error states; and finished-pieces grids on self and visible public profiles. Signup with a required email address, account administration, temporary-password replacement, and report review are available through the backend's Thymeleaf website. Shop, glaze combinations, textiles, in-app signup, forgot-password email recovery, richer public ceramic details/showcases, push delivery, and background execution while the app is suspended remain intentionally incomplete.
+Ceramics, clays, glazes, images, session login by email or username, profiles, profile photos, account search, friend requests, friendships, blocking, unblocking, encrypted direct messaging, encrypted group chat, message-scoped ceramic sharing, message reporting, authenticated WebSocket invalidations, REST backfill, category-aware request/unread badges, account settings, and English/Danish localization are functional. The ceramic journal has a unified grid with client-side search across titles, notes, outcomes, tags, clay, and glaze names; multi-category filters; title/rating/stage/created/updated sorting; improved empty/error states; and finished-pieces grids on self and visible public profiles. Signup with a required email address, account administration, temporary-password replacement, and report review are available through the backend's Thymeleaf website. Shop, glaze combinations, textiles, native signup forms, richer public ceramic details/showcases, push delivery, and background execution while the app is suspended remain intentionally incomplete.
 
 Ceramic detail records support optional dimensions, ordered repeatable glaze applications with coat counts, outcome notes, planned/completed firing records, server timestamps, and read-only stage history. Owners can save reusable planning-only project templates, create numbered batches of up to 50 ceramics, and safely batch-edit owned journal entries after reviewing a preview. Templates intentionally exclude images, ratings, outcomes, completed firings, stage history, publication, engagement, chat references, and timestamps. Batch edits skip protected glaze/firing work instead of replacing it. Journal selection mode also offers a separate permanent batch-delete workflow with a title review, explicit acknowledgement, stale-item protection, and all-or-nothing ownership enforcement.
 
@@ -45,11 +55,26 @@ Profile uploads can use the device camera or gallery through the existing image 
 
 The client expects the backend's `{success, data, error}` envelope for every endpoint. The login field accepts an email address or username and sends it in the established `username` request field for backward compatibility. Authentication failures follow the same envelope and route through the normal unauthenticated state. `PASSWORD_CHANGE_REQUIRED` directs the member to replace an administrator-issued temporary password on the Keramik website instead of presenting a generic network error. Create and edit forms use the backend's 255-character text limits, required ceramic fields, 0–5 rating, and nonnegative weight rules. Draft images are temporary JPEG files: they are retained after a failed create for retry and removed when deleted, after success, or when the create page is abandoned.
 
+## Signup and password recovery
+
+The login screen's accessible **Sign up** and **Forgot password** buttons open the
+external browser at `/signup` and `/forgot-password`. Set `WEBSITE_BASE_URL` to the
+website origin; it defaults to `API_BASE_URL`, and release builds require HTTPS.
+Membership continues to use the same origin at `/membership`. URLs contain no
+credentials, app cookies, query parameters or automatic return links. Duplicate
+launches are prevented and launch failure feedback is localized in English/Danish.
+
+The same account works in both places. After registering or choosing a new
+password, return to the app and sign in normally. Recovery signs out existing
+sessions/devices. An enabled account awaiting deletion can recover its password;
+recovery does not cancel deletion or alter billing. Backend mail setup and rollout
+checks are documented in [PASSWORD_RECOVERY.md](../keramik_app_backend/PASSWORD_RECOVERY.md).
+
 ## Localization
 
 Flutter generates localizations from `lib/l10n/app_<locale>.arb`, with `app_en.arb` as the template. English and Danish are complete. Every locale file supplies its own native `languageName`; the language settings page discovers generated `supportedLocales`, so adding a compiled ARB locale does not require a client registry or backend change.
 
-The premium-feature ARB messages are complete in English and Danish. In this implementation session `flutter gen-l10n` did not complete within the documented timeout, so a source-compatible localized extension supplies those new messages until an operator successfully regenerates the normal Flutter localization files. Generated files were not edited manually.
+The ARB catalogs and generated localization classes are current for English and Danish. `flutter gen-l10n` has completed successfully in the approved validation work; generated files remain derived from `app_en.arb` and `app_da.arb` and are not edited manually.
 
 To add a language:
 
@@ -62,6 +87,13 @@ The selected canonical BCP-47 tag is saved through account settings and cached i
 
 ## Validation
 
+Recovery validation (2026-10-02): analysis passes, all 136 Flutter tests pass,
+and the Android debug APK builds. The account-link tests also pass with a separate
+HTTPS website origin and discard base-path/query values. Backend disposable
+MariaDB and Mailpit HTTP/SMTP acceptance pass; installed Android/browser recovery
+UX acceptance remains open because Playwright MCP is unavailable in this session.
+See [the recovery report](../keramik_app_backend/PASSWORD_RECOVERY.md).
+
 ```powershell
 flutter analyze
 flutter test
@@ -69,6 +101,8 @@ flutter build apk --debug --dart-define=API_BASE_URL=http://10.0.2.2:8080
 ```
 
 These automated checks validate analysis, unit/widget behavior, and debug packaging. Two-client on-device acceptance against real MariaDB, MinIO, Redis, and multiple backend instances remains an external release gate; see the backend operations guide.
+
+Local validation (2026-10-01): `flutter analyze --no-pub` passed and all 121 Flutter tests passed with `flutter test`. The earlier shared-ceramic detail failure was an off-screen lazy-list assertion and now scrolls to the relevant content. The imperial-weight stall was caused by a non-language settings update unnecessarily awaiting the platform locale cache; locale persistence now runs only when the language tag changes. Discover coverage now includes the Shop route, initial/incremental/empty/error feed states, pagination, refresh, duplicate suppression, logical-request UUID reuse after failure, expired-session replacement, image containment/error placeholders, optimistic-like reconciliation and rollback, integrated five-second Not interested/Undo transport behavior, direct create/Finished-transition prompts and non-Finished exclusion, owner published/unpublished state and audience warnings, curated details, published-profile filtering, publication chat sharing and unavailable placeholders, all report categories (including the required stolen-work explanation), validation/request mapping, successful duplicate-report receipt parsing, English/Danish copy, and accessibility semantics. The pagination trigger now runs after the current frame instead of notifying its `AnimatedBuilder` during list construction. The guarded backend Android runner also passes a two-emulator scenario against disposable H2 and real MinIO: two apps authenticate independently; the viewer sees the owner's image-backed publication; Everyone/Friends and block/unblock transitions remove and restore live Discover visibility; owner unpublish removes it after a cold viewer reload; and concurrent viewer-like/owner-unpublish and publication-share/owner-unpublish races leave withdrawn episodes inaccessible. A withdrawn publication message persists and renders the localized unavailable card on the viewer emulator. A separate real-time MinIO run proves the unchanged application-signed image URL works immediately and returns HTTP 403 after 900 seconds. All disposable resources were removed afterward. Recommendation-session expiry timing remains open.
 # Discover and publication
 
 The former Shop navigation item is presented as Discover. Authenticated members can
@@ -99,3 +133,43 @@ before opening it, and shows a localized unavailable placeholder after authoriza
 or lifecycle changes. The report dialog localizes every category, validates required
 explanations, and explains the immutable evidence copy and permanent episode
 suppression.
+
+## Account deletion timing
+
+English and Danish deletion messages describe a cancellation period of at least 30 days. A paid membership can extend deletion until the paid period ends; cancellation remains available before the backend's scheduled deletion date. This wording follows the existing backend policy and does not change the API or retention behavior. The generated localization files come from `app_en.arb` and `app_da.arb`.
+
+## Membership and feature allowances
+
+Settings includes Membership with the effective plan, publication usage, preview
+state, cancellation/end date, saved-data explanation and manual refresh. The app
+loads `GET /api/account/entitlements` after authentication, refreshes on foreground
+return and subscription errors, retains only the current session's last result on
+network failure, and clears it on logout/account changes. Loading/failure is distinct
+from confirmed Free membership. Backend checks remain authoritative.
+
+Discoverable feature actions show localized Maker/allowance explanations. Image,
+firing and publication quotas come from the server rather than Dart policy values.
+Saved templates have a complete read-only view, inventory/cost history stays
+readable, and reversals, ordinary firing edits, exports, unpublishing and deletion
+remain available after downgrade. New private ceramic cards require Maker when
+enforcement is enabled; receiving/reading cards and public Discover sharing remain
+Free. Existing send identities can still replay after expiry.
+
+The upgrade action opens the configured website's `/membership` in the external
+browser without app cookies or credentials. Set `--dart-define=WEBSITE_BASE_URL=https://www.example.com`
+when the website origin differs from `API_BASE_URL`; otherwise the API origin is
+used. Release website URLs require HTTPS. Browser sign-in may be required.
+
+Backend enforcement defaults disabled until coordinated acceptance; the app honors
+that preview switch. Unknown feature keys parse safely, and missing known keys are
+unavailable. English/Danish ARBs and generated localizations include all membership
+copy. The already installed `url_launcher_platform_interface` 2.3.2 is now a direct
+dev dependency for the browser-launch test, with no package version upgrades.
+See the backend [policy and rollout guide](../keramik_app_backend/ENTITLEMENTS.md).
+
+Subscription validation (2026-10-02): regenerated localizations and changed-file
+formatting passed. `flutter analyze --no-pub` passed with no issues and
+`flutter test --no-pub` passed all 131 tests. The backend's isolated test suite and
+build also passed (241 active tests; seven opt-in tests skipped). Browser/app/Stripe
+and disposable-MariaDB entitlement acceptance remain pre-enablement gates;
+enforcement is still disabled.

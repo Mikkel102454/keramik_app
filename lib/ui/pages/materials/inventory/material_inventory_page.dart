@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/account_settings_dto.dart';
@@ -142,6 +144,10 @@ class _MaterialInventoryPageState extends State<MaterialInventoryPage> {
   }
 
   Future<void> _showCreate() async {
+    if (!await requireFeature(context, Features.materialInventory) ||
+        !mounted) {
+      return;
+    }
     final created = await showDialog<bool>(
       context: context,
       builder: (_) => _CreateInventoryDialog(controller: _controller),

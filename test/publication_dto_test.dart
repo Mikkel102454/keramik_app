@@ -36,6 +36,24 @@ void main() {
     expect(page.nextCursor, 'opaque-token');
   });
 
+  test('owner status preserves publication and audience state', () {
+    final status = PublicationStatusDto.fromJson({
+      'publicationId': '1f2f8816-99c4-4c73-92b7-44b684077c20',
+      'state': 'MODERATION_REMOVED',
+      'current': true,
+      'eligible': false,
+      'currentAudience': 'FRIENDS',
+      'replayed': false,
+      'changed': true,
+    });
+
+    expect(status.current, isTrue);
+    expect(status.eligible, isFalse);
+    expect(status.state, 'MODERATION_REMOVED');
+    expect(status.currentAudience, 'FRIENDS');
+    expect(status.changed, isTrue);
+  });
+
   test('publication detail parses only the curated public contract', () {
     final detail = PublicationDetailDto.fromJson({
       'publicationId': '1f2f8816-99c4-4c73-92b7-44b684077c20',

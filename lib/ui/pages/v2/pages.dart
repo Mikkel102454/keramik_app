@@ -2,14 +2,21 @@ import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_feature_page.dart';
 import 'package:ceramic_app/ui/pages/discover/discover_page.dart';
+import 'package:ceramic_app/ui/pages/discover/discover_controller.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()
 class ShopPage extends StatelessWidget {
-  const ShopPage({super.key});
+  const ShopPage({this.forYouController, this.latestController, super.key});
+
+  final DiscoverController? forYouController;
+  final DiscoverController? latestController;
 
   @override
-  Widget build(BuildContext context) => const DiscoverPage();
+  Widget build(BuildContext context) => DiscoverPage(
+    forYouController: forYouController,
+    latestController: latestController,
+  );
 }
 
 @RoutePage()

@@ -123,6 +123,28 @@ class PublicationStatusDto {
       );
 }
 
+class PublicationReportReceiptDto {
+  const PublicationReportReceiptDto({
+    required this.reportId,
+    required this.evidenceState,
+    required this.createdAt,
+    required this.replayed,
+  });
+
+  final String reportId;
+  final String evidenceState;
+  final DateTime createdAt;
+  final bool replayed;
+
+  factory PublicationReportReceiptDto.fromJson(Map<String, dynamic> json) =>
+      PublicationReportReceiptDto(
+        reportId: json['reportId'] as String,
+        evidenceState: json['evidenceState'] as String,
+        createdAt: DateTime.parse(json['createdAt'] as String),
+        replayed: json['replayed'] as bool? ?? false,
+      );
+}
+
 class PublicationDetailDto {
   const PublicationDetailDto({
     required this.publicationId,

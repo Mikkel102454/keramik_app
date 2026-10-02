@@ -24,6 +24,8 @@ class ConversationPageController extends ChangeNotifier {
   bool _liveReloading = false;
   bool _liveReloadQueued = false;
   final Map<int, String> _ceramicClientIds = {};
+  bool hasPendingCeramicSend(int ceramicId) =>
+      _ceramicClientIds.containsKey(ceramicId);
 
   void _handleEvent(ChatEventDto event) {
     if (_disposed) return;

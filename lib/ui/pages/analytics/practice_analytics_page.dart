@@ -1,3 +1,6 @@
+import 'package:ceramic_app/app/entitlement_controller.dart';
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/practice_analytics_dto.dart';
 import 'package:ceramic_app/ui/pages/analytics/practice_analytics_controller.dart';
@@ -20,11 +23,23 @@ class _PracticeAnalyticsPageState extends State<PracticeAnalyticsPage> {
   @override
   void initState() {
     super.initState();
-    _controller.load();
+    EntitlementController.instance.addListener(_membershipChanged);
+    _membershipChanged();
+  }
+
+  bool _wasAllowed = false;
+  void _membershipChanged() {
+    final state = EntitlementController.instance;
+    final allowed =
+        !state.active ||
+        state.value?.allows(Features.practiceAnalytics) == true;
+    if (allowed && !_wasAllowed) _controller.load();
+    _wasAllowed = allowed;
   }
 
   @override
   void dispose() {
+    EntitlementController.instance.removeListener(_membershipChanged);
     if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
@@ -33,64 +48,67 @@ class _PracticeAnalyticsPageState extends State<PracticeAnalyticsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.practiceAnalytics)),
-      body: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) {
-          if (_controller.loading && _controller.data == null) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (_controller.error != null && _controller.data == null) {
-            return _Retry(onRetry: _controller.load);
-          }
-          final data = _controller.data;
-          if (data == null) return const SizedBox.shrink();
-          return RefreshIndicator(
-            onRefresh: _controller.load,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
-              children: [
-                _rangeSelector(),
-                if (_controller.loading) const LinearProgressIndicator(),
-                if (_controller.error != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12),
-                    child: Text(
-                      context.l10n.analyticsRefreshFailed,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  ),
-                const SizedBox(height: 16),
-                if (!data.hasAnyData)
-                  _Empty()
-                else ...[
-                  if (data.dataQuality.legacyBaselineCount > 0)
-                    Card(
-                      child: ListTile(
-                        leading: const Icon(Icons.info_outline),
-                        title: Text(context.l10n.incompleteHistory),
-                        subtitle: Text(
-                          context.l10n.incompleteHistoryBody(
-                            data.dataQuality.legacyBaselineCount,
-                          ),
+      body: FeatureGate(
+        feature: Features.practiceAnalytics,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            if (_controller.loading && _controller.data == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (_controller.error != null && _controller.data == null) {
+              return _Retry(onRetry: _controller.load);
+            }
+            final data = _controller.data;
+            if (data == null) return const SizedBox.shrink();
+            return RefreshIndicator(
+              onRefresh: _controller.load,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+                children: [
+                  _rangeSelector(),
+                  if (_controller.loading) const LinearProgressIndicator(),
+                  if (_controller.error != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: Text(
+                        context.l10n.analyticsRefreshFailed,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
                         ),
                       ),
                     ),
-                  _activity(data),
-                  _stages(data),
-                  _durations(data),
-                  _ratings(data),
-                  _materials(data),
-                  _inventory(data),
-                  _combinations(data),
-                  _firings(data),
+                  const SizedBox(height: 16),
+                  if (!data.hasAnyData)
+                    _Empty()
+                  else ...[
+                    if (data.dataQuality.legacyBaselineCount > 0)
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.info_outline),
+                          title: Text(context.l10n.incompleteHistory),
+                          subtitle: Text(
+                            context.l10n.incompleteHistoryBody(
+                              data.dataQuality.legacyBaselineCount,
+                            ),
+                          ),
+                        ),
+                      ),
+                    _activity(data),
+                    _stages(data),
+                    _durations(data),
+                    _ratings(data),
+                    _materials(data),
+                    _inventory(data),
+                    _combinations(data),
+                    _firings(data),
+                  ],
                 ],
-              ],
-            ),
-          );
-        },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

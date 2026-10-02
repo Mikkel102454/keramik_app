@@ -9,6 +9,10 @@ class AppLocalizationsDa extends AppLocalizations {
   AppLocalizationsDa([String locale = 'da']) : super(locale);
 
   @override
+  String get accountWebsiteOpenFailed =>
+      'Kunne ikke ?bne kontowebstedet. Pr?v igen.';
+
+  @override
   String get languageName => 'Dansk';
 
   @override
@@ -337,15 +341,15 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get deletionCancellationPeriod =>
-      'Sletning starter en annulleringsperiode på 30 dage.';
+      'Sletning starter en annulleringsperiode på mindst 30 dage. Et betalt medlemskab kan forlænge perioden, indtil den betalte periode slutter.';
 
   @override
   String get deletionSignOutExplanation =>
-      'Du bliver straks logget ud overalt og kan ikke bruge appens almindelige funktioner. Log ind igen inden for de næste 30 dage for at annullere sletningen eller logge ud.';
+      'Du bliver straks logget ud overalt og kan ikke bruge appens almindelige funktioner. Log ind igen før den planlagte sletningsdato for at annullere sletningen eller logge ud.';
 
   @override
   String get deletionRetentionExplanation =>
-      'Efter 30 dage slettes privat identitet, journal- og materialedata samt ejede medier. En deaktiveret pseudonym konto og delte chat-, rapport-, revisions- og sikkerhedsdata bevares på ubestemt tid. Andre medlemmer vil se “Slettet medlem”.';
+      'Når annulleringsperioden og en eventuel betalt medlemskabsperiode er udløbet, slettes privat identitet, journal- og materialedata samt ejede medier. En deaktiveret pseudonym konto og delte chat-, rapport-, revisions- og sikkerhedsdata bevares på ubestemt tid. Andre medlemmer vil se “Slettet medlem”.';
 
   @override
   String get deletionUnderstand => 'Jeg forstår, hvad der slettes og bevares.';
@@ -410,7 +414,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get accountDeletionPendingExplanation =>
-      'Almindelig aktivitet er begrænset i perioden på 30 dage. Annuller sletningen for at gendanne kontoen, eller log ud.';
+      'Almindelig aktivitet er begrænset frem til den planlagte sletningsdato. Annuller sletningen for at gendanne kontoen, eller log ud.';
 
   @override
   String get cancelDeletion => 'Annuller sletning';
@@ -2203,4 +2207,98 @@ class AppLocalizationsDa extends AppLocalizations {
   String exchangeRateSource(String date, String provider) {
     return 'ECB-referencekurser fra $date ($provider)';
   }
+
+  @override
+  String get membership => 'Medlemskab';
+
+  @override
+  String get membershipFree => 'Gratis';
+
+  @override
+  String get membershipMaker => 'Maker';
+
+  @override
+  String get viewMakerMembership => 'Se Maker-medlemskab';
+
+  @override
+  String get refreshMembership => 'Opdater medlemskab';
+
+  @override
+  String get membershipLoading => 'Indlæser medlemskab…';
+
+  @override
+  String get membershipLoadFailed =>
+      'Medlemskabet kunne ikke opdateres. Det seneste resultat vises, hvis det findes. Prøv igen.';
+
+  @override
+  String get membershipRequired =>
+      'Maker giver adgang til denne funktion. Dine gemte data er stadig tilgængelige, når medlemskabet slutter.';
+
+  @override
+  String membershipLimitReached(int used, int limit) {
+    return 'Du har brugt $used af $limit. Fjern en eksisterende registrering for at tilføje en ny, eller se Maker for en større grænse, hvor det er muligt.';
+  }
+
+  @override
+  String membershipQuota(String feature, int used, int limit) {
+    return '$feature: $used af $limit';
+  }
+
+  @override
+  String membershipUnlimitedUsage(String feature, int used) {
+    return '$feature: $used · Ubegrænset';
+  }
+
+  @override
+  String membershipAllowance(int limit) {
+    return 'Grænse: $limit';
+  }
+
+  @override
+  String get membershipIncluded => 'Inkluderet';
+
+  @override
+  String get membershipReadOnly =>
+      'Gemte registreringer kan læses; ændringer kræver Maker';
+
+  @override
+  String get membershipPreview =>
+      'Forhåndsvisning: planbegrænsninger er slået fra.';
+
+  @override
+  String get membershipOverdue =>
+      'Betalingen er forsinket. Maker-adgang fortsætter, mens du opdaterer betalingen på hjemmesiden.';
+
+  @override
+  String membershipEnds(String date) {
+    return 'Medlemsperioden slutter $date.';
+  }
+
+  @override
+  String get membershipDataPreserved =>
+      'Gemte data bevares, når Maker slutter. Skabeloner og lager kan stadig læses. Sletning, afpublicering, eksport, almindelige ændringer af brændinger og tilladte tilbageførsler af lager er stadig tilgængelige.';
+
+  @override
+  String get membershipBrowserSignIn =>
+      'Hjemmesiden kan bede dig om at logge ind. Appens loginoplysninger overføres ikke.';
+
+  @override
+  String get membershipOpenFailed =>
+      'Hjemmesiden for medlemskab kunne ikke åbnes.';
+
+  @override
+  String get membershipImages => 'Billeder af keramik';
+
+  @override
+  String get membershipPublications => 'Aktuelle publiceringer';
+
+  @override
+  String get membershipCoats => 'Tilpassede antal glasurlag';
+
+  @override
+  String get membershipBatchEditing => 'Masseredigering';
+
+  @override
+  String get publicationChatShareDisclosure =>
+      'Kun de udvalgte offentlige Discover-oplysninger deles. Modtageren skal stadig have adgang til publiceringen.';
 }

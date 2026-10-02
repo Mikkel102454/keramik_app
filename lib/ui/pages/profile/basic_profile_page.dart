@@ -56,7 +56,13 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
       final loader =
           widget.loadFinishedCeramics ?? SocialRepository.getPublishedCeramics;
       final ceramics = await loader(_profile.userId);
-      if (mounted) setState(() => _finishedCeramics = ceramics);
+      if (mounted) {
+        setState(() {
+          _finishedCeramics = ceramics
+              .where((ceramic) => ceramic.publicationId != null)
+              .toList(growable: false);
+        });
+      }
     } catch (exception) {
       if (mounted) setState(() => _ceramicsError = exception);
     } finally {
@@ -81,9 +87,7 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(context.l10n.removeFriendQuestion),
-        content: Text(
-          context.l10n.removeFriendExplanation(_profile.username),
-        ),
+        content: Text(context.l10n.removeFriendExplanation(_profile.username)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -132,7 +136,10 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
     try {
       await SocialRepository.block(_profile.userId);
       if (mounted) {
-        Navigator.pop(context, BlockedAccountResult(_profile.userId, _profile.username));
+        Navigator.pop(
+          context,
+          BlockedAccountResult(_profile.userId, _profile.username),
+        );
       }
     } catch (exception) {
       if (mounted) {
@@ -150,7 +157,9 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
         if (mounted) {
           conversation = await Navigator.push<DirectConversationDto>(
             context,
-            MaterialPageRoute(builder: (_) => MessageRequestPage(user: _profile)),
+            MaterialPageRoute(
+              builder: (_) => MessageRequestPage(user: _profile),
+            ),
           );
         }
       } else {
@@ -159,7 +168,9 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
       if (!mounted || conversation == null) return;
       await Navigator.push(
         context,
-        MaterialPageRoute(builder: (_) => ConversationPage(initialConversation: conversation!)),
+        MaterialPageRoute(
+          builder: (_) => ConversationPage(initialConversation: conversation!),
+        ),
       );
       if (!mounted) return;
       final refreshed = await SocialRepository.getProfile(_profile.userId);
@@ -172,7 +183,9 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
   }
 
   void _showError(Object exception) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(exception.toString())));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(exception.toString())));
   }
 
   @override
@@ -209,7 +222,9 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
           if (!_busy) ...[
             if (_profile.actions.contains('SEND_FRIEND_REQUEST'))
               FilledButton.icon(
-                onPressed: () => _perform(() => SocialRepository.sendFriendRequest(_profile.userId)),
+                onPressed: () => _perform(
+                  () => SocialRepository.sendFriendRequest(_profile.userId),
+                ),
                 icon: const Icon(Icons.person_add_alt_1),
                 label: Text(context.l10n.sendFriendRequest),
               ),
@@ -217,14 +232,22 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
               FilledButton(
                 onPressed: _profile.friendRequestId == null
                     ? null
-                    : () => _perform(() => SocialRepository.acceptFriendRequest(_profile.friendRequestId!)),
+                    : () => _perform(
+                        () => SocialRepository.acceptFriendRequest(
+                          _profile.friendRequestId!,
+                        ),
+                      ),
                 child: Text(context.l10n.acceptRequest),
               ),
             if (_profile.actions.contains('DECLINE_FRIEND_REQUEST'))
               OutlinedButton(
                 onPressed: _profile.friendRequestId == null
                     ? null
-                    : () => _perform(() => SocialRepository.declineFriendRequest(_profile.friendRequestId!)),
+                    : () => _perform(
+                        () => SocialRepository.declineFriendRequest(
+                          _profile.friendRequestId!,
+                        ),
+                      ),
                 child: Text(context.l10n.declineRequest),
               ),
             if (_profile.actions.contains('MESSAGE'))
@@ -247,7 +270,9 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
             if (_profile.actions.contains('BLOCK'))
               TextButton(
                 onPressed: _block,
-                style: TextButton.styleFrom(foregroundColor: Theme.of(context).colorScheme.error),
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
                 child: Text(context.l10n.blockAccount),
               ),
           ],
@@ -319,13 +344,13 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
                   onTap: ceramic.publicationId == null
                       ? null
                       : () => Navigator.push<void>(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => PublicationDetailPage(
-                                publicationId: ceramic.publicationId!,
-                              ),
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PublicationDetailPage(
+                              publicationId: ceramic.publicationId!,
                             ),
                           ),
+                        ),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [

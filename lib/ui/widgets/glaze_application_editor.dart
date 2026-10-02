@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:collection/collection.dart';
@@ -183,7 +185,9 @@ class _GlazeApplicationEditDialogState
   }
 
   Future<void> _save() async {
-    if (_saving) return;
+    if (_saving) {
+      return;
+    }
     final coatCount = int.tryParse(_coats.text.trim());
     if (coatCount == null || coatCount < 1) {
       setState(() {
@@ -193,6 +197,11 @@ class _GlazeApplicationEditDialogState
       return;
     }
 
+    if (coatCount != widget.initialCoatCount &&
+        (!await requireFeature(context, Features.customGlazeCoats) ||
+            !mounted)) {
+      return;
+    }
     FocusScope.of(context).unfocus();
     setState(() {
       _saving = true;
@@ -201,7 +210,9 @@ class _GlazeApplicationEditDialogState
     });
     final saveFailed = context.l10n.glazeApplicationSaveFailed;
     final saved = await widget.onSave(_note.text, coatCount);
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
     if (saved) {
       Navigator.of(context).pop();
       return;

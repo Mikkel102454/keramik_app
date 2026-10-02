@@ -4,6 +4,7 @@ import 'package:ceramic_app/repositories/publication_repository.dart';
 import 'package:ceramic_app/repositories/social_repository.dart';
 import 'package:ceramic_app/ui/pages/discover/discover_controller.dart';
 import 'package:ceramic_app/ui/pages/discover/publication_detail_page.dart';
+import 'package:ceramic_app/ui/pages/discover/publication_report_dialog.dart';
 import 'package:ceramic_app/ui/pages/profile/basic_profile_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
@@ -11,15 +12,20 @@ import 'package:ceramic_app/ui/pages/notification/ceramic_sharing_pages.dart';
 import 'package:flutter/material.dart';
 
 class DiscoverPage extends StatefulWidget {
-  const DiscoverPage({super.key});
+  const DiscoverPage({this.forYouController, this.latestController, super.key});
+
+  final DiscoverController? forYouController;
+  final DiscoverController? latestController;
+
   @override
   State<DiscoverPage> createState() => _DiscoverPageState();
 }
 
-class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderStateMixin {
+class _DiscoverPageState extends State<DiscoverPage>
+    with SingleTickerProviderStateMixin {
   late final TabController _tabs = TabController(length: 2, vsync: this);
-  final _forYou = DiscoverController('FOR_YOU');
-  final _latest = DiscoverController('LATEST');
+  late final _forYou = widget.forYouController ?? DiscoverController('FOR_YOU');
+  late final _latest = widget.latestController ?? DiscoverController('LATEST');
 
   @override
   void initState() {
@@ -31,30 +37,34 @@ class _DiscoverPageState extends State<DiscoverPage> with SingleTickerProviderSt
   @override
   void dispose() {
     _tabs.dispose();
-    _forYou.dispose();
-    _latest.dispose();
+    if (widget.forYouController == null) _forYou.dispose();
+    if (widget.latestController == null) _latest.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: Text(context.l10n.navigationDiscover),
-          bottom: TabBar(
-            controller: _tabs,
-            tabs: [
-              Tab(text: context.l10n.discoverForYou),
-              Tab(text: context.l10n.discoverLatest),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          controller: _tabs,
-          children: [_Feed(controller: _forYou), _Feed(controller: _latest)],
-        ),
-        bottomNavigationBar:
-            const NavigationWidget(currentPage: NavigationPage.discover),
-      );
+    appBar: AppBar(
+      title: Text(context.l10n.navigationDiscover),
+      bottom: TabBar(
+        controller: _tabs,
+        tabs: [
+          Tab(text: context.l10n.discoverForYou),
+          Tab(text: context.l10n.discoverLatest),
+        ],
+      ),
+    ),
+    body: TabBarView(
+      controller: _tabs,
+      children: [
+        _Feed(controller: _forYou),
+        _Feed(controller: _latest),
+      ],
+    ),
+    bottomNavigationBar: const NavigationWidget(
+      currentPage: NavigationPage.discover,
+    ),
+  );
 }
 
 class _Feed extends StatelessWidget {
@@ -63,92 +73,94 @@ class _Feed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: controller,
-        builder: (context, _) {
-          if (controller.loading && controller.items.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (controller.error != null && controller.items.isEmpty) {
-            return Center(
-              child: FilledButton(
-                onPressed: () => controller.load(refresh: true),
-                child: Text(context.l10n.tryAgain),
-              ),
-            );
-          }
-          if (controller.items.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: () => controller.load(refresh: true),
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  const SizedBox(height: 180),
-                  Center(child: Text(context.l10n.discoverEmpty)),
-                ],
-              ),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: () => controller.load(refresh: true),
-            child: ListView.builder(
-              padding: const EdgeInsets.only(bottom: 24),
-              itemCount: controller.items.length + (controller.nextCursor == null ? 0 : 1),
-              itemBuilder: (context, index) {
-                if (index == controller.items.length) {
+    animation: controller,
+    builder: (context, _) {
+      if (controller.loading && controller.items.isEmpty) {
+        return const Center(child: CircularProgressIndicator());
+      }
+      if (controller.error != null && controller.items.isEmpty) {
+        return Center(
+          child: FilledButton(
+            onPressed: () => controller.load(refresh: true),
+            child: Text(context.l10n.tryAgain),
+          ),
+        );
+      }
+      if (controller.items.isEmpty) {
+        return RefreshIndicator(
+          onRefresh: () => controller.load(refresh: true),
+          child: ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              const SizedBox(height: 180),
+              Center(child: Text(context.l10n.discoverEmpty)),
+            ],
+          ),
+        );
+      }
+      return RefreshIndicator(
+        onRefresh: () => controller.load(refresh: true),
+        child: ListView.builder(
+          padding: const EdgeInsets.only(bottom: 24),
+          itemCount:
+              controller.items.length + (controller.nextCursor == null ? 0 : 1),
+          itemBuilder: (context, index) {
+            if (index == controller.items.length) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!controller.loading && controller.nextCursor != null) {
                   controller.load();
-                  return const Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Center(child: CircularProgressIndicator()),
+                }
+              });
+              return const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            final item = controller.items[index];
+            return _PublicationPost(
+              item: item,
+              onOpen: () => Navigator.push<void>(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      PublicationDetailPage(publicationId: item.publicationId),
+                ),
+              ),
+              onOpenCreator: () => _openCreator(context, item.creator.userId),
+              onLike: item.ownedByMe
+                  ? null
+                  : () => controller.toggleLike(index),
+              onHide: () async {
+                final removed = await controller.hide(index);
+                if (removed != null && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      duration: const Duration(seconds: 5),
+                      content: Text(context.l10n.notInterestedAction),
+                      action: SnackBarAction(
+                        label: context.l10n.undoAction,
+                        onPressed: () => controller.undoHide(index, removed),
+                      ),
+                    ),
                   );
                 }
-                final item = controller.items[index];
-                return _PublicationPost(
-                  item: item,
-                  onOpen: () => Navigator.push<void>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => PublicationDetailPage(
-                        publicationId: item.publicationId,
-                      ),
-                    ),
-                  ),
-                  onOpenCreator: () =>
-                      _openCreator(context, item.creator.userId),
-                  onLike: item.ownedByMe
-                      ? null
-                      : () => controller.toggleLike(index),
-                  onHide: () async {
-                    final removed = await controller.hide(index);
-                    if (removed != null && context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          duration: const Duration(seconds: 5),
-                          content: Text(context.l10n.notInterestedAction),
-                          action: SnackBarAction(
-                            label: context.l10n.undoAction,
-                            onPressed: () =>
-                                controller.undoHide(index, removed),
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                  onReport: () => _report(context, item.publicationId),
-                  onShare: () => Navigator.push<bool>(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          ShareCeramicConversationPickerPage.publication(
-                        publicationId: item.publicationId,
-                      ),
-                    ),
-                  ),
-                );
               },
-            ),
-          );
-        },
+              onReport: () => _report(context, item.publicationId),
+              onShare: () => Navigator.push<bool>(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      ShareCeramicConversationPickerPage.publication(
+                        publicationId: item.publicationId,
+                      ),
+                ),
+              ),
+            );
+          },
+        ),
       );
+    },
+  );
 
   Future<void> _openCreator(BuildContext context, String userId) async {
     try {
@@ -174,9 +186,9 @@ class _Feed extends StatelessWidget {
                 await controller.load(refresh: true);
               } catch (exception) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(exception.toString())),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(exception.toString())));
                 }
               }
             },
@@ -185,96 +197,27 @@ class _Feed extends StatelessWidget {
       );
     } catch (exception) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(exception.toString())),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(exception.toString())));
       }
     }
   }
 
   Future<void> _report(BuildContext context, String publicationId) async {
-    var category = 'SPAM';
-    final explanation = TextEditingController();
-    final formKey = GlobalKey<FormState>();
-    final submit = await showDialog<bool>(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text(context.l10n.reportPublication),
-          content: SingleChildScrollView(
-            child: Form(
-              key: formKey,
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(
-                  context.l10n.publicationReportEvidenceDisclosure,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  initialValue: category,
-                  isExpanded: true,
-                  decoration:
-                      InputDecoration(labelText: context.l10n.reportReason),
-                  items: const [
-                    'SPAM',
-                    'HARASSMENT_OR_HATE',
-                    'SEXUAL_CONTENT',
-                    'VIOLENCE_OR_DANGEROUS',
-                    'STOLEN_WORK_OR_IP',
-                    'OTHER',
-                  ].map((value) => DropdownMenuItem(
-                    value: value,
-                    child: Text(
-                      context.l10n.publicationReportCategory(value),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  )).toList(),
-                  onChanged: (value) =>
-                      setState(() => category = value ?? category),
-                ),
-                TextFormField(
-                  controller: explanation,
-                  maxLength: 2000,
-                  maxLines: 4,
-                  decoration:
-                      InputDecoration(labelText: context.l10n.reportExplanation),
-                  validator: (value) {
-                    final length = value?.trim().runes.length ?? 0;
-                    final required =
-                        category == 'STOLEN_WORK_OR_IP' || category == 'OTHER';
-                    if ((required && length < 10) ||
-                        (length > 0 && length < 10) ||
-                        length > 2000) {
-                      return context.l10n.reportOtherExplanationRequired;
-                    }
-                    return null;
-                  },
-                ),
-              ]),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text(context.l10n.cancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                if (formKey.currentState?.validate() == true) {
-                  Navigator.pop(context, true);
-                }
-              },
-              child: Text(context.l10n.submitReport),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (submit == true) {
-      await PublicationRepository.report(publicationId, category, explanation.text);
+    final draft = await showPublicationReportDialog(context);
+    if (draft != null) {
+      await PublicationRepository.report(
+        publicationId,
+        draft.category,
+        draft.explanation,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.reportSubmitted)),
+        );
+      }
     }
-    explanation.dispose();
   }
 }
 
@@ -307,9 +250,9 @@ class _PublicationPost extends StatelessWidget {
       imageFrameHeight = screenHeightLimit;
     }
     if (imageFrameHeight > 420) imageFrameHeight = 420;
-    final published = MaterialLocalizations.of(context).formatShortDate(
-      item.publishedAt.toLocal(),
-    );
+    final published = MaterialLocalizations.of(
+      context,
+    ).formatShortDate(item.publishedAt.toLocal());
     return ColoredBox(
       color: theme.colorScheme.surface,
       child: Column(
@@ -349,8 +292,7 @@ class _PublicationPost extends StatelessWidget {
                                 Text(
                                   published,
                                   style: theme.textTheme.labelSmall?.copyWith(
-                                    color:
-                                        theme.colorScheme.onSurfaceVariant,
+                                    color: theme.colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                               ],
@@ -397,8 +339,10 @@ class _PublicationPost extends StatelessWidget {
                   height: imageFrameHeight,
                   child: item.primaryImage == null
                       ? const Center(
-                          child:
-                              Icon(Icons.image_not_supported_outlined, size: 46),
+                          child: Icon(
+                            Icons.image_not_supported_outlined,
+                            size: 46,
+                          ),
                         )
                       : Image.network(
                           item.primaryImage!.uri,
@@ -422,8 +366,8 @@ class _PublicationPost extends StatelessWidget {
                             child: Icon(Icons.broken_image_outlined, size: 46),
                           ),
                         ),
-                      ),
                 ),
+              ),
             ),
           ),
           Padding(

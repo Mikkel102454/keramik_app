@@ -79,7 +79,14 @@ class _ConversationPageState extends State<ConversationPage> {
       context,
       MaterialPageRoute(builder: (_) => const CeramicPickerPage()),
     );
-    if (!mounted || ceramic == null || !await confirmCeramicShare(context)) return;
+    if (!mounted ||
+        ceramic == null ||
+        !await confirmCeramicShare(
+          context,
+          checkMembership: !_controller.hasPendingCeramicSend(ceramic.id),
+        )) {
+      return;
+    }
     final sent = await _controller.sendCeramic(ceramic.id);
     if (!mounted || !sent) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -246,9 +253,9 @@ class _ConversationPageState extends State<ConversationPage> {
       ),
     );
     if (mounted && submitted == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.reportSubmitted)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.reportSubmitted)));
     }
   }
 
@@ -301,7 +308,9 @@ class _ConversationPageState extends State<ConversationPage> {
                           context.l10n.memberCount(conversation.memberCount),
                           style: TextStyle(
                             fontSize: 11,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                     ],
@@ -435,7 +444,8 @@ class _ConversationPageState extends State<ConversationPage> {
               _MessageBubble(
                 message: message,
                 isGroup: _controller.conversation.type == 'GROUP',
-                onLongPress: !message.mine &&
+                onLongPress:
+                    !message.mine &&
                         (message.type == 'TEXT' ||
                             message.type == 'CERAMIC' ||
                             message.type == 'PUBLICATION')
@@ -507,7 +517,9 @@ class _MessageBubble extends StatelessWidget {
                   ),
                 ),
               ChatCeramicCard(
-                card: message.ceramic ?? const ChatCeramicCardDto(available: false),
+                card:
+                    message.ceramic ??
+                    const ChatCeramicCardDto(available: false),
                 onTap: onCeramicTap,
                 onLongPress: onLongPress,
               ),
@@ -535,7 +547,8 @@ class _MessageBubble extends StatelessWidget {
                   ),
                 ),
               ChatPublicationCard(
-                card: message.publication ??
+                card:
+                    message.publication ??
                     const ChatPublicationCardDto(available: false),
                 onTap: onPublicationTap,
                 onLongPress: onLongPress,
@@ -547,9 +560,7 @@ class _MessageBubble extends StatelessWidget {
     }
     return Semantics(
       button: onLongPress != null,
-      hint: onLongPress == null
-          ? null
-          : context.l10n.messageActionsHint,
+      hint: onLongPress == null ? null : context.l10n.messageActionsHint,
       child: GestureDetector(
         onLongPress: onLongPress,
         child: Align(

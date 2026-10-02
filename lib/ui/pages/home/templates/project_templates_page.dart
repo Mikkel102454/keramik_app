@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/project_template_dto.dart';
 import 'package:ceramic_app/ui/pages/home/templates/project_template_editor_page.dart';
@@ -94,7 +96,12 @@ class _ProjectTemplatesPageState extends State<ProjectTemplatesPage> {
       margin: const EdgeInsets.only(bottom: 12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => _createFrom(template),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProjectTemplateReadPage(template: template),
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -177,6 +184,9 @@ class _ProjectTemplatesPageState extends State<ProjectTemplatesPage> {
   }
 
   Future<void> _create() async {
+    if (!await requireFeature(context, Features.projectTemplates) || !mounted) {
+      return;
+    }
     final result = await Navigator.push<ProjectTemplateDto>(
       context,
       MaterialPageRoute(
@@ -190,6 +200,9 @@ class _ProjectTemplatesPageState extends State<ProjectTemplatesPage> {
   }
 
   Future<void> _createFrom(ProjectTemplateDto template) async {
+    if (!await requireFeature(context, Features.projectTemplates) || !mounted) {
+      return;
+    }
     final changed = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
@@ -202,6 +215,11 @@ class _ProjectTemplatesPageState extends State<ProjectTemplatesPage> {
   }
 
   Future<void> _action(String action, ProjectTemplateDto template) async {
+    if (action != 'delete' &&
+        (!await requireFeature(context, Features.projectTemplates) ||
+            !mounted)) {
+      return;
+    }
     if (action == 'edit') {
       final result = await Navigator.push<ProjectTemplateDto>(
         context,
@@ -290,7 +308,9 @@ class _ProjectTemplatesPageState extends State<ProjectTemplatesPage> {
   }
 
   void _showError(Object value) {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(value.toString())));
@@ -345,6 +365,84 @@ class _Retry extends StatelessWidget {
           Text(context.l10n.templatesLoadFailed),
           const SizedBox(height: 12),
           FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
+        ],
+      ),
+    );
+  }
+}
+
+/// Saved planning records stay fully readable regardless of current membership.
+class ProjectTemplateReadPage extends StatelessWidget {
+  const ProjectTemplateReadPage({super.key, required this.template});
+  final ProjectTemplateDto template;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget field(String label, Object? value) => ListTile(
+      title: Text(label),
+      subtitle: SelectableText(value?.toString() ?? ''),
+    );
+    String firingLabel(String type) => switch (type) {
+      'BISQUE' => context.l10n.bisqueFiring,
+      'GLAZE' => context.l10n.glazeFiring,
+      'SINGLE' => context.l10n.singleFiring,
+      'OVERGLAZE' => context.l10n.overglazeFiring,
+      _ => context.l10n.otherFiring,
+    };
+    return Scaffold(
+      appBar: AppBar(title: Text(template.name)),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          field(context.l10n.templateTitlePattern, template.titlePattern),
+          field(context.l10n.clay, template.clayTitle),
+          field(context.l10n.notes, template.note),
+          field(context.l10n.tags, template.tags.join(', ')),
+          if (template.heightCm != null)
+            field(context.l10n.height, '${template.heightCm} cm'),
+          if (template.widthCm != null)
+            field(context.l10n.width, '${template.widthCm} cm'),
+          if (template.depthCm != null)
+            field(context.l10n.depth, '${template.depthCm} cm'),
+          if (template.diameterCm != null)
+            field(context.l10n.diameter, '${template.diameterCm} cm'),
+          Text(
+            context.l10n.glazeApplications,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          for (final glaze in template.glazes)
+            Card(
+              child: ListTile(
+                title: Text('${glaze.layerOrder}. ${glaze.glazeTitle}'),
+                subtitle: SelectableText(
+                  '${context.l10n.coatCount(glaze.coatCount)}\n${glaze.note}',
+                ),
+              ),
+            ),
+          Text(
+            context.l10n.firings,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          for (final firing in template.firings)
+            Card(
+              child: Column(
+                children: [
+                  field(
+                    firingLabel(firing.type),
+                    firing.firingDate?.toIso8601String().split('T').first,
+                  ),
+                  field(context.l10n.targetCone, firing.targetCone),
+                  if (firing.targetTemperatureC != null)
+                    field(
+                      context.l10n.targetTemperature,
+                      '${firing.targetTemperatureC} °C',
+                    ),
+                  field(context.l10n.kiln, firing.kiln),
+                  field(context.l10n.program, firing.program),
+                  field(context.l10n.notes, firing.note),
+                ],
+              ),
+            ),
         ],
       ),
     );

@@ -1,4 +1,6 @@
 {
+  "accountWebsiteOpenFailed": "Could not open the account website. Please try again.",
+  "@accountWebsiteOpenFailed": {"description": "Feedback when signup or password recovery cannot open in the browser"},
   "@@locale": "en",
   "languageName": "English",
   "@languageName": {
@@ -120,9 +122,9 @@
   "exportExpired": "Export expired",
   "exportFailed": "Export failed",
   "deletionScheduleFailed": "Deletion could not be scheduled. Please retry.",
-  "deletionCancellationPeriod": "Deletion starts a 30-day cancellation period.",
-  "deletionSignOutExplanation": "You will be signed out everywhere immediately and cannot use ordinary app features. Sign in again during the next 30 days to cancel deletion or sign out.",
-  "deletionRetentionExplanation": "After 30 days, private identity, journal and material data, and owned media are erased. A disabled pseudonymous account shell and shared chat, report, audit, and safety records are retained indefinitely. Other members will see “Deleted member.”",
+  "deletionCancellationPeriod": "Deletion starts a cancellation period of at least 30 days. A paid membership can extend it until the paid period ends.",
+  "deletionSignOutExplanation": "You will be signed out everywhere immediately and cannot use ordinary app features. Sign in again before the scheduled deletion date to cancel deletion or sign out.",
+  "deletionRetentionExplanation": "After the cancellation period and any paid membership period have ended, private identity, journal and material data, and owned media are erased. A disabled pseudonymous account shell and shared chat, report, audit, and safety records are retained indefinitely. Other members will see “Deleted member.”",
   "deletionUnderstand": "I understand what is erased and retained.",
   "typeDeleteToConfirm": "Type DELETE to confirm",
   "scheduleAccountDeletion": "Schedule account deletion",
@@ -149,7 +151,7 @@
   "forgotPassword": "Forgot password",
   "logIn": "Log in",
   "accountDeletionPending": "Account deletion pending",
-  "accountDeletionPendingExplanation": "Ordinary activity is restricted during the 30-day grace period. Cancel deletion to restore the account, or sign out.",
+  "accountDeletionPendingExplanation": "Ordinary activity is restricted until the scheduled deletion date. Cancel deletion to restore the account, or sign out.",
   "cancelDeletion": "Cancel deletion",
   "signOut": "Sign out",
   "or": "OR",
@@ -845,5 +847,77 @@
   "@convertedSpending": {"placeholders": {"amount": {"type": "String"}, "currency": {"type": "String"}}},
   "currencyConversionUnavailable": "A converted total is unavailable. Original currency totals are still shown.",
   "exchangeRateSource": "ECB reference rates from {date} ({provider})",
-  "@exchangeRateSource": {"placeholders": {"date": {"type": "String"}, "provider": {"type": "String"}}}
+  "@exchangeRateSource": {"placeholders": {"date": {"type": "String"}, "provider": {"type": "String"}}},
+  "membership": "Membership",
+  "membershipFree": "Free",
+  "membershipMaker": "Maker",
+  "viewMakerMembership": "View Maker membership",
+  "refreshMembership": "Refresh membership",
+  "membershipLoading": "Loading membership…",
+  "membershipLoadFailed": "Membership could not be refreshed. Your last result is shown if available. Try again.",
+  "membershipRequired": "Maker unlocks this feature. Your saved data stays available when membership ends.",
+  "membershipLimitReached": "You have used {used} of {limit}. Remove an existing record to add another, or view Maker for a larger allowance where available.",
+  "membershipQuota": "{feature}: {used} of {limit}",
+  "membershipUnlimitedUsage": "{feature}: {used} · Unlimited",
+  "membershipAllowance": "Allowance: {limit}",
+  "membershipIncluded": "Included",
+  "membershipReadOnly": "Saved records readable; changes require Maker",
+  "membershipPreview": "Preview: plan restrictions are currently disabled.",
+  "membershipOverdue": "Payment overdue. Maker access continues while you update billing on the website.",
+  "membershipEnds": "Membership period ends {date}.",
+  "membershipDataPreserved": "Saved data is preserved after Maker ends. Templates and inventory remain readable. Deletion, unpublishing, export, ordinary firing edits, and eligible inventory reversals stay available.",
+  "membershipBrowserSignIn": "The website may ask you to sign in. App credentials are not transferred.",
+  "membershipOpenFailed": "The membership website could not be opened.",
+  "membershipImages": "Ceramic images",
+  "membershipPublications": "Current publications",
+  "membershipCoats": "Custom glaze coat counts",
+  "membershipBatchEditing": "Batch editing",
+  "@membershipLimitReached": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@membershipQuota": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      },
+      "used": {
+        "type": "int"
+      },
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@membershipUnlimitedUsage": {
+    "placeholders": {
+      "feature": {
+        "type": "String"
+      },
+      "used": {
+        "type": "int"
+      }
+    }
+  },
+  "@membershipAllowance": {
+    "placeholders": {
+      "limit": {
+        "type": "int"
+      }
+    }
+  },
+  "@membershipEnds": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "publicationChatShareDisclosure": "Only the curated public Discover details are shared. The recipient must still have access to the publication."
 }

@@ -9,6 +9,10 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get accountWebsiteOpenFailed =>
+      'Could not open the account website. Please try again.';
+
+  @override
   String get languageName => 'English';
 
   @override
@@ -337,15 +341,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get deletionCancellationPeriod =>
-      'Deletion starts a 30-day cancellation period.';
+      'Deletion starts a cancellation period of at least 30 days. A paid membership can extend it until the paid period ends.';
 
   @override
   String get deletionSignOutExplanation =>
-      'You will be signed out everywhere immediately and cannot use ordinary app features. Sign in again during the next 30 days to cancel deletion or sign out.';
+      'You will be signed out everywhere immediately and cannot use ordinary app features. Sign in again before the scheduled deletion date to cancel deletion or sign out.';
 
   @override
   String get deletionRetentionExplanation =>
-      'After 30 days, private identity, journal and material data, and owned media are erased. A disabled pseudonymous account shell and shared chat, report, audit, and safety records are retained indefinitely. Other members will see “Deleted member.”';
+      'After the cancellation period and any paid membership period have ended, private identity, journal and material data, and owned media are erased. A disabled pseudonymous account shell and shared chat, report, audit, and safety records are retained indefinitely. Other members will see “Deleted member.”';
 
   @override
   String get deletionUnderstand => 'I understand what is erased and retained.';
@@ -410,7 +414,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountDeletionPendingExplanation =>
-      'Ordinary activity is restricted during the 30-day grace period. Cancel deletion to restore the account, or sign out.';
+      'Ordinary activity is restricted until the scheduled deletion date. Cancel deletion to restore the account, or sign out.';
 
   @override
   String get cancelDeletion => 'Cancel deletion';
@@ -2199,4 +2203,98 @@ class AppLocalizationsEn extends AppLocalizations {
   String exchangeRateSource(String date, String provider) {
     return 'ECB reference rates from $date ($provider)';
   }
+
+  @override
+  String get membership => 'Membership';
+
+  @override
+  String get membershipFree => 'Free';
+
+  @override
+  String get membershipMaker => 'Maker';
+
+  @override
+  String get viewMakerMembership => 'View Maker membership';
+
+  @override
+  String get refreshMembership => 'Refresh membership';
+
+  @override
+  String get membershipLoading => 'Loading membership…';
+
+  @override
+  String get membershipLoadFailed =>
+      'Membership could not be refreshed. Your last result is shown if available. Try again.';
+
+  @override
+  String get membershipRequired =>
+      'Maker unlocks this feature. Your saved data stays available when membership ends.';
+
+  @override
+  String membershipLimitReached(int used, int limit) {
+    return 'You have used $used of $limit. Remove an existing record to add another, or view Maker for a larger allowance where available.';
+  }
+
+  @override
+  String membershipQuota(String feature, int used, int limit) {
+    return '$feature: $used of $limit';
+  }
+
+  @override
+  String membershipUnlimitedUsage(String feature, int used) {
+    return '$feature: $used · Unlimited';
+  }
+
+  @override
+  String membershipAllowance(int limit) {
+    return 'Allowance: $limit';
+  }
+
+  @override
+  String get membershipIncluded => 'Included';
+
+  @override
+  String get membershipReadOnly =>
+      'Saved records readable; changes require Maker';
+
+  @override
+  String get membershipPreview =>
+      'Preview: plan restrictions are currently disabled.';
+
+  @override
+  String get membershipOverdue =>
+      'Payment overdue. Maker access continues while you update billing on the website.';
+
+  @override
+  String membershipEnds(String date) {
+    return 'Membership period ends $date.';
+  }
+
+  @override
+  String get membershipDataPreserved =>
+      'Saved data is preserved after Maker ends. Templates and inventory remain readable. Deletion, unpublishing, export, ordinary firing edits, and eligible inventory reversals stay available.';
+
+  @override
+  String get membershipBrowserSignIn =>
+      'The website may ask you to sign in. App credentials are not transferred.';
+
+  @override
+  String get membershipOpenFailed =>
+      'The membership website could not be opened.';
+
+  @override
+  String get membershipImages => 'Ceramic images';
+
+  @override
+  String get membershipPublications => 'Current publications';
+
+  @override
+  String get membershipCoats => 'Custom glaze coat counts';
+
+  @override
+  String get membershipBatchEditing => 'Batch editing';
+
+  @override
+  String get publicationChatShareDisclosure =>
+      'Only the curated public Discover details are shared. The recipient must still have access to the publication.';
 }

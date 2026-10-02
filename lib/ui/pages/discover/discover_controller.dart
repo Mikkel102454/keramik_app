@@ -1,13 +1,39 @@
 import 'package:ceramic_app/objects/publication_dto.dart';
 import 'package:ceramic_app/repositories/publication_repository.dart';
+import 'package:ceramic_app/utils/client_uuid.dart';
 import 'package:ceramic_app/utils/web.dart';
 import 'package:flutter/foundation.dart';
 
+typedef DiscoverPageLoader =
+    Future<DiscoverPageDto> Function(
+      String mode, {
+      String? cursor,
+      String? requestId,
+    });
+typedef PublicationLikeUpdater =
+    Future<PublicationCardDto> Function(PublicationCardDto card, bool liked);
+typedef NotInterestedUpdater =
+    Future<void> Function(String publicationId, bool hidden);
+
 class DiscoverController extends ChangeNotifier {
-  DiscoverController(this.mode);
+  DiscoverController(
+    this.mode, {
+    DiscoverPageLoader? pageLoader,
+    PublicationLikeUpdater? likeUpdater,
+    NotInterestedUpdater? notInterestedUpdater,
+  }) : _pageLoader = pageLoader ?? PublicationRepository.discover,
+       _likeUpdater = likeUpdater ?? PublicationRepository.like,
+       _notInterestedUpdater =
+           notInterestedUpdater ?? PublicationRepository.notInterested;
+
   final String mode;
+  final DiscoverPageLoader _pageLoader;
+  final PublicationLikeUpdater _likeUpdater;
+  final NotInterestedUpdater _notInterestedUpdater;
   final List<PublicationCardDto> items = [];
   String? nextCursor;
+  String? _pendingCursor;
+  String? _pendingRequestId;
   bool loading = false;
   Object? error;
 
@@ -16,11 +42,19 @@ class DiscoverController extends ChangeNotifier {
     loading = true;
     error = null;
     notifyListeners();
+    final requestCursor = refresh ? null : nextCursor;
+    if (_pendingRequestId == null || _pendingCursor != requestCursor) {
+      _pendingCursor = requestCursor;
+      _pendingRequestId = createClientUuid();
+    }
     try {
-      final page = await PublicationRepository.discover(
+      final page = await _pageLoader(
         mode,
-        cursor: refresh ? null : nextCursor,
+        cursor: requestCursor,
+        requestId: _pendingRequestId,
       );
+      _pendingCursor = null;
+      _pendingRequestId = null;
       if (refresh) items.clear();
       final known = items.map((item) => item.publicationId).toSet();
       items.addAll(page.items.where((item) => known.add(item.publicationId)));
@@ -28,6 +62,8 @@ class DiscoverController extends ChangeNotifier {
       return true;
     } on ApiException catch (exception) {
       if (exception.code == 'DISCOVER_SESSION_EXPIRED') {
+        _pendingCursor = null;
+        _pendingRequestId = null;
         items.clear();
         nextCursor = null;
         loading = false;
@@ -54,9 +90,16 @@ class DiscoverController extends ChangeNotifier {
     );
     notifyListeners();
     try {
-      items[index] = await PublicationRepository.like(original, !original.likedByMe);
+      final updated = await _likeUpdater(original, !original.likedByMe);
+      final currentIndex = items.indexWhere(
+        (item) => item.publicationId == original.publicationId,
+      );
+      if (currentIndex >= 0) items[currentIndex] = updated;
     } catch (_) {
-      items[index] = original;
+      final currentIndex = items.indexWhere(
+        (item) => item.publicationId == original.publicationId,
+      );
+      if (currentIndex >= 0) items[currentIndex] = original;
     }
     notifyListeners();
   }
@@ -65,7 +108,7 @@ class DiscoverController extends ChangeNotifier {
     final removed = items.removeAt(index);
     notifyListeners();
     try {
-      await PublicationRepository.notInterested(removed.publicationId, true);
+      await _notInterestedUpdater(removed.publicationId, true);
     } catch (_) {
       items.insert(index.clamp(0, items.length), removed);
       notifyListeners();
@@ -75,8 +118,10 @@ class DiscoverController extends ChangeNotifier {
   }
 
   Future<void> undoHide(int index, PublicationCardDto item) async {
-    await PublicationRepository.notInterested(item.publicationId, false);
-    items.insert(index.clamp(0, items.length), item);
+    await _notInterestedUpdater(item.publicationId, false);
+    if (items.every((value) => value.publicationId != item.publicationId)) {
+      items.insert(index.clamp(0, items.length), item);
+    }
     notifyListeners();
   }
 }

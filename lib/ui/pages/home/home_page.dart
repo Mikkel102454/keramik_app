@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
@@ -342,7 +344,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (changed == true && mounted) await _controller.load();
       return;
     }
-    if (action != 'blank') return;
+    if (action != 'blank') {
+      return;
+    }
     await _createBlankCeramic();
   }
 
@@ -394,6 +398,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   });
 
   Future<void> _batchEdit() async {
+    if (!await requireFeature(context, Features.batchEditing) || !mounted) {
+      return;
+    }
     final changed = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
@@ -416,34 +423,40 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       final preview = await CeramicBatchRepository.previewDelete(
         _selectedIds.toList()..sort(),
       );
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       final confirmed = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
         builder: (_) => CeramicBatchDeleteReviewDialog(preview: preview),
       );
-      if (confirmed != true || !mounted) return;
+      if (confirmed != true || !mounted) {
+        return;
+      }
       final result = await CeramicBatchRepository.applyDelete(preview);
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       _exitSelection();
       await _controller.load();
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            context.l10n.batchDeleteComplete(result.deletedCount),
-          ),
+          content: Text(context.l10n.batchDeleteComplete(result.deletedCount)),
         ),
       );
     } catch (value) {
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       final retry = await showDialog<bool>(
         context: context,
         builder: (dialogContext) => AlertDialog(
           title: Text(context.l10n.batchDeleteFailed),
-          content: Text(
-            '${context.l10n.batchDeleteFailedBody}\n\n$value',
-          ),
+          content: Text('${context.l10n.batchDeleteFailedBody}\n\n$value'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),

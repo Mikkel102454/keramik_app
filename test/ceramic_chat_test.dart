@@ -44,66 +44,80 @@ void main() {
     expect(find.text('This ceramic is no longer available.'), findsOneWidget);
   });
 
-  testWidgets('shared ceramic detail is complete and has no mutation controls', (
-    tester,
-  ) async {
-    final detail = SharedCeramicDetailDto(
-      available: true,
-      title: 'Read-only vase',
-      stage: 'Finished',
-      clayTitle: 'Porcelain',
-      rating: 5,
-      weight: 720,
-      heightCm: 18,
-      note: 'Private project notes now shared',
-      outcomeNote: 'Kept',
-      tags: const ['gift'],
-      glazes: const [
-        SharedCeramicGlazeDto(
-          title: 'Celadon',
-          note: 'Two even coats',
-          layerOrder: 1,
-          coatCount: 2,
+  testWidgets(
+    'shared ceramic detail is complete and has no mutation controls',
+    (tester) async {
+      final detail = SharedCeramicDetailDto(
+        available: true,
+        title: 'Read-only vase',
+        stage: 'Finished',
+        clayTitle: 'Porcelain',
+        rating: 5,
+        weight: 720,
+        heightCm: 18,
+        note: 'Private project notes now shared',
+        outcomeNote: 'Kept',
+        tags: const ['gift'],
+        glazes: const [
+          SharedCeramicGlazeDto(
+            title: 'Celadon',
+            note: 'Two even coats',
+            layerOrder: 1,
+            coatCount: 2,
+          ),
+        ],
+        firings: const [],
+        stageHistory: const [],
+        images: const [],
+        imageCount: 0,
+        createdAt: DateTime(2026, 7, 20),
+        updatedAt: DateTime(2026, 7, 25),
+      );
+      await tester.pumpWidget(
+        localizedTestApp(
+          home: SharedCeramicDetailPage(
+            conversationId: 'conversation',
+            messageId: 'message',
+            loadDetail: (_, _) async => detail,
+          ),
         ),
-      ],
-      firings: const [],
-      stageHistory: const [],
-      images: const [],
-      imageCount: 0,
-      createdAt: DateTime(2026, 7, 20),
-      updatedAt: DateTime(2026, 7, 25),
-    );
-    await tester.pumpWidget(
-      localizedTestApp(
-        home: SharedCeramicDetailPage(
-          conversationId: 'conversation',
-          messageId: 'message',
-          loadDetail: (_, _) async => detail,
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.text('Read-only vase'), findsOneWidget);
-    expect(find.text('Private project notes now shared'), findsOneWidget);
-    expect(find.text('Celadon'), findsOneWidget);
-    expect(find.text('720.0 kg'), findsOneWidget);
-    final history = tester.widget<ExpansionTile>(
-      find.widgetWithText(ExpansionTile, 'History'),
-    );
-    expect(history.initiallyExpanded, isFalse);
-    expect(find.byType(TextField), findsNothing);
-    expect(find.byIcon(Icons.delete), findsNothing);
-    expect(find.byIcon(Icons.share), findsNothing);
-  });
+      expect(find.text('Read-only vase'), findsOneWidget);
+      expect(find.text('720.0 kg'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Celadon'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('Celadon'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('Private project notes now shared'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('Private project notes now shared'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.widgetWithText(ExpansionTile, 'History'),
+        300,
+        scrollable: find.byType(Scrollable).first,
+      );
+      final history = tester.widget<ExpansionTile>(
+        find.widgetWithText(ExpansionTile, 'History'),
+      );
+      expect(history.initiallyExpanded, isFalse);
+      expect(find.byType(TextField), findsNothing);
+      expect(find.byIcon(Icons.delete), findsNothing);
+      expect(find.byIcon(Icons.share), findsNothing);
+    },
+  );
 
   testWidgets('shared ceramic weight follows the active imperial setting', (
     tester,
   ) async {
     await AppSettingsController.instance.applyLocalSettings(
-      const AccountSettingsDto(
-        measurementSystem: MeasurementSystem.imperial,
-      ),
+      const AccountSettingsDto(measurementSystem: MeasurementSystem.imperial),
     );
     addTearDown(
       () => AppSettingsController.instance.applyLocalSettings(

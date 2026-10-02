@@ -97,11 +97,14 @@ class AppSettingsController extends ChangeNotifier {
     AccountSettingsDto value, {
     required bool cacheLanguage,
   }) async {
+    final languageChanged = value.languageTag != _lastLanguageTag;
     _settings = value;
     _lastLanguageTag = value.languageTag;
     _locale = resolveSupportedLocale(value.languageTag);
     notifyListeners();
-    if (cacheLanguage) await _localeCache.write(value.languageTag);
+    if (cacheLanguage && languageChanged) {
+      await _localeCache.write(value.languageTag);
+    }
   }
 
   void resetForLogout() {

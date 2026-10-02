@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'dart:io';
 
 import 'package:ceramic_app/objects/clay_dto.dart';
@@ -17,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/repositories/publication_repository.dart';
+import 'package:ceramic_app/ui/pages/discover/publication_prompt.dart';
 import 'package:image_picker/image_picker.dart';
 import 'ceramic_create_page_controller.dart';
 
@@ -24,12 +27,16 @@ class CeramicCreatePage extends StatefulWidget {
   final List<StageDto> stages;
   final List<ClayDto> clayTypes;
   final List<GlazeDto> glazes;
+  final CeramicCreatePageController? controller;
+  final Future<void> Function(int ceramicId)? publishCeramic;
 
   const CeramicCreatePage({
     super.key,
     required this.stages,
     required this.clayTypes,
-    required this.glazes
+    required this.glazes,
+    this.controller,
+    this.publishCeramic,
   });
 
   @override
@@ -37,7 +44,8 @@ class CeramicCreatePage extends StatefulWidget {
 }
 
 class _CeramicCreatePageState extends State<CeramicCreatePage> {
-  final CeramicCreatePageController _controller = CeramicCreatePageController();
+  late final CeramicCreatePageController _controller =
+      widget.controller ?? CeramicCreatePageController();
 
   @override
   void initState() {
@@ -47,7 +55,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
 
@@ -57,7 +65,14 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
       appBar: AppBar(
         title: Text(context.l10n.ceramic),
 
-        actions: [IconButton(icon: const Icon(Icons.check), onPressed: () {_createCeramic();})],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () {
+              _createCeramic();
+            },
+          ),
+        ],
       ),
 
       body: SafeArea(
@@ -88,7 +103,10 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
     );
   }
 
-  SingleChildScrollView _pageContent(CeramicCreatePageController controller, CeramicCreatePage widget) {
+  SingleChildScrollView _pageContent(
+    CeramicCreatePageController controller,
+    CeramicCreatePage widget,
+  ) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
 
@@ -101,6 +119,10 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           // =========================
           // Images
           // =========================
+          QuotaIndicator(
+            feature: Features.ceramicImages,
+            currentUsage: controller.images.length,
+          ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
 
@@ -109,35 +131,33 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             child: Row(
               children: [
                 for (final entry in controller.images.asMap().entries) ...[
-                SquareWidget(
-                width: 92,
-                  height: 92,
-                  imageFile: entry.value,
-                  onPressed: () async {
+                  SquareWidget(
+                    width: 92,
+                    height: 92,
+                    imageFile: entry.value,
+                    onPressed: () async {
+                      showDialog(
+                        context: context,
+                        barrierColor: Colors.black87,
+                        builder: (_) => ImageViewPage(
+                          xFile: entry.value,
+                          onDelete: () async {
+                            final navigator = Navigator.of(context);
 
-                    showDialog(
-                      context: context,
-                      barrierColor: Colors.black87,
-                      builder: (_) => ImageViewPage(
-                        xFile: entry.value,
-                        onDelete: () async {
-                          final navigator = Navigator.of(context);
+                            final success = await controller.deleteImage(
+                              entry.key,
+                            );
 
-                          final success =
-                          await controller.deleteImage(
-                            entry.key,
-                          );
+                            if (success) {
+                              navigator.pop();
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
 
-                          if (success) {
-                            navigator.pop();
-                          }
-                        },
-                      ),
-                    );
-                  },
-                ),
-
-                const SizedBox(width: 12),
+                  const SizedBox(width: 12),
                 ],
 
                 SquareWidget(
@@ -146,8 +166,18 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
                   iconSize: 42,
                   width: 92,
                   height: 92,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                   onPressed: () async {
+                    if (!await requireFeature(
+                          context,
+                          Features.ceramicImages,
+                          currentUsage: controller.images.length,
+                        ) ||
+                        !mounted) {
+                      return;
+                    }
                     final source = await showModalBottomSheet<ImageSource>(
                       context: context,
                       builder: (context) {
@@ -174,7 +204,9 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
                       },
                     );
 
-                    if (source == null) return;
+                    if (source == null) {
+                      return;
+                    }
 
                     final picked = await ImagePicker().pickImage(
                       source: source,
@@ -236,7 +268,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           ),
           const SizedBox(height: 4),
           TextFieldWidget(
-              placeholder: context.l10n.title,
+            placeholder: context.l10n.title,
             onChanged: (value) async {
               controller.setTitle(value);
               return true;
@@ -307,37 +339,41 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
               ),
             ),
             children: [
-              Row(children: [
-                Expanded(
-                  child: _dimensionField(
-                    context.l10n.height,
-                    (value) => controller.setDimension('height', value),
+              Row(
+                children: [
+                  Expanded(
+                    child: _dimensionField(
+                      context.l10n.height,
+                      (value) => controller.setDimension('height', value),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _dimensionField(
-                    context.l10n.width,
-                    (value) => controller.setDimension('width', value),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _dimensionField(
+                      context.l10n.width,
+                      (value) => controller.setDimension('width', value),
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
               const SizedBox(height: 10),
-              Row(children: [
-                Expanded(
-                  child: _dimensionField(
-                    context.l10n.depth,
-                    (value) => controller.setDimension('depth', value),
+              Row(
+                children: [
+                  Expanded(
+                    child: _dimensionField(
+                      context.l10n.depth,
+                      (value) => controller.setDimension('depth', value),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: _dimensionField(
-                    context.l10n.diameter,
-                    (value) => controller.setDimension('diameter', value),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _dimensionField(
+                      context.l10n.diameter,
+                      (value) => controller.setDimension('diameter', value),
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
               const SizedBox(height: 12),
             ],
           ),
@@ -355,7 +391,8 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
               GlazeApplicationEditor(
                 entries: controller.glazes,
                 glazes: widget.glazes,
-                onAdd: (glazeId) async => await controller.addGlaze(glazeId) > 0,
+                onAdd: (glazeId) async =>
+                    await controller.addGlaze(glazeId) > 0,
                 onDelete: (id) async {
                   await controller.removeGlaze(id);
                   return true;
@@ -410,7 +447,9 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             fontWeight: FontWeight.normal,
 
             borderColor: Theme.of(context).colorScheme.outline,
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+            backgroundColor: Theme.of(
+              context,
+            ).colorScheme.surfaceContainerHighest,
 
             removeIconSize: 20,
             removeIconColor: Colors.red,
@@ -477,6 +516,16 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
   }
 
   Future<void> _createCeramic() async {
+    if (_controller.images.isNotEmpty &&
+        (!await requireFeature(
+              context,
+              Features.ceramicImages,
+              currentUsage: 0,
+              additions: _controller.images.length,
+            ) ||
+            !mounted)) {
+      return;
+    }
     if (_controller.title.trim().isEmpty || _controller.title.length > 255) {
       ScaffoldMessenger.of(
         context,
@@ -489,56 +538,50 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
       ).showSnackBar(SnackBar(content: Text(context.l10n.invalidStage)));
       return;
     }
-    if (_controller.rating < 0 || _controller.rating > 5 ||
-        _controller.weight < 0 || _controller.notes.length > 255 ||
+    if (_controller.rating < 0 ||
+        _controller.rating > 5 ||
+        _controller.weight < 0 ||
+        _controller.notes.length > 255 ||
         _controller.outcomeNote.length > 2000) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(context.l10n.ceramicFieldsInvalid),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.ceramicFieldsInvalid)),
+      );
       return;
     }
 
     try {
       final created = await _controller.create();
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
 
       final finished = widget.stages
           .where((stage) => stage.id == created.stageId)
           .any((stage) => stage.title.toLowerCase() == 'finished');
       if (finished) {
-        final publish = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text(context.l10n.publishFinishedTitle),
-            content: Text(
-              created.images.isEmpty
-                  ? '${context.l10n.publishFinishedBody}\n\n'
-                      '${context.l10n.publicationTemporarilyUnavailable}'
-                  : context.l10n.publishFinishedBody,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text(context.l10n.notNowAction),
-              ),
-              if (created.images.isNotEmpty)
-                FilledButton(
-                  onPressed: () => Navigator.pop(context, true),
-                  child: Text(context.l10n.publishAction),
-                ),
-            ],
-          ),
+        final publish = await showFinishedPublicationPrompt(
+          context,
+          hasImage: created.images.isNotEmpty,
         );
-        if (publish == true) {
-          await PublicationRepository.publish(created.id);
+        if (publish) {
+          final publisher =
+              widget.publishCeramic ??
+              (ceramicId) async {
+                await PublicationRepository.publish(ceramicId);
+              };
+          await publisher(created.id);
         }
       }
 
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       Navigator.pop(context, true);
     } catch (e) {
       debugPrint("Create failed: $e");
-      if (!mounted) return;
+      if (!mounted) {
+        return;
+      }
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
       );

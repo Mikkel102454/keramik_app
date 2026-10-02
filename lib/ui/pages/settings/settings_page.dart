@@ -9,6 +9,7 @@ import 'package:ceramic_app/ui/pages/settings/privacy_settings_pages.dart';
 import 'package:ceramic_app/ui/pages/settings/settings_controller.dart';
 import 'package:ceramic_app/utils/web.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/ui/pages/settings/membership_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -172,6 +173,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 label: context.l10n.deleteAccount,
                 destructive: true,
                 onTap: () => _open(const DeleteAccountPage()),
+              ),
+              _SettingsRow(
+                icon: Icons.workspace_premium_outlined,
+                label: context.l10n.membership,
+                onTap: () => _open(const MembershipPage()),
               ),
               _Heading(context.l10n.settingsPrivacy),
               _SettingsRow(

@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'dart:io';
 
 import 'package:ceramic_app/objects/account_settings_dto.dart';
@@ -24,6 +26,8 @@ import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/utils/measurement.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/repositories/project_template_repository.dart';
+import 'package:ceramic_app/ui/pages/discover/publication_prompt.dart';
+import 'package:ceramic_app/ui/pages/discover/owner_publication_status_card.dart';
 import 'package:ceramic_app/ui/pages/materials/inventory/ceramic_material_cost_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -35,12 +39,14 @@ class CeramicViewPage extends StatefulWidget {
   final List<StageDto> stages;
   final List<ClayDto> clayTypes;
   final List<GlazeDto> glazes;
+  final CeramicViewPageController? controller;
   const CeramicViewPage({
     super.key,
     required this.ceramic,
     required this.stages,
     required this.clayTypes,
     required this.glazes,
+    this.controller,
   });
 
   @override
@@ -48,7 +54,8 @@ class CeramicViewPage extends StatefulWidget {
 }
 
 class _CeramicViewPageState extends State<CeramicViewPage> {
-  final CeramicViewPageController _controller = CeramicViewPageController();
+  late final CeramicViewPageController _controller =
+      widget.controller ?? CeramicViewPageController();
 
   @override
   void initState() {
@@ -58,7 +65,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (widget.controller == null) _controller.dispose();
     super.dispose();
   }
 
@@ -67,7 +74,9 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
-        if (didPop) return;
+        if (didPop) {
+          return;
+        }
 
         Navigator.of(context).pop(_controller.hasChanged);
       },
@@ -109,7 +118,9 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                   ),
                 );
 
-                if (confirmed != true) return;
+                if (confirmed != true) {
+                  return;
+                }
 
                 final success = await _controller.deleteCeramic();
 
@@ -193,55 +204,19 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
         children: [
           if (controller.publicationStatus case final status?) ...[
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (status.state == 'MODERATION_REMOVED')
-                      Text(context.l10n.publicationModerationRemoved)
-                    else if (status.current && !status.eligible)
-                      Text(context.l10n.publicationTemporarilyUnavailable)
-                    else
-                      Text(
-                        status.current
-                            ? context.l10n.navigationDiscover
-                            : context.l10n.publishFinishedBody,
-                      ),
-                    const SizedBox(height: 10),
-                    FilledButton.icon(
-                      onPressed: status.state == 'MODERATION_REMOVED'
-                          ? null
-                          : () async {
-                              final success = await controller
-                                  .togglePublication();
-                              if (!success && mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(context.l10n.tryAgain),
-                                  ),
-                                );
-                              }
-                            },
-                      icon: Icon(
-                        status.current ? Icons.visibility_off : Icons.public,
-                      ),
-                      label: Text(
-                        status.current
-                            ? context.l10n.unpublishAction
-                            : context.l10n.publishAction,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            OwnerPublicationStatusCard(
+              status: status,
+              onToggle: controller.togglePublication,
             ),
             const SizedBox(height: 14),
           ],
           // =========================
           // Images
           // =========================
+          QuotaIndicator(
+            feature: Features.ceramicImages,
+            currentUsage: controller.ceramic.images.length,
+          ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
 
@@ -286,6 +261,14 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                     context,
                   ).colorScheme.surfaceContainerHighest,
                   onPressed: () async {
+                    if (!await requireFeature(
+                          context,
+                          Features.ceramicImages,
+                          currentUsage: controller.ceramic.images.length,
+                        ) ||
+                        !mounted) {
+                      return;
+                    }
                     final source = await showModalBottomSheet<ImageSource>(
                       context: context,
                       builder: (context) {
@@ -312,7 +295,9 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                       },
                     );
 
-                    if (source == null) return;
+                    if (source == null) {
+                      return;
+                    }
 
                     final picked = await ImagePicker().pickImage(
                       source: source,
@@ -389,7 +374,9 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             debounceDuration: Duration(milliseconds: 300),
 
             onChanged: (value) async {
-              if (value == "") return true;
+              if (value == "") {
+                return true;
+              }
               return controller.setTitle(value);
             },
           ),
@@ -545,6 +532,10 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
               context.l10n.firingRecordCount(controller.firings.length),
             ),
             children: [
+              QuotaIndicator(
+                feature: Features.firingRecords,
+                currentUsage: controller.firings.length,
+              ),
               if (controller.firings.isEmpty)
                 Align(
                   alignment: Alignment.centerLeft,
@@ -757,6 +748,9 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
   }
 
   Future<void> _saveAsTemplate() async {
+    if (!await requireFeature(context, Features.projectTemplates) || !mounted) {
+      return;
+    }
     final name = TextEditingController(
       text: context.l10n.templateFromCeramic(widget.ceramic.title),
     );
@@ -836,31 +830,11 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
   }
 
   Future<void> _offerPublication(CeramicViewPageController controller) async {
-    final hasImage = controller.ceramic.images.isNotEmpty;
-    final publish = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(context.l10n.publishFinishedTitle),
-        content: Text(
-          hasImage
-              ? context.l10n.publishFinishedBody
-              : '${context.l10n.publishFinishedBody}\n\n'
-                    '${context.l10n.publicationTemporarilyUnavailable}',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(context.l10n.notNowAction),
-          ),
-          if (hasImage)
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(context.l10n.publishAction),
-            ),
-        ],
-      ),
+    final publish = await showFinishedPublicationPrompt(
+      context,
+      hasImage: controller.ceramic.images.isNotEmpty,
     );
-    if (publish == true) await controller.togglePublication();
+    if (publish) await controller.togglePublication();
   }
 
   Widget _dimensionField(
@@ -888,6 +862,15 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
   }
 
   Future<void> _showFiringEditor(CeramicFiringDto? existing) async {
+    if (existing == null &&
+        (!await requireFeature(
+              context,
+              Features.firingRecords,
+              currentUsage: _controller.firings.length,
+            ) ||
+            !mounted)) {
+      return;
+    }
     await showDialog<void>(
       context: context,
       builder: (_) => FiringEditorDialog(
@@ -940,9 +923,13 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
   String _historyTitle(BuildContext context, CeramicStageHistoryDto event) {
     final toStage = localizedStageName(context.l10n, event.toStageTitle);
-    if (event.baseline) return context.l10n.historyStartedAt(toStage);
+    if (event.baseline) {
+      return context.l10n.historyStartedAt(toStage);
+    }
     final from = event.fromStageTitle;
-    if (from == null) return context.l10n.startedAtStage(toStage);
+    if (from == null) {
+      return context.l10n.startedAtStage(toStage);
+    }
     return context.l10n.stageTransition(
       localizedStageName(context.l10n, from),
       toStage,
