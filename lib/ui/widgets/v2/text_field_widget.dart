@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ceramic_app/utils/validation/validation_builder.dart';
+import 'form_field_style.dart';
 
 class TextFieldWidget extends StatefulWidget {
   final bool autocorrect;
@@ -30,6 +31,14 @@ class TextFieldWidget extends StatefulWidget {
   final String? suffix;
   final String? placeholder;
   final String? initialValue;
+  final TextEditingController? controller;
+  final String? label;
+  final String? semanticsLabel;
+  final int? maxLength;
+  final Widget? suffixIcon;
+  final String? errorText;
+  final bool enabled;
+  final bool readOnly;
 
   const TextFieldWidget({
     super.key,
@@ -48,14 +57,23 @@ class TextFieldWidget extends StatefulWidget {
     this.suffix,
     this.placeholder,
     this.initialValue,
-  });
+    this.controller,
+    this.label,
+    this.semanticsLabel,
+    this.maxLength,
+    this.suffixIcon,
+    this.errorText,
+    this.enabled = true,
+    this.readOnly = false,
+  }) : assert(controller == null || initialValue == null);
 
   @override
   State<TextFieldWidget> createState() => TextFieldWidgetState();
 }
 
 class TextFieldWidgetState extends State<TextFieldWidget> {
-  late final TextEditingController _controller;
+  late TextEditingController _controller;
+  bool get _ownsController => widget.controller == null;
 
   Timer? _debounce;
 
@@ -64,8 +82,7 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
 
   late String lastValidValue;
 
-  bool get isValid =>
-      widget.validator?.call(_controller.text, context) == null;
+  bool get isValid => widget.validator?.call(_controller.text, context) == null;
 
   bool get showError {
     if (forcedValidation && !isValid) {
@@ -97,17 +114,23 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
   void initState() {
     super.initState();
 
-    _controller = TextEditingController(
-      text: widget.initialValue,
-    );
+    _controller =
+        widget.controller ?? TextEditingController(text: widget.initialValue);
 
-    lastValidValue = widget.initialValue ?? "";
+    lastValidValue = _controller.text;
   }
 
   @override
   void didUpdateWidget(covariant TextFieldWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialValue != oldWidget.initialValue &&
+    if (widget.controller != oldWidget.controller) {
+      _debounce?.cancel();
+      if (oldWidget.controller == null) _controller.dispose();
+      _controller =
+          widget.controller ?? TextEditingController(text: widget.initialValue);
+      lastValidValue = _controller.text;
+    } else if (_ownsController &&
+        widget.initialValue != oldWidget.initialValue &&
         widget.initialValue != _controller.text) {
       _controller.text = widget.initialValue ?? '';
       lastValidValue = _controller.text;
@@ -117,7 +140,7 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   void dispose() {
     _debounce?.cancel();
-    _controller.dispose();
+    if (_ownsController) _controller.dispose();
 
     super.dispose();
   }
@@ -126,9 +149,7 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
     _controller.text = lastValidValue;
 
     _controller.selection = TextSelection.fromPosition(
-      TextPosition(
-        offset: _controller.text.length,
-      ),
+      TextPosition(offset: _controller.text.length),
     );
   }
 
@@ -156,12 +177,9 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
     if (widget.debounceDuration != null) {
       _debounce?.cancel();
 
-      _debounce = Timer(
-        widget.debounceDuration!,
-            () async {
-          await _executeChange(value);
-        },
-      );
+      _debounce = Timer(widget.debounceDuration!, () async {
+        await _executeChange(value);
+      });
 
       return;
     }
@@ -201,96 +219,41 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: _controller,
-      autocorrect: widget.autocorrect,
-      autovalidateMode: widget.autovalidateMode,
-      inputFormatters: widget.inputFormatters,
-      keyboardType: widget.keyboardType,
-      obscureText: widget.obscureText,
-      textInputAction: widget.textInputAction,
-      minLines: widget.minLines ?? 1,
-      maxLines: widget.maxLines ?? 1,
-
-      onChanged: _onChanged,
-
-      onFieldSubmitted: _handleSubmitted,
-
-      onTap: () {
-        hadFirstFocus = true;
-      },
-
-      validator: (text) {
-        forcedValidation = true;
-
-        return widget.validator?.call(text, context);
-      },
-
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w500,
-      ),
-
-      decoration: InputDecoration(
-        hintText: widget.placeholder,
-
-        hintStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-
-        errorText: showError
-            ? widget.validator?.call(_controller.text, context)
-            : null,
-
-        suffixText: widget.suffix,
-
-        suffixStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
-
-        filled: true,
-        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 12,
-        ),
-
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
-            width: 1,
-          ),
-        ),
-
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Colors.red,
-            width: 1,
-          ),
-        ),
-
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Colors.red,
-            width: 1,
+    return FieldLabel(
+      label: widget.label,
+      child: Semantics(
+        label: widget.semanticsLabel ?? widget.label,
+        child: TextFormField(
+          controller: _controller,
+          enabled: widget.enabled,
+          readOnly: widget.readOnly,
+          autocorrect: widget.autocorrect,
+          autovalidateMode: widget.autovalidateMode,
+          inputFormatters: widget.inputFormatters,
+          keyboardType: widget.keyboardType,
+          obscureText: widget.obscureText,
+          textInputAction: widget.textInputAction,
+          minLines: widget.minLines ?? 1,
+          maxLines: widget.maxLines ?? 1,
+          maxLength: widget.maxLength,
+          onChanged: _onChanged,
+          onFieldSubmitted: _handleSubmitted,
+          onTap: () => hadFirstFocus = true,
+          validator: (text) {
+            forcedValidation = true;
+            return widget.validator?.call(text, context);
+          },
+          style: FormFieldStyle.textStyle,
+          decoration: FormFieldStyle.decoration(
+            context,
+            hint: widget.placeholder,
+            suffix: widget.suffix,
+            suffixIcon: widget.suffixIcon,
+            error:
+                widget.errorText ??
+                (showError
+                    ? widget.validator?.call(_controller.text, context)
+                    : null),
           ),
         ),
       ),

@@ -1,10 +1,8 @@
+import 'package:ceramic_app/ui/pages/materials/glazes/notebook/glaze_notebook_page.dart';
 import 'package:ceramic_app/ui/pages/materials/glazes/glazes_create/glazes_create_page.dart';
 import 'package:ceramic_app/ui/pages/materials/glazes/glazes_page_controller.dart';
 import 'package:ceramic_app/ui/pages/materials/glazes/glazes_view/glazes_view_page.dart';
-import 'package:ceramic_app/ui/widgets/extends/smart_row.dart';
-import 'package:ceramic_app/ui/widgets/v2/divider_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
+import 'package:ceramic_app/ui/widgets/v2/entry_page_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
@@ -40,6 +38,14 @@ class _GlazesPageState extends State<GlazesPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
+      floatingActionButton: AnimatedBuilder(
+        animation: _controller,
+        builder: (_, _) => FloatingActionButton(
+          tooltip: context.l10n.createGlaze,
+          onPressed: _controller.isLoading ? null : _createGlaze,
+          child: const Icon(Icons.add),
+        ),
+      ),
       body: SafeArea(
         child: AnimatedBuilder(
           animation: _controller,
@@ -48,15 +54,18 @@ class _GlazesPageState extends State<GlazesPage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (_controller.error != null) {
-              return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(
-                  context.l10n.errorWithDetails('${_controller.error}'),
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(context.l10n.errorWithDetails('${_controller.error}')),
+                    FilledButton(
+                      onPressed: _controller.load,
+                      child: Text(context.l10n.retry),
+                    ),
+                  ],
                 ),
-                FilledButton(
-                  onPressed: _controller.load,
-                  child: Text(context.l10n.retry),
-                ),
-              ]));
+              );
             }
             return RefreshIndicator(
               onRefresh: _controller.load,
@@ -75,61 +84,61 @@ class _GlazesPageState extends State<GlazesPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TextWidget(
-            text: context.l10n.glazes,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-          const SizedBox(height: 16),
-          const DividerWidget(),
-          const SizedBox(height: 16),
-          for (final glaze in _controller.glazes) ...[
-            SmartRow(
-              onPressed: () async {
-                final changed = await Navigator.push<bool>(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => GlazesViewPage(glaze: glaze),
-                  ),
-                );
-                if (changed == true) await _controller.load();
-              },
-              children: [
-                SquareWidget(
-                  width: 80,
-                  height: 80,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  icon: Icons.opacity,
-                  iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
-                  iconSize: 38,
-                ),
-                const SizedBox(width: 16),
-                TextWidget(
-                  text: glaze.title,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ],
+          ListTile(
+            leading: const Icon(Icons.layers_outlined),
+            title: Text(context.l10n.glazeCombinations),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const GlazeNotebookPage(tiles: false),
+              ),
             ),
-            const SizedBox(height: 16),
-          ],
-          SquareWidget(
-            height: 60,
-            icon: Icons.add,
-            iconSize: 30,
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-            iconColor: Theme.of(context).colorScheme.onSurface,
-            onPressed: () async {
-              final created = await Navigator.push<bool>(
-                context,
-                MaterialPageRoute(builder: (_) => const GlazesCreatePage()),
-              );
-              if (created == true) await _controller.load();
-            },
           ),
-          const SizedBox(height: 40),
+          ListTile(
+            leading: const Icon(Icons.science_outlined),
+            title: Text(context.l10n.testTileNotebook),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const GlazeNotebookPage(tiles: true),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          EntrySection(
+            title: context.l10n.glazes,
+            children: [
+              if (_controller.glazes.isEmpty) Text(context.l10n.notebookEmpty),
+              for (final glaze in _controller.glazes)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(glaze.title),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () async {
+                    final changed = await Navigator.push<bool>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => GlazesViewPage(glaze: glaze),
+                      ),
+                    );
+                    if (changed == true) await _controller.load();
+                  },
+                ),
+            ],
+          ),
+          const SizedBox(height: 72),
         ],
       ),
     );
+  }
+
+  Future<void> _createGlaze() async {
+    final created = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(builder: (_) => const GlazesCreatePage()),
+    );
+    if (created == true && mounted) await _controller.load();
   }
 }

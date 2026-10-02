@@ -24,6 +24,12 @@ class ProfilePageController extends ChangeNotifier {
   bool isUpdatingPhoto = false;
   String? error;
 
+  void profileSaved(AccountProfileDto refreshed) {
+    if (_disposed) return;
+    account = refreshed;
+    _notifySafely();
+  }
+
   Future<void> load() async {
     if (_disposed) return;
     isLoading = true;
@@ -58,9 +64,14 @@ class ProfilePageController extends ChangeNotifier {
         .where((stage) => stage.title.toLowerCase() == 'finished')
         .map((stage) => stage.id)
         .toSet();
-    return ceramics.where((ceramic) => finishedIds.contains(ceramic.stageId)).toList()
-      ..sort((a, b) => (b.updatedAt ?? DateTime(1970))
-          .compareTo(a.updatedAt ?? DateTime(1970)));
+    return ceramics
+        .where((ceramic) => finishedIds.contains(ceramic.stageId))
+        .toList()
+      ..sort(
+        (a, b) => (b.updatedAt ?? DateTime(1970)).compareTo(
+          a.updatedAt ?? DateTime(1970),
+        ),
+      );
   }
 
   Future<void> loadMoreFriends() async {

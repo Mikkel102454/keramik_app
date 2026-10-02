@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'select_field_widget.dart';
 
 class DropdownWidget extends StatefulWidget {
   final String? placeholder;
@@ -19,12 +20,10 @@ class DropdownWidget extends StatefulWidget {
   });
 
   @override
-  State<DropdownWidget> createState() =>
-      _DropdownWidgetState();
+  State<DropdownWidget> createState() => _DropdownWidgetState();
 }
 
-class _DropdownWidgetState
-    extends State<DropdownWidget> {
+class _DropdownWidgetState extends State<DropdownWidget> {
   String? selectedValue;
 
   String? lastValidValue;
@@ -33,9 +32,7 @@ class _DropdownWidgetState
   void initState() {
     super.initState();
 
-    final validValues = widget.entries
-        .map((e) => e.value)
-        .toSet();
+    final validValues = widget.entries.map((e) => e.value).toSet();
 
     if (widget.initialValue != null &&
         validValues.contains(widget.initialValue)) {
@@ -53,7 +50,9 @@ class _DropdownWidgetState
     if (widget.initialValue != oldWidget.initialValue ||
         widget.entries != oldWidget.entries) {
       final values = widget.entries.map((entry) => entry.value).toSet();
-      final next = values.contains(widget.initialValue) ? widget.initialValue : null;
+      final next = values.contains(widget.initialValue)
+          ? widget.initialValue
+          : null;
       selectedValue = next;
       lastValidValue = next;
     }
@@ -100,50 +99,18 @@ class _DropdownWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-      ),
-
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(14),
-      ),
-
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedValue,
-
-          isExpanded: true,
-
-          hint: Text(
-            widget.placeholder ?? "Please Select",
-
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-
-          icon: Icon(
-            Icons.arrow_drop_down,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-
-          borderRadius: BorderRadius.circular(14),
-
-          onChanged: _handleChanged,
-
-          items: widget.entries.map((entry) {
-            return DropdownMenuItem<String>(
+    return SelectFieldWidget<String>(
+      value: selectedValue,
+      placeholder: widget.placeholder,
+      onChanged: _handleChanged,
+      items: widget.entries
+          .map(
+            (entry) => DropdownMenuItem<String>(
               value: entry.value,
-
               child: Text(entry.key),
-            );
-          }).toList(),
-        ),
-      ),
+            ),
+          )
+          .toList(),
     );
   }
 }

@@ -1,7 +1,8 @@
 import 'package:ceramic_app/repositories/glaze_repository.dart';
+import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:flutter/material.dart';
 
-class GlazesCreatePageController extends ChangeNotifier{
+class GlazesCreatePageController extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   String title = '';
@@ -11,8 +12,7 @@ class GlazesCreatePageController extends ChangeNotifier{
     _error = null;
     notifyListeners();
 
-    try {
-    } catch (e){
+    try {} catch (e) {
       _error = e.toString();
     }
 
@@ -26,6 +26,14 @@ class GlazesCreatePageController extends ChangeNotifier{
 
   Future<void> create() async {
     await GlazeRepository.createGlaze(title.trim());
+  }
+
+  Future<void> save(int? id) async {
+    if (id == null) {
+      await create();
+    } else {
+      await GlazeRepository.updateGlaze(GlazeDto(id: id, title: title.trim()));
+    }
   }
 
   bool get isLoading => _isLoading;

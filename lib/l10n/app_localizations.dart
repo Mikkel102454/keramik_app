@@ -3930,6 +3930,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Only the curated public Discover details are shared. The recipient must still have access to the publication.'**
   String get publicationChatShareDisclosure;
+
+  /// No description provided for @glazeCombinations.
+  ///
+  /// In en, this message translates to:
+  /// **'Combinations'**
+  String get glazeCombinations;
+
+  /// No description provided for @testTileNotebook.
+  ///
+  /// In en, this message translates to:
+  /// **'Test-tile notebook'**
+  String get testTileNotebook;
+
+  /// No description provided for @createCombination.
+  ///
+  /// In en, this message translates to:
+  /// **'Create combination'**
+  String get createCombination;
+
+  /// No description provided for @createTestTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Create test tile'**
+  String get createTestTile;
+
+  /// No description provided for @editCombination.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit combination'**
+  String get editCombination;
+
+  /// No description provided for @editTestTile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit test tile'**
+  String get editTestTile;
+
+  /// No description provided for @notebookName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get notebookName;
+
+  /// No description provided for @notebookEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved records yet.'**
+  String get notebookEmpty;
+
+  /// No description provided for @notebookFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load or save this record. Your draft is preserved.'**
+  String get notebookFailed;
+
+  /// No description provided for @notebookConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'This record changed. Reload it before editing again. Your draft is preserved.'**
+  String get notebookConflict;
+
+  /// No description provided for @notebookDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this record? Existing test tiles and applied layers are preserved.'**
+  String get notebookDeleteConfirm;
+
+  /// No description provided for @applySavedCombination.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply saved combination'**
+  String get applySavedCombination;
+
+  /// No description provided for @appendCombinationPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Existing layers followed by saved layers'**
+  String get appendCombinationPreview;
+
+  /// No description provided for @appendCombinationHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Appends glaze layers only. Clay and firing defaults are not applied.'**
+  String get appendCombinationHelp;
+
+  /// No description provided for @combinationApplyUncertain.
+  ///
+  /// In en, this message translates to:
+  /// **'Application could not be confirmed. Retry uses the same request; it will not append twice.'**
+  String get combinationApplyUncertain;
+
+  /// No description provided for @combinationApplyConflict.
+  ///
+  /// In en, this message translates to:
+  /// **'The recipe changed or this request conflicts. Reload before starting a new application.'**
+  String get combinationApplyConflict;
+
+  /// No description provided for @notebookLayerLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 1–20 layers and 1–20 coats per layer.'**
+  String get notebookLayerLimit;
+
+  /// No description provided for @replaceUnavailableGlaze.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace unavailable glazes before applying.'**
+  String get replaceUnavailableGlaze;
+
+  /// No description provided for @resultNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Result notes'**
+  String get resultNotes;
+
+  /// No description provided for @sourceRecipe.
+  ///
+  /// In en, this message translates to:
+  /// **'Source recipe'**
+  String get sourceRecipe;
+
+  /// No description provided for @sourceRecipeSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Original recipe snapshot'**
+  String get sourceRecipeSnapshot;
+
+  /// No description provided for @actualConditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actual conditions'**
+  String get actualConditions;
+
+  /// No description provided for @recipeDefaults.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional defaults'**
+  String get recipeDefaults;
+
+  /// No description provided for @atmosphere.
+  ///
+  /// In en, this message translates to:
+  /// **'Atmosphere'**
+  String get atmosphere;
+
+  /// No description provided for @atmosphereOxidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Oxidation'**
+  String get atmosphereOxidation;
+
+  /// No description provided for @atmosphereReduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reduction'**
+  String get atmosphereReduction;
+
+  /// No description provided for @atmosphereNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get atmosphereNeutral;
+
+  /// No description provided for @notebookPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Result photos (up to 20)'**
+  String get notebookPhotos;
+
+  /// No description provided for @notebookPhotoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update photos. Retry or reload to check the saved photos.'**
+  String get notebookPhotoFailed;
+
+  /// No description provided for @filterRecipe.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by recipe'**
+  String get filterRecipe;
+
+  /// No description provided for @allRecipes.
+  ///
+  /// In en, this message translates to:
+  /// **'All recipes'**
+  String get allRecipes;
+
+  /// No description provided for @allClays.
+  ///
+  /// In en, this message translates to:
+  /// **'All clays'**
+  String get allClays;
+
+  /// No description provided for @coatsRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a coat count from 1 to 20.'**
+  String get coatsRange;
+
+  /// No description provided for @notebookDraftDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard unsaved changes?'**
+  String get notebookDraftDiscard;
+
+  /// No description provided for @notebookSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get notebookSearch;
+
+  /// No description provided for @createGlaze.
+  ///
+  /// In en, this message translates to:
+  /// **'Create glaze'**
+  String get createGlaze;
+
+  /// No description provided for @editGlaze.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit glaze'**
+  String get editGlaze;
+
+  /// No description provided for @profileNameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name of 1–100 characters.'**
+  String get profileNameInvalid;
+
+  /// No description provided for @profileUsernameInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a username of 3–50 characters.'**
+  String get profileUsernameInvalid;
+
+  /// No description provided for @usernameChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking username…'**
+  String get usernameChecking;
+
+  /// No description provided for @usernameAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Username available'**
+  String get usernameAvailable;
+
+  /// No description provided for @usernameUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'That username is unavailable. Choose another.'**
+  String get usernameUnavailable;
+
+  /// No description provided for @usernameCheckFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not check the username. Please retry.'**
+  String get usernameCheckFailed;
+
+  /// No description provided for @profileSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile could not be saved. Your changes are preserved. Please retry.'**
+  String get profileSaveFailed;
+
+  /// No description provided for @profilePhotoUpdateFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your photo could not be updated. Please retry.'**
+  String get profilePhotoUpdateFailed;
+
+  /// No description provided for @profileEditPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Your names remain private. Your username and photo follow your existing profile visibility settings.'**
+  String get profileEditPrivacy;
+
+  /// No description provided for @usernameSessionNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing your username keeps this device signed in and signs out your other sessions.'**
+  String get usernameSessionNotice;
 }
 
 class _AppLocalizationsDelegate

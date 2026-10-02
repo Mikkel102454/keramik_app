@@ -5,6 +5,7 @@ import 'package:ceramic_app/objects/glaze_dto.dart';
 import 'package:collection/collection.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
 
 class GlazeApplicationEditor extends StatelessWidget {
   const GlazeApplicationEditor({
@@ -15,8 +16,14 @@ class GlazeApplicationEditor extends StatelessWidget {
     required this.onEdit,
     required this.onDelete,
     required this.onMove,
+    this.maxLayers,
+    this.glazeNames = const {},
+    this.entryNames = const {},
   });
 
+  final int? maxLayers;
+  final Map<int, String> glazeNames;
+  final Map<int, String> entryNames;
   final List<CeramicGlazeEntryDto> entries;
   final List<GlazeDto> glazes;
   final Future<bool> Function(int glazeId) onAdd;
@@ -49,67 +56,87 @@ class GlazeApplicationEditor extends StatelessWidget {
         for (var index = 0; index < ordered.length; index++)
           Card(
             margin: const EdgeInsets.only(bottom: 9),
-            child: ListTile(
-              leading: CircleAvatar(radius: 15, child: Text('${index + 1}')),
-              title: Text(_glazeName(context, ordered[index].glazeId)),
-              subtitle: Text(
-                _summary(context, ordered[index]),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              onTap: () => _edit(context, ordered[index]),
-              trailing: Wrap(
-                spacing: 0,
-                children: [
-                  IconButton(
-                    tooltip: context.l10n.moveUp,
-                    onPressed: index == 0
-                        ? null
-                        : () => onMove(ordered[index].id, -1),
-                    icon: const Icon(Icons.arrow_upward, size: 19),
+            child: Column(
+              children: [
+                ListTile(
+                  leading: CircleAvatar(
+                    radius: 15,
+                    child: Text('${index + 1}'),
                   ),
-                  IconButton(
-                    tooltip: context.l10n.moveDown,
-                    onPressed: index == ordered.length - 1
-                        ? null
-                        : () => onMove(ordered[index].id, 1),
-                    icon: const Icon(Icons.arrow_downward, size: 19),
+                  title: Text(
+                    entryNames[ordered[index].id] ??
+                        _glazeName(context, ordered[index].glazeId),
                   ),
-                  IconButton(
-                    tooltip: context.l10n.removeApplication,
-                    onPressed: () => onDelete(ordered[index].id),
-                    icon: const Icon(Icons.close, size: 19),
+                  subtitle: Text(
+                    _summary(context, ordered[index]),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-              ),
+                  onTap: () => _edit(context, ordered[index]),
+                ),
+                Wrap(
+                  spacing: 0,
+                  children: [
+                    IconButton(
+                      tooltip: context.l10n.moveUp,
+                      onPressed: index == 0
+                          ? null
+                          : () => onMove(ordered[index].id, -1),
+                      icon: const Icon(Icons.arrow_upward, size: 19),
+                    ),
+                    IconButton(
+                      tooltip: context.l10n.moveDown,
+                      onPressed: index == ordered.length - 1
+                          ? null
+                          : () => onMove(ordered[index].id, 1),
+                      icon: const Icon(Icons.arrow_downward, size: 19),
+                    ),
+                    IconButton(
+                      tooltip: context.l10n.removeApplication,
+                      onPressed: () => onDelete(ordered[index].id),
+                      icon: const Icon(Icons.close, size: 19),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         Align(
           alignment: Alignment.centerLeft,
-          child: PopupMenuButton<int>(
-            enabled: glazes.isNotEmpty,
-            onSelected: onAdd,
-            itemBuilder: (_) => glazes
-                .map(
-                  (glaze) =>
-                      PopupMenuItem(value: glaze.id, child: Text(glaze.title)),
-                )
-                .toList(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.outline,
+          child: Semantics(
+            container: true,
+            child: PopupMenuButton<int>(
+              enabled:
+                  glazes.isNotEmpty &&
+                  (maxLayers == null || entries.length < maxLayers!),
+              onSelected: onAdd,
+              itemBuilder: (_) => glazes
+                  .map(
+                    (glaze) => PopupMenuItem(
+                      value: glaze.id,
+                      child: Text(glaze.title),
+                    ),
+                  )
+                  .toList(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
                 ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.add, size: 18),
-                  const SizedBox(width: 8),
-                  Text(context.l10n.addGlazeApplication),
-                ],
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.outline,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.add, size: 18),
+                    const SizedBox(width: 8),
+                    Flexible(child: Text(context.l10n.addGlazeApplication)),
+                  ],
+                ),
               ),
             ),
           ),
@@ -123,6 +150,7 @@ class GlazeApplicationEditor extends StatelessWidget {
           .where((glaze) => glaze.id == glazeId)
           .map((glaze) => glaze.title)
           .firstOrNull ??
+      glazeNames[glazeId] ??
       context.l10n.unknownGlaze;
 
   String _summary(BuildContext context, CeramicGlazeEntryDto entry) {
@@ -134,7 +162,7 @@ class GlazeApplicationEditor extends StatelessWidget {
     await showDialog<void>(
       context: context,
       builder: (_) => GlazeApplicationEditDialog(
-        title: _glazeName(context, entry.glazeId),
+        title: entryNames[entry.id] ?? _glazeName(context, entry.glazeId),
         initialNote: entry.note,
         initialCoatCount: entry.coatCount,
         onSave: (note, coatCount) => onEdit(entry.id, note, coatCount),
@@ -189,9 +217,9 @@ class _GlazeApplicationEditDialogState
       return;
     }
     final coatCount = int.tryParse(_coats.text.trim());
-    if (coatCount == null || coatCount < 1) {
+    if (coatCount == null || coatCount < 1 || coatCount > 20) {
       setState(() {
-        _coatError = context.l10n.coatMinimum;
+        _coatError = context.l10n.coatsRange;
         _saveError = null;
       });
       return;
@@ -233,23 +261,20 @@ class _GlazeApplicationEditDialogState
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
+              TextFieldWidget(
                 controller: _coats,
+                label: context.l10n.coatCountLabel,
+                errorText: _coatError,
                 enabled: !_saving,
                 keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: context.l10n.coatCountLabel,
-                  errorText: _coatError,
-                ),
               ),
-              TextField(
+              const SizedBox(height: 12),
+              TextFieldWidget(
                 controller: _note,
+                label: context.l10n.applicationNote,
                 enabled: !_saving,
                 maxLength: 255,
                 maxLines: 3,
-                decoration: InputDecoration(
-                  labelText: context.l10n.applicationNote,
-                ),
               ),
               if (_saveError != null)
                 Align(

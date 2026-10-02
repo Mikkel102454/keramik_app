@@ -1,5 +1,6 @@
 import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/ui/widgets/v2/ui_library.dart';
 import 'package:intl/intl.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/utils/measurement.dart';
@@ -11,8 +12,16 @@ class FiringEditorDialog extends StatefulWidget {
     required this.ceramicId,
     required this.onSave,
     this.existing,
+    this.planningOnly = false,
+    this.showAtmosphere = false,
+    this.initialAtmosphere,
+    this.onAtmosphere,
   });
 
+  final bool planningOnly;
+  final bool showAtmosphere;
+  final String? initialAtmosphere;
+  final ValueChanged<String?>? onAtmosphere;
   final int ceramicId;
   final CeramicFiringDto? existing;
   final Future<bool> Function(CeramicFiringDto firing) onSave;
@@ -22,6 +31,7 @@ class FiringEditorDialog extends StatefulWidget {
 }
 
 class _FiringEditorDialogState extends State<FiringEditorDialog> {
+  String? _atmosphere;
   late String _status;
   late String _type;
   late DateTime? _date;
@@ -40,6 +50,7 @@ class _FiringEditorDialogState extends State<FiringEditorDialog> {
     super.initState();
     final existing = widget.existing;
     final units = AppSettingsController.instance.measurementSystem;
+    _atmosphere = widget.initialAtmosphere;
     _status = existing?.status ?? 'PLANNED';
     _type = existing?.type ?? 'BISQUE';
     _date = existing?.firingDate;
@@ -98,6 +109,30 @@ class _FiringEditorDialogState extends State<FiringEditorDialog> {
 
   Future<void> _save() async {
     if (_saving) return;
+    final units = AppSettingsController.instance.measurementSystem;
+    for (final c in [_targetTemperature, _peakTemperature]) {
+      if (c.text.trim().isEmpty) continue;
+      final display = double.tryParse(c.text.trim());
+      final canonical = display == null
+          ? null
+          : Measurement.temperatureToCelsius(display, units);
+      if (canonical == null ||
+          !canonical.isFinite ||
+          canonical < 0 ||
+          canonical > 2000) {
+        setState(() => _saveError = context.l10n.invalidNumber);
+        return;
+      }
+    }
+    if (_targetCone.text.length > 16 ||
+        _observedCone.text.length > 16 ||
+        _kiln.text.length > 255 ||
+        _program.text.length > 1000 ||
+        _note.text.length > 2000) {
+      setState(() => _saveError = context.l10n.firingSaveFailed);
+      return;
+    }
+    widget.onAtmosphere?.call(_atmosphere);
     final saveFailed = context.l10n.firingSaveFailed;
     FocusScope.of(context).unfocus();
     setState(() {
@@ -105,7 +140,6 @@ class _FiringEditorDialogState extends State<FiringEditorDialog> {
       _saveError = null;
     });
 
-    final units = AppSettingsController.instance.measurementSystem;
     final targetDisplay = double.tryParse(_targetTemperature.text);
     final peakDisplay = double.tryParse(_peakTemperature.text);
     final saved = await widget.onSave(
@@ -156,30 +190,27 @@ class _FiringEditorDialogState extends State<FiringEditorDialog> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                DropdownButtonFormField<String>(
-                  initialValue: _status,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.status,
+                if (!widget.planningOnly)
+                  SelectFieldWidget<String>(
+                    value: _status,
+                    label: context.l10n.status,
+                    items: [
+                      DropdownMenuItem(
+                        value: 'PLANNED',
+                        child: Text(context.l10n.planned),
+                      ),
+                      DropdownMenuItem(
+                        value: 'COMPLETED',
+                        child: Text(context.l10n.completed),
+                      ),
+                    ],
+                    onChanged: _saving
+                        ? null
+                        : (value) => setState(() => _status = value!),
                   ),
-                  items: [
-                    DropdownMenuItem(
-                      value: 'PLANNED',
-                      child: Text(context.l10n.planned),
-                    ),
-                    DropdownMenuItem(
-                      value: 'COMPLETED',
-                      child: Text(context.l10n.completed),
-                    ),
-                  ],
-                  onChanged: _saving
-                      ? null
-                      : (value) => setState(() => _status = value!),
-                ),
-                DropdownButtonFormField<String>(
-                  initialValue: _type,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.firingType,
-                  ),
+                SelectFieldWidget<String>(
+                  value: _type,
+                  label: context.l10n.firingType,
                   items: [
                     DropdownMenuItem(
                       value: 'BISQUE',
@@ -206,6 +237,36 @@ class _FiringEditorDialogState extends State<FiringEditorDialog> {
                       ? null
                       : (value) => setState(() => _type = value!),
                 ),
+                if (widget.showAtmosphere)
+                  SelectFieldWidget<String>(
+                    value: _atmosphere,
+                    label: context.l10n.atmosphere,
+                    items: [
+                      DropdownMenuItem<String>(
+                        value: null,
+                        child: Text(context.l10n.notSet),
+                      ),
+                      DropdownMenuItem(
+                        value: 'OXIDATION',
+                        child: Text(context.l10n.atmosphereOxidation),
+                      ),
+                      DropdownMenuItem(
+                        value: 'REDUCTION',
+                        child: Text(context.l10n.atmosphereReduction),
+                      ),
+                      DropdownMenuItem(
+                        value: 'NEUTRAL',
+                        child: Text(context.l10n.atmosphereNeutral),
+                      ),
+                      DropdownMenuItem(
+                        value: 'OTHER',
+                        child: Text(context.l10n.other),
+                      ),
+                    ],
+                    onChanged: _saving
+                        ? null
+                        : (v) => setState(() => _atmosphere = v),
+                  ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   enabled: !_saving,
@@ -284,14 +345,15 @@ class _FiringEditorDialogState extends State<FiringEditorDialog> {
   }) {
     return Padding(
       padding: const EdgeInsets.only(top: 10),
-      child: TextField(
+      child: TextFieldWidget(
         controller: controller,
+        label: label,
+        suffix: suffix,
         enabled: !_saving,
         keyboardType: numeric
             ? const TextInputType.numberWithOptions(decimal: true)
             : null,
         maxLines: maxLines,
-        decoration: InputDecoration(labelText: label, suffixText: suffix),
       ),
     );
   }

@@ -2,6 +2,9 @@ import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'profile_edit_controller.dart';
+import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
+import 'package:ceramic_app/ui/widgets/v2/entry_page_widgets.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class ProfileEditPage extends StatefulWidget {
@@ -15,10 +18,79 @@ class ProfileEditPage extends StatefulWidget {
 
 class _ProfileEditPageState extends State<ProfileEditPage> {
   final ImagePicker _picker = ImagePicker();
+  ProfileEditController? _draft;
+  final _forename = TextEditingController();
+  final _surname = TextEditingController();
+  final _username = TextEditingController();
+  bool _allowPop = false, _pickingPhoto = false, _confirmingDiscard = false;
+  bool get _busy =>
+      (_draft?.saving ?? false) ||
+      widget.controller.isUpdatingPhoto ||
+      _pickingPhoto;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_profileChanged);
+    _initializeDraft();
+  }
+
+  void _initializeDraft() {
+    final account = widget.controller.account;
+    if (_draft != null || account == null) return;
+    _draft = ProfileEditController(account)..addListener(_draftChanged);
+    _forename.text = account.forename;
+    _surname.text = account.surname;
+    _username.text = account.username;
+  }
+
+  void _profileChanged() {
+    _initializeDraft();
+    if (mounted) setState(() {});
+  }
+
+  void _draftChanged() {
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_profileChanged);
+    _draft?.dispose();
+    _forename.dispose();
+    _surname.dispose();
+    _username.dispose();
+    super.dispose();
+  }
+
+  Future<void> _leave() async {
+    if (_busy || _confirmingDiscard) return;
+    _confirmingDiscard = true;
+    final discard =
+        !(_draft?.dirty ?? false) || await confirmEntryDiscard(context);
+    _confirmingDiscard = false;
+    if (!mounted || !discard || _busy) return;
+    setState(() => _allowPop = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Navigator.pop(context);
+    });
+  }
+
+  Future<void> _save() async {
+    if (_busy) return;
+    FocusScope.of(context).unfocus();
+    final result = await _draft?.save();
+    if (!mounted || result == null) return;
+    widget.controller.profileSaved(result);
+    setState(() => _allowPop = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) Navigator.pop(context);
+    });
+  }
 
   Future<void> _showPhotoActions() async {
     final account = widget.controller.account;
-    if (account == null) return;
+    if (account == null || _busy) return;
     await showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -37,7 +109,8 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => _PhotoViewer(imageUrl: account.avatarUrl!),
+                          builder: (_) =>
+                              _PhotoViewer(imageUrl: account.avatarUrl!),
                         ),
                       );
                     },
@@ -61,12 +134,13 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
             ),
             if (account.avatarUrl != null)
               ListTile(
-                leading: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error),
+                leading: Icon(
+                  Icons.delete_outline,
+                  color: Theme.of(context).colorScheme.error,
+                ),
                 title: Text(
                   context.l10n.removePhoto,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
                 ),
                 onTap: () {
                   Navigator.pop(sheetContext);
@@ -80,15 +154,20 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   Future<void> _choosePhoto(ImageSource source) async {
+    if (_busy) return;
+    setState(() => _pickingPhoto = true);
     try {
       final selected = await _picker.pickImage(source: source);
       if (selected != null) await widget.controller.uploadPhoto(selected);
     } catch (exception) {
       if (mounted) _showError(exception);
+    } finally {
+      if (mounted) setState(() => _pickingPhoto = false);
     }
   }
 
   Future<void> _removePhoto() async {
+    if (_busy) return;
     try {
       await widget.controller.removePhoto();
     } catch (exception) {
@@ -97,165 +176,169 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   }
 
   void _showError(Object exception) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(exception.toString())));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(context.l10n.profilePhotoUpdateFailed)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          context.l10n.editProfile,
-          style: const TextStyle(fontWeight: FontWeight.w700),
+    final account = widget.controller.account;
+    final draft = _draft;
+    return PopScope(
+      canPop: _allowPop,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _leave();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(context.l10n.editProfile),
+          leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            onPressed: _busy ? null : _leave,
+            icon: const BackButtonIcon(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: !_busy && (draft?.canSave ?? false) ? _save : null,
+              child: Text(context.l10n.save),
+            ),
+          ],
         ),
-      ),
-      body: AnimatedBuilder(
-        animation: widget.controller,
-        builder: (context, _) {
-          final account = widget.controller.account;
-          if (account == null) return const Center(child: CircularProgressIndicator());
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 40),
-            children: [
-              Center(
-                child: InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: widget.controller.isUpdatingPhoto ? null : _showPhotoActions,
-                  child: Stack(
-                    alignment: Alignment.center,
+        body: account == null || draft == null
+            ? const Center(child: CircularProgressIndicator())
+            : SafeArea(
+                child: AbsorbPointer(
+                  absorbing: _busy,
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
                     children: [
-                      ProfileAvatar(
-                        initials: account.avatarInitials,
-                        colorHex: account.avatarColor,
-                        imageUrl: account.avatarUrl,
-                        radius: 68,
-                      ),
-                      if (widget.controller.isUpdatingPhoto)
-                        const SizedBox.square(
-                          dimension: 42,
-                          child: CircularProgressIndicator(color: Colors.white),
+                      if (draft.saving) const LinearProgressIndicator(),
+                      if (draft.saveFailed)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: Text(
+                            context.l10n.profileSaveFailed,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
                         ),
+                      Center(
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: _busy ? null : _showPhotoActions,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ProfileAvatar(
+                                initials: account.avatarInitials,
+                                colorHex: account.avatarColor,
+                                imageUrl: account.avatarUrl,
+                                radius: 68,
+                              ),
+                              if (widget.controller.isUpdatingPhoto ||
+                                  _pickingPhoto)
+                                const SizedBox.square(
+                                  dimension: 42,
+                                  child: CircularProgressIndicator(),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _busy ? null : _showPhotoActions,
+                        child: Text(context.l10n.changePhoto),
+                      ),
+                      Text(
+                        context.l10n.profilePhotoPrivacy,
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      TextFieldWidget(
+                        key: const ValueKey('profile-forename'),
+                        controller: _forename,
+                        label: context.l10n.forename,
+                        enabled: !_busy,
+                        textInputAction: TextInputAction.next,
+                        errorText:
+                            ProfileEditController.validName(draft.forename)
+                            ? null
+                            : context.l10n.profileNameInvalid,
+                        onChanged: (value) async {
+                          draft.changeNames(forename: value);
+                          return true;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFieldWidget(
+                        controller: _surname,
+                        label: context.l10n.surname,
+                        enabled: !_busy,
+                        textInputAction: TextInputAction.next,
+                        errorText:
+                            ProfileEditController.validName(draft.surname)
+                            ? null
+                            : context.l10n.profileNameInvalid,
+                        onChanged: (value) async {
+                          draft.changeNames(surname: value);
+                          return true;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      TextFieldWidget(
+                        controller: _username,
+                        label: context.l10n.username,
+                        enabled: !_busy,
+                        textInputAction: TextInputAction.done,
+                        errorText:
+                            !ProfileEditController.validUsername(draft.username)
+                            ? context.l10n.profileUsernameInvalid
+                            : draft.usernameCheck == UsernameCheck.unavailable
+                            ? context.l10n.usernameUnavailable
+                            : null,
+                        onChanged: (value) async {
+                          draft.changeUsername(value);
+                          return true;
+                        },
+                      ),
+                      if (ProfileEditController.validUsername(
+                        draft.username,
+                      )) ...[
+                        const SizedBox(height: 8),
+                        if (draft.usernameCheck == UsernameCheck.waiting ||
+                            draft.usernameCheck == UsernameCheck.checking)
+                          Text(context.l10n.usernameChecking),
+                        if (draft.usernameCheck == UsernameCheck.available ||
+                            draft.usernameCheck == UsernameCheck.unchanged)
+                          Text(context.l10n.usernameAvailable),
+                        if (draft.usernameCheck == UsernameCheck.failed) ...[
+                          Text(context.l10n.usernameCheckFailed),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: TextButton(
+                              onPressed: _busy ? null : draft.retryCheck,
+                              child: Text(context.l10n.retry),
+                            ),
+                          ),
+                        ],
+                      ],
+                      const SizedBox(height: 16),
+                      EntryValue(
+                        key: const ValueKey('profile-user-id'),
+                        label: context.l10n.publicUserId,
+                        value: account.userId,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(context.l10n.profileEditPrivacy),
+                      const SizedBox(height: 8),
+                      Text(context.l10n.usernameSessionNotice),
+                      const SizedBox(height: 32),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: widget.controller.isUpdatingPhoto ? null : _showPhotoActions,
-                child: Text(
-                  context.l10n.changePhoto,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              Text(
-                context.l10n.profilePhotoPrivacy,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 28),
-              _ReadOnlyCard(
-                children: [
-                  _ReadOnlyField(
-                    label: context.l10n.forename,
-                    value: _display(context, account.forename),
-                  ),
-                  _ReadOnlyField(
-                    label: context.l10n.surname,
-                    value: _display(context, account.surname),
-                  ),
-                  _ReadOnlyField(
-                    label: context.l10n.username,
-                    value: account.username,
-                  ),
-                  _ReadOnlyField(
-                    label: context.l10n.publicUserId,
-                    value: account.userId,
-                    compact: true,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  context.l10n.readOnlyFields,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  static String _display(BuildContext context, String value) =>
-      value.trim().isEmpty ? context.l10n.notSet : value;
-}
-
-class _ReadOnlyCard extends StatelessWidget {
-  const _ReadOnlyCard({required this.children});
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(children: children),
-    );
-  }
-}
-
-class _ReadOnlyField extends StatelessWidget {
-  const _ReadOnlyField({required this.label, required this.value, this.compact = false});
-  final String label;
-  final String value;
-  final bool compact;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 96,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontSize: 16,
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              value,
-              maxLines: compact ? 2 : 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: compact ? 13 : 16, fontWeight: FontWeight.w600),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Icon(
-            Icons.lock_outline,
-            size: 17,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ],
       ),
     );
   }

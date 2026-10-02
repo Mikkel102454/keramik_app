@@ -1,3 +1,4 @@
+import 'package:ceramic_app/app/combination_application_controller.dart';
 import 'dart:io';
 
 import 'package:ceramic_app/extensions/extensions.dart';
@@ -18,7 +19,13 @@ import 'package:ceramic_app/repositories/ceramic_repository.dart';
 import 'package:ceramic_app/repositories/publication_repository.dart';
 import 'package:ceramic_app/objects/publication_dto.dart';
 
-class CeramicViewPageController extends ChangeNotifier{
+class CeramicViewPageController extends ChangeNotifier {
+  var combinationApplication = CombinationApplicationController();
+  Future<bool> applyCombination() => combinationApplication.apply(() async {
+    ceramic = await CeramicRepository.getCeramic(ceramic.id);
+    hasChanged = true;
+    notifyListeners();
+  });
   List<StageDto> stages = [];
 
   late CeramicDto ceramic;
@@ -38,6 +45,9 @@ class CeramicViewPageController extends ChangeNotifier{
 
     try {
       final ceramicId = ceramicDto?.id ?? ceramic.id;
+      combinationApplication = CombinationApplicationController.forPiece(
+        ceramicId,
+      );
       final results = await Future.wait<dynamic>([
         CeramicRepository.getCeramic(ceramicId),
         CeramicFiringRepository.getFirings(ceramicId),
@@ -48,10 +58,13 @@ class CeramicViewPageController extends ChangeNotifier{
       firings = results[1] as List<CeramicFiringDto>;
       stageHistory = results[2] as List<CeramicStageHistoryDto>;
       publicationStatus = results[3] as PublicationStatusDto;
-      if(stages != null) this.stages = stages;
+      if (stages != null) this.stages = stages;
 
-      ceramic.stageId = this.stages.where((e) => e.id == ceramic.stageId,).first.id;
-    } catch (e){
+      ceramic.stageId = this.stages
+          .where((e) => e.id == ceramic.stageId)
+          .first
+          .id;
+    } catch (e) {
       _error = 'We could not load this ceramic.';
     }
 
@@ -133,13 +146,15 @@ class CeramicViewPageController extends ChangeNotifier{
   Future<int> addGlaze(int glazeId) async {
     final oldGlazes = ceramic.glazes.copy();
     try {
-      ceramic.glazes.add(await GlazeEntryRepository.addGlazeNoteEntry(
-        ceramic.id,
-        glazeId,
-        "",
-        layerOrder: ceramic.glazes.length + 1,
-        coatCount: 1,
-      ));
+      ceramic.glazes.add(
+        await GlazeEntryRepository.addGlazeNoteEntry(
+          ceramic.id,
+          glazeId,
+          "",
+          layerOrder: ceramic.glazes.length + 1,
+          coatCount: 1,
+        ),
+      );
       notifyListeners();
       hasChanged = true;
       return ceramic.glazes.last.id;
@@ -167,7 +182,9 @@ class CeramicViewPageController extends ChangeNotifier{
     ceramic.glazes.sort((a, b) => a.layerOrder.compareTo(b.layerOrder));
     final index = ceramic.glazes.indexWhere((entry) => entry.id == id);
     final target = index + direction;
-    if (index < 0 || target < 0 || target >= ceramic.glazes.length) return false;
+    if (index < 0 || target < 0 || target >= ceramic.glazes.length) {
+      return false;
+    }
     final oldGlazes = ceramic.glazes.copy();
     final moved = ceramic.glazes[index];
     final other = ceramic.glazes[target];
@@ -400,7 +417,6 @@ class CeramicViewPageController extends ChangeNotifier{
       hasChanged = true;
       notifyListeners();
       return true;
-
     } catch (e) {
       ceramic.images = oldImages;
       notifyListeners();
@@ -411,15 +427,12 @@ class CeramicViewPageController extends ChangeNotifier{
   Future<bool> deleteImage(ImageDto image) async {
     List<ImageDto> oldImages = ceramic.images.copy();
     try {
-      await CeramicRepository.deleteCeramicImage(
-        image: image,
-      );
+      await CeramicRepository.deleteCeramicImage(image: image);
 
       ceramic.images.removeWhere((e) => e.id == image.id);
       hasChanged = true;
       notifyListeners();
       return true;
-
     } catch (e) {
       ceramic.images = oldImages;
       notifyListeners();

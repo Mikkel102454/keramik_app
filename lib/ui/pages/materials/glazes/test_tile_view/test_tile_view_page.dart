@@ -1,7 +1,7 @@
 import 'package:ceramic_app/ui/pages/materials/glazes/notebook/glaze_notebook_detail_page.dart';
 
-class GlazesCombinationViewPage extends GlazeNotebookDetailPage {
-  const GlazesCombinationViewPage({
+class TestTileViewPage extends GlazeNotebookDetailPage {
+  const TestTileViewPage({
     super.key,
     required super.controller,
     required super.value,

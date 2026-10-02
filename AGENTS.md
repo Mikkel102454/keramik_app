@@ -21,6 +21,7 @@ AutoRoute provides navigation. A shared Dio client and persistent cookie jar com
 - Follow the existing feature and layer boundaries unless an approved task changes the architecture.
 - Keep the established state-management and dependency-injection approach. Ask before replacing it as a substantial architecture change unless that change is already explicitly requested.
 - Keep widgets focused; place network access in repositories and coordination/state in the established controller or Cubit layer.
+- Follow [UI_CONVENTIONS.md](UI_CONVENTIONS.md): reuse and extend the existing `v2` UI library for fields and use the shared entry-page structure for similar create/view/edit flows. Preserve domain rules and avoid page-local field styling or unrelated wholesale UI rewrites.
 - Preserve authentication redirects, cookie persistence, and unauthenticated-response handling unless an approved task changes them.
 - Treat DTO field names, enum values, multipart fields, endpoint paths, and response handling as shared API contracts. Inspect the backend implementation before changing API-consuming code.
 - Do not assume all generated platform targets are supported. Avoid platform-specific behavior unless the target platform is part of the task.

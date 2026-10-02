@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/ui/widgets/v2/form_field_style.dart';
 import 'package:ceramic_app/app/entitlement_controller.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -120,14 +121,7 @@ class MyApp extends StatelessWidget {
         foregroundColor: scheme.onSurface,
       ),
       dividerTheme: DividerThemeData(color: scheme.outlineVariant),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: scheme.surfaceContainerHighest.withValues(alpha: .55),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
-      ),
+      inputDecorationTheme: FormFieldStyle.theme(scheme),
     );
   }
 }

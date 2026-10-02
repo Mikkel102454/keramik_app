@@ -1,3 +1,4 @@
+import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
 import 'dart:io';
 
 import 'package:ceramic_app/extensions/extensions.dart';
@@ -14,7 +15,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/utils/measurement.dart';
 
-class CeramicCreatePageController extends ChangeNotifier{
+class CeramicCreatePageController extends ChangeNotifier {
   List<StageDto> stages = [];
 
   String title = '';
@@ -43,7 +44,7 @@ class CeramicCreatePageController extends ChangeNotifier{
     try {
       stages = await StageRepository.getStages();
       stageId = stages.first.id;
-    } catch (e){
+    } catch (e) {
       _error = 'We could not prepare the ceramic form.';
     }
 
@@ -77,10 +78,24 @@ class CeramicCreatePageController extends ChangeNotifier{
     return true;
   }
 
+  Future<bool> appendCombination(GlazeNotebookDto recipe) async {
+    if (recipe.layers.any((l) => l.glazeId == null)) return false;
+    var id = glazes.fold<int>(0, (n, l) => n > l.id ? n : l.id);
+    var order = glazes.fold<int>(
+      0,
+      (n, l) => n > l.layerOrder ? n : l.layerOrder,
+    );
+    for (final layer in recipe.layers) {
+      glazes.add(layer.entry(++id, ++order));
+    }
+    notifyListeners();
+    return true;
+  }
+
   Future<int> addGlaze(int glazeId) async {
     final newId = glazes.isEmpty
         ? 1
-        : glazes.last.id + 1;
+        : glazes.map((l) => l.id).reduce((a, b) => a > b ? a : b) + 1;
 
     glazes.add(
       CeramicGlazeEntryDto(
@@ -124,17 +139,9 @@ class CeramicCreatePageController extends ChangeNotifier{
   }
 
   Future<int> addTag(String value) async {
-    final newId = tags.isEmpty
-        ? 1
-        : tags.last.id + 1;
+    final newId = tags.isEmpty ? 1 : tags.last.id + 1;
 
-    tags.add(
-      CeramicTagDto(
-        id: newId,
-        ceramicId: 0,
-        tag: value,
-      ),
-    );
+    tags.add(CeramicTagDto(id: newId, ceramicId: 0, tag: value));
 
     return newId;
   }
@@ -190,7 +197,6 @@ class CeramicCreatePageController extends ChangeNotifier{
       images.add(compressed);
       notifyListeners();
       return true;
-
     } catch (e) {
       images = oldImages;
       notifyListeners();
@@ -206,7 +212,6 @@ class CeramicCreatePageController extends ChangeNotifier{
       if (await file.exists()) await file.delete();
       notifyListeners();
       return true;
-
     } catch (e) {
       images = oldImages;
       notifyListeners();
@@ -214,7 +219,7 @@ class CeramicCreatePageController extends ChangeNotifier{
     }
   }
 
-  Future<CeramicDto> create() async{
+  Future<CeramicDto> create() async {
     CeramicDto ceramicDto = CeramicDto(
       title: title,
       clayTypeId: clayTypeId,
@@ -232,8 +237,10 @@ class CeramicCreatePageController extends ChangeNotifier{
       diameterCm: diameterCm,
       outcomeNote: outcomeNote,
     );
-    final created =
-        await CeramicRepository.createCeramic(ceramic: ceramicDto, images: images);
+    final created = await CeramicRepository.createCeramic(
+      ceramic: ceramicDto,
+      images: images,
+    );
     await cleanupImages();
     return created;
   }

@@ -2301,4 +2301,160 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get publicationChatShareDisclosure =>
       'Kun de udvalgte offentlige Discover-oplysninger deles. Modtageren skal stadig have adgang til publiceringen.';
+
+  @override
+  String get glazeCombinations => 'Kombinationer';
+
+  @override
+  String get testTileNotebook => 'Prøveflise-notesbog';
+
+  @override
+  String get createCombination => 'Opret kombination';
+
+  @override
+  String get createTestTile => 'Opret prøveflise';
+
+  @override
+  String get editCombination => 'Rediger kombination';
+
+  @override
+  String get editTestTile => 'Rediger prøveflise';
+
+  @override
+  String get notebookName => 'Navn';
+
+  @override
+  String get notebookEmpty => 'Ingen gemte poster endnu.';
+
+  @override
+  String get notebookFailed =>
+      'Posten kunne ikke indlæses eller gemmes. Din kladde er bevaret.';
+
+  @override
+  String get notebookConflict =>
+      'Posten er ændret. Genindlæs den før du redigerer igen. Din kladde er bevaret.';
+
+  @override
+  String get notebookDeleteConfirm =>
+      'Slet denne post? Eksisterende prøvefliser og påførte lag bevares.';
+
+  @override
+  String get applySavedCombination => 'Anvend gemt kombination';
+
+  @override
+  String get appendCombinationPreview =>
+      'Eksisterende lag efterfulgt af gemte lag';
+
+  @override
+  String get appendCombinationHelp =>
+      'Tilføjer kun glasurlag. Ler og brændingsstandarder anvendes ikke.';
+
+  @override
+  String get combinationApplyUncertain =>
+      'Anvendelsen kunne ikke bekræftes. Prøv igen med samme anmodning; lagene tilføjes ikke to gange.';
+
+  @override
+  String get combinationApplyConflict =>
+      'Opskriften er ændret, eller anmodningen er i konflikt. Genindlæs før en ny anvendelse.';
+
+  @override
+  String get notebookLayerLimit => 'Brug 1–20 lag og 1–20 påføringer pr. lag.';
+
+  @override
+  String get replaceUnavailableGlaze =>
+      'Erstat utilgængelige glasurer før anvendelse.';
+
+  @override
+  String get resultNotes => 'Resultatnoter';
+
+  @override
+  String get sourceRecipe => 'Kildeopskrift';
+
+  @override
+  String get sourceRecipeSnapshot => 'Oprindelig opskrift (kopi)';
+
+  @override
+  String get actualConditions => 'Faktiske forhold';
+
+  @override
+  String get recipeDefaults => 'Valgfrie standarder';
+
+  @override
+  String get atmosphere => 'Atmosfære';
+
+  @override
+  String get atmosphereOxidation => 'Oxidation';
+
+  @override
+  String get atmosphereReduction => 'Reduktion';
+
+  @override
+  String get atmosphereNeutral => 'Neutral';
+
+  @override
+  String get notebookPhotos => 'Resultatbilleder (op til 20)';
+
+  @override
+  String get notebookPhotoFailed =>
+      'Billederne kunne ikke opdateres. Prøv igen eller genindlæs for at se de gemte billeder.';
+
+  @override
+  String get filterRecipe => 'Filtrer efter opskrift';
+
+  @override
+  String get allRecipes => 'Alle opskrifter';
+
+  @override
+  String get allClays => 'Alle lertyper';
+
+  @override
+  String get coatsRange => 'Angiv 1 til 20 påføringer.';
+
+  @override
+  String get notebookDraftDiscard => 'Kassér ikke-gemte ændringer?';
+
+  @override
+  String get notebookSearch => 'Søg';
+
+  @override
+  String get createGlaze => 'Opret glasur';
+
+  @override
+  String get editGlaze => 'Rediger glasur';
+
+  @override
+  String get profileNameInvalid => 'Indtast et navn på 1–100 tegn.';
+
+  @override
+  String get profileUsernameInvalid => 'Indtast et brugernavn på 3–50 tegn.';
+
+  @override
+  String get usernameChecking => 'Kontrollerer brugernavn…';
+
+  @override
+  String get usernameAvailable => 'Brugernavnet er ledigt';
+
+  @override
+  String get usernameUnavailable =>
+      'Brugernavnet er ikke ledigt. Vælg et andet.';
+
+  @override
+  String get usernameCheckFailed =>
+      'Kunne ikke kontrollere brugernavnet. Prøv igen.';
+
+  @override
+  String get profileSaveFailed =>
+      'Din profil kunne ikke gemmes. Dine ændringer er bevaret. Prøv igen.';
+
+  @override
+  String get profilePhotoUpdateFailed =>
+      'Dit billede kunne ikke opdateres. Prøv igen.';
+
+  @override
+  String get profileEditPrivacy =>
+      'Dine navne forbliver private. Dit brugernavn og billede følger dine nuværende indstillinger for profilsynlighed.';
+
+  @override
+  String get usernameSessionNotice =>
+      'Når du ændrer dit brugernavn, forbliver denne enhed logget ind, og dine andre sessioner bliver logget ud.';
 }

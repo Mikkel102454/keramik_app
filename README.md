@@ -31,17 +31,54 @@ flutter build apk --release --dart-define=API_BASE_URL=https://api.example.com
 
 Signing credentials are intentionally not stored in this repository. The current Android `release` build type still uses debug signing for local execution; it is not publishable until an approved production keystore/signing configuration is supplied.
 
+## Shared UI conventions
+
+The existing `v2` UI library provides text/select controls and common entry-page
+primitives. Field decoration is shared with the application theme. Glaze entries,
+combinations and test tiles use matching Information/domain sections, read-only
+details with Edit/Delete, and explicit Save with draft-discard protection. Glaze
+titles now save when Save is pressed. Existing clay/piece flows retain their
+current save semantics. See [UI_CONVENTIONS.md](UI_CONVENTIONS.md) for component
+usage and the required consistency review, and [MOBILE_TESTING.md](MOBILE_TESTING.md)
+for installed Android evidence.
+
 ## Current MVP boundary
 
-Ceramics, clays, glazes, images, session login by email or username, profiles, profile photos, account search, friend requests, friendships, blocking, unblocking, encrypted direct messaging, encrypted group chat, message-scoped ceramic sharing, message reporting, authenticated WebSocket invalidations, REST backfill, category-aware request/unread badges, account settings, and English/Danish localization are functional. The ceramic journal has a unified grid with client-side search across titles, notes, outcomes, tags, clay, and glaze names; multi-category filters; title/rating/stage/created/updated sorting; improved empty/error states; and finished-pieces grids on self and visible public profiles. Signup with a required email address, account administration, temporary-password replacement, and report review are available through the backend's Thymeleaf website. Shop, glaze combinations, textiles, native signup forms, richer public ceramic details/showcases, push delivery, and background execution while the app is suspended remain intentionally incomplete.
+Ceramics, clays, glazes, images, session login by email or username, profiles, profile photos, account search, friend requests, friendships, blocking, unblocking, encrypted direct messaging, encrypted group chat, message-scoped ceramic sharing, message reporting, authenticated WebSocket invalidations, REST backfill, category-aware request/unread badges, account settings, and English/Danish localization are functional. The ceramic journal has a unified grid with client-side search across titles, notes, outcomes, tags, clay, and glaze names; multi-category filters; title/rating/stage/created/updated sorting; improved empty/error states; and finished-pieces grids on self and visible public profiles. Signup with a required email address, account administration, temporary-password replacement, and report review are available through the backend's Thymeleaf website. Shop, native signup forms, richer public ceramic details/showcases, push delivery, and background execution while the app is suspended remain intentionally incomplete.
 
 Ceramic detail records support optional dimensions, ordered repeatable glaze applications with coat counts, outcome notes, planned/completed firing records, server timestamps, and read-only stage history. Owners can save reusable planning-only project templates, create numbered batches of up to 50 ceramics, and safely batch-edit owned journal entries after reviewing a preview. Templates intentionally exclude images, ratings, outcomes, completed firings, stage history, publication, engagement, chat references, and timestamps. Batch edits skip protected glaze/firing work instead of replacing it. Journal selection mode also offers a separate permanent batch-delete workflow with a title review, explicit acknowledgement, stale-item protection, and all-or-nothing ownership enforcement.
+
+Materials → Glazes now exposes Combinations and the Test-tile notebook. Recipes
+provide optional clay and planning-only firing defaults; tiles preserve a selected
+recipe version and independently record actual layers/conditions, results and up
+to 20 private photos. Search, recipe/clay filters, editing/reordering, confirmed
+deletion and retry states are available in English and Danish. Saved combinations
+preview and append glaze layers only, either to local creation drafts or through
+an atomic existing-piece operation with retry receipts and a subsequent refresh.
+Notebook editing is Free; existing Maker rules govern new/changed custom coat
+counts, including copied/applied counts. See
+[the shared contract and validation guide](../keramik_app_backend/GLAZE_NOTEBOOK.md).
+The backend must have V21 before these flows are used. The local backend was
+subsequently migrated to V21 and restarted after approval, an encrypted backup
+and an isolated restore rehearsal; readiness passed. Uncertain application requests retain their UUID
+across navigation within the authenticated app session; app termination ends the
+in-memory retry context. Installed Android notebook flows and screenshots were
+checked on a disposable read-only emulator against isolated H2/MinIO, including
+light/dark themes, English/Danish and compact enlarged text. See
+[MOBILE_TESTING.md](MOBILE_TESTING.md) for the evidence, repeatable setup and
+remaining physical-device/failure checks. Browser acceptance still needs
+Playwright MCP, which is unavailable in this session.
+Notebook validation (2026-10-02): changed-file formatting and localization
+generation completed, `flutter analyze --no-pub` found no issues, and the full
+`flutter test --no-pub` suite passed all 156 tests after the shared-UI follow-up. Device testing exposed and
+fixed empty pagination values, disabled Create controls and crowded labels;
+regression tests cover both list entry paths. Dependencies are unchanged.
 
 The private Practice analytics page aggregates only the signed-in member's records on the backend. It shows created/completed activity, current stages, trustworthy timing samples, structured ratings, material use, successful clay–glaze combinations, firing-target accuracy, and inventory spending/usage. Every section includes its calculation rule and preserves missing data as missing rather than zero.
 
 Materials now includes an optional append-only inventory ledger. Clay is stored canonically in kilograms; each glaze inventory chooses kilograms or litres. Purchases, confirmed usage, edits recorded as reversal/replacement pairs, and explicit reversals explain the stock balance. Purchase and usage costs use decimal strings and a currency selected from a dropdown. Weighted-average usage combines positive costed purchase history, converts its original currencies into the selected estimate currency using the backend's cached ECB reference rates, and then calculates the quantity's cost. Original purchase amounts remain unchanged. Cost and analytics screens also request an estimate in the preferred currency. Usage can be linked through an owned-ceramic picker but is never inferred automatically. When opened from a ceramic, that ceramic is preselected but remains changeable. The Metric/Imperial setting converts kilogram input/display at the boundary.
 
-The titleless Profile tab uses a compact TikTok-inspired overview with avatar, username, read-only edit view, a tappable friend count, and a three-line Settings and privacy menu. Account search remains on Chats. The settings destination covers account details, in-app password change with website fallback, exports, scheduled deletion/cancellation, privacy audiences, blocked accounts, category-aware notifications, system/light/dark appearance, metric/imperial units, language, preferred currency, support/privacy/about links, and recoverable logout. Preferred currency defaults to Automatic, which follows the device region with EUR as the safe fallback, and can be changed to a fixed dropdown value. Push delivery remains labeled Coming later. The Edit Profile view shows self-only forename, surname, username, and public UUID; these fields cannot yet be changed. Search accepts username prefixes of at least three characters and returns only accounts allowed by server-side discoverability. Opening a visible result uses the same profile-style presentation and adds a read-only grid containing only that member's Finished-piece image, title, stage, clay, and rating; no public journal-detail route is provided.
+The titleless Profile tab uses a compact TikTok-inspired overview with avatar, username, explicit-save profile editor, a tappable friend count, and a three-line Settings and privacy menu. Account search remains on Chats. The settings destination covers account details, in-app password change with website fallback, exports, scheduled deletion/cancellation, privacy audiences, blocked accounts, category-aware notifications, system/light/dark appearance, metric/imperial units, language, preferred currency, support/privacy/about links, and recoverable logout. Preferred currency defaults to Automatic, which follows the device region with EUR as the safe fallback, and can be changed to a fixed dropdown value. Push delivery remains labeled Coming later. Edit Profile validates and saves private forename/surname (1-100 Unicode code points) and public username (3-50) together. It trims surrounding whitespace, checks changed usernames after a 500 ms debounce, retains failed drafts, and confirms before discarding unsaved text. Photos remain immediate and preserve text drafts; the public UUID stays read-only. A username change keeps this device signed in, expires other sessions and reconnects chat; name-only edits leave sessions unchanged. Username/photo visibility follows existing settings and blocking rules. Search accepts username prefixes of at least three characters and returns only accounts allowed by server-side discoverability. Opening a visible result uses the same profile-style presentation and adds a read-only grid containing only that member's Finished-piece image, title, stage, clay, and rating; no public journal-detail route is provided.
 
 The Chats tab uses the shared page-title styling and lists direct and group conversations with All/Unread/Groups filters, pagination, pull-to-refresh, unread counts, request routing, and per-user archives. Friend requests and incoming one-message requests share the Requests panel. Friends can open an active direct chat from a profile; non-friends can send one preview and must wait for acceptance. New group is available from the Chats overflow menu and selects 1–49 friends. Every active group member can rename, add their own friends, leave, archive, and send; generated group avatars, member counts, sender labels, and centered system events preserve group context. Former members retain read-only membership-period history, while absence gaps remain hidden after rejoin. The composer ceramic action opens the owner's journal as standard cards, confirms disclosure, and sends an idempotent ceramic message. Live chat cards preserve the complete image aspect ratio and open a complete read-only detail page whose spaced image pager also avoids cropping, displays weight using the member's Metric/Imperial preference, and starts stage history collapsed. The detail has no edit, stage, upload, delete, tag, glaze, firing, or reshare controls; deleted ceramics remain as localized unavailable cards. The inbox uses the message type for a localized preview. The shared navigation badge uses the backend aggregate rather than the first inbox page. Authenticated WebSocket events contain no content; they invalidate the badge, inbox, and matching open conversation, which then reconcile over REST. Stable event IDs are deduplicated, reconnects use bounded exponential backoff, and returning to the foreground performs backfill. Microphone and emoji controls remain future placeholders.
 
@@ -137,6 +174,15 @@ suppression.
 ## Account deletion timing
 
 English and Danish deletion messages describe a cancellation period of at least 30 days. A paid membership can extend deletion until the paid period ends; cancellation remains available before the backend's scheduled deletion date. This wording follows the existing backend policy and does not change the API or retention behavior. The generated localization files come from `app_en.arb` and `app_da.arb`.
+
+Profile editing validation (2026-10-02): localization generation, changed-file
+formatting and `flutter analyze --no-pub` passed; `flutter test --no-pub` passed
+all 166 tests. The coordinated backend tests/build passed 288 active tests with
+25 opt-in tests skipped, and seven additional disposable MariaDB profile tests
+passed. Android acceptance covered Save/session continuity, other-session expiry,
+discard, photo changes during text editing, and English/Danish light/dark layouts
+at 320 dp with 160% text and keyboard visible. See [MOBILE_TESTING.md](MOBILE_TESTING.md)
+for evidence and remaining physical-device/iOS limitations.
 
 ## Membership and feature allowances
 

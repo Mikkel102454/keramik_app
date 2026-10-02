@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/pages/materials/glazes/notebook/combination_application_dialog.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'dart:io';
@@ -388,6 +389,23 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             children: [
+              TextButton.icon(
+                icon: const Icon(Icons.layers_outlined),
+                label: Text(context.l10n.applySavedCombination),
+                onPressed: () async {
+                  final recipe = await selectCombination(context);
+                  if (recipe == null || !mounted) return;
+                  await previewCombination(
+                    context,
+                    recipe: recipe,
+                    existing: controller.glazes,
+                    glazes: widget.glazes,
+                    onApply: () async {
+                      return controller.appendCombination(recipe);
+                    },
+                  );
+                },
+              ),
               GlazeApplicationEditor(
                 entries: controller.glazes,
                 glazes: widget.glazes,

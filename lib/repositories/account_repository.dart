@@ -9,6 +9,30 @@ import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 
 class AccountRepository {
+  static Future<bool> usernameAvailable(String username) async {
+    final response = await ApiClient.dio.get(
+      '/api/account/username-availability',
+      queryParameters: {'username': username},
+    );
+    checkSuccess(response);
+    return response.data['data']['available'] as bool;
+  }
+
+  static Future<AccountProfileDto> updateProfile(
+    String forename,
+    String surname,
+    String username,
+  ) async {
+    final response = await ApiClient.dio.put(
+      '/api/account/profile',
+      data: {'forename': forename, 'surname': surname, 'username': username},
+    );
+    checkSuccess(response);
+    return AccountProfileDto.fromJson(
+      response.data['data'] as Map<String, dynamic>,
+    );
+  }
+
   static Future<AccountSettingsDto> getSettings() async {
     final response = await ApiClient.dio.get('/api/account/settings');
     checkSuccess(response);
@@ -46,9 +70,7 @@ class AccountRepository {
     checkSuccess(response);
   }
 
-  static Future<CursorPage<UserProfileDto>> getBlocks({
-    String? cursor,
-  }) async {
+  static Future<CursorPage<UserProfileDto>> getBlocks({String? cursor}) async {
     final query = <String, dynamic>{'limit': 20};
     if (cursor case final value?) query['cursor'] = value;
     final response = await ApiClient.dio.get(
@@ -98,10 +120,7 @@ class AccountRepository {
   }) async {
     final response = await ApiClient.dio.post(
       '/api/account/deletion',
-      data: {
-        'currentPassword': currentPassword,
-        'confirmation': confirmation,
-      },
+      data: {'currentPassword': currentPassword, 'confirmation': confirmation},
     );
     checkSuccess(response);
     return AccountDeletionDto.fromJson(

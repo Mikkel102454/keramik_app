@@ -2297,4 +2297,160 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get publicationChatShareDisclosure =>
       'Only the curated public Discover details are shared. The recipient must still have access to the publication.';
+
+  @override
+  String get glazeCombinations => 'Combinations';
+
+  @override
+  String get testTileNotebook => 'Test-tile notebook';
+
+  @override
+  String get createCombination => 'Create combination';
+
+  @override
+  String get createTestTile => 'Create test tile';
+
+  @override
+  String get editCombination => 'Edit combination';
+
+  @override
+  String get editTestTile => 'Edit test tile';
+
+  @override
+  String get notebookName => 'Name';
+
+  @override
+  String get notebookEmpty => 'No saved records yet.';
+
+  @override
+  String get notebookFailed =>
+      'Could not load or save this record. Your draft is preserved.';
+
+  @override
+  String get notebookConflict =>
+      'This record changed. Reload it before editing again. Your draft is preserved.';
+
+  @override
+  String get notebookDeleteConfirm =>
+      'Delete this record? Existing test tiles and applied layers are preserved.';
+
+  @override
+  String get applySavedCombination => 'Apply saved combination';
+
+  @override
+  String get appendCombinationPreview =>
+      'Existing layers followed by saved layers';
+
+  @override
+  String get appendCombinationHelp =>
+      'Appends glaze layers only. Clay and firing defaults are not applied.';
+
+  @override
+  String get combinationApplyUncertain =>
+      'Application could not be confirmed. Retry uses the same request; it will not append twice.';
+
+  @override
+  String get combinationApplyConflict =>
+      'The recipe changed or this request conflicts. Reload before starting a new application.';
+
+  @override
+  String get notebookLayerLimit => 'Use 1–20 layers and 1–20 coats per layer.';
+
+  @override
+  String get replaceUnavailableGlaze =>
+      'Replace unavailable glazes before applying.';
+
+  @override
+  String get resultNotes => 'Result notes';
+
+  @override
+  String get sourceRecipe => 'Source recipe';
+
+  @override
+  String get sourceRecipeSnapshot => 'Original recipe snapshot';
+
+  @override
+  String get actualConditions => 'Actual conditions';
+
+  @override
+  String get recipeDefaults => 'Optional defaults';
+
+  @override
+  String get atmosphere => 'Atmosphere';
+
+  @override
+  String get atmosphereOxidation => 'Oxidation';
+
+  @override
+  String get atmosphereReduction => 'Reduction';
+
+  @override
+  String get atmosphereNeutral => 'Neutral';
+
+  @override
+  String get notebookPhotos => 'Result photos (up to 20)';
+
+  @override
+  String get notebookPhotoFailed =>
+      'Could not update photos. Retry or reload to check the saved photos.';
+
+  @override
+  String get filterRecipe => 'Filter by recipe';
+
+  @override
+  String get allRecipes => 'All recipes';
+
+  @override
+  String get allClays => 'All clays';
+
+  @override
+  String get coatsRange => 'Enter a coat count from 1 to 20.';
+
+  @override
+  String get notebookDraftDiscard => 'Discard unsaved changes?';
+
+  @override
+  String get notebookSearch => 'Search';
+
+  @override
+  String get createGlaze => 'Create glaze';
+
+  @override
+  String get editGlaze => 'Edit glaze';
+
+  @override
+  String get profileNameInvalid => 'Enter a name of 1–100 characters.';
+
+  @override
+  String get profileUsernameInvalid => 'Enter a username of 3–50 characters.';
+
+  @override
+  String get usernameChecking => 'Checking username…';
+
+  @override
+  String get usernameAvailable => 'Username available';
+
+  @override
+  String get usernameUnavailable =>
+      'That username is unavailable. Choose another.';
+
+  @override
+  String get usernameCheckFailed =>
+      'Could not check the username. Please retry.';
+
+  @override
+  String get profileSaveFailed =>
+      'Your profile could not be saved. Your changes are preserved. Please retry.';
+
+  @override
+  String get profilePhotoUpdateFailed =>
+      'Your photo could not be updated. Please retry.';
+
+  @override
+  String get profileEditPrivacy =>
+      'Your names remain private. Your username and photo follow your existing profile visibility settings.';
+
+  @override
+  String get usernameSessionNotice =>
+      'Changing your username keeps this device signed in and signs out your other sessions.';
 }
