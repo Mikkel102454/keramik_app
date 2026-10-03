@@ -180,6 +180,11 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                 );
               }
 
+              if (!_controller.viewRecorded && !_controller.viewSyncFailed) {
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted) _controller.recordDisplayedView();
+                });
+              }
               return RefreshIndicator(
                 onRefresh: () => _controller.load(null, null),
                 child: _pageContent(_controller, widget),
@@ -204,6 +209,16 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
+          if (controller.viewSyncFailed)
+            MaterialBanner(
+              content: Text(context.l10n.viewSyncFailed),
+              actions: [
+                TextButton(
+                  onPressed: controller.recordDisplayedView,
+                  child: Text(context.l10n.retry),
+                ),
+              ],
+            ),
           if (controller.publicationStatus case final status?) ...[
             OwnerPublicationStatusCard(
               status: status,

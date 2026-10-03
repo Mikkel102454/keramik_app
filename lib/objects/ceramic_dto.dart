@@ -21,6 +21,7 @@ class CeramicDto {
   String outcomeNote;
   DateTime? createdAt;
   DateTime? updatedAt;
+  DateTime? lastViewedAt;
 
   CeramicDto({
     required this.id,
@@ -40,6 +41,7 @@ class CeramicDto {
     this.outcomeNote = '',
     this.createdAt,
     this.updatedAt,
+    this.lastViewedAt,
   });
 
   factory CeramicDto.fromJson(Map<String, dynamic> json) {
@@ -51,9 +53,15 @@ class CeramicDto {
       rating: json['rating'],
       weight: json['weight'],
       note: json['note'],
-      glazes: (json['glazes'] as List).map((e) => CeramicGlazeEntryDto.fromJson(e)).toList(),
-      tags: (json['tags'] as List).map((e) => CeramicTagDto.fromJson(e)).toList(),
-      images: (json['images'] as List).map((e) => ImageDto.fromJson(e)).toList(),
+      glazes: (json['glazes'] as List)
+          .map((e) => CeramicGlazeEntryDto.fromJson(e))
+          .toList(),
+      tags: (json['tags'] as List)
+          .map((e) => CeramicTagDto.fromJson(e))
+          .toList(),
+      images: (json['images'] as List)
+          .map((e) => ImageDto.fromJson(e))
+          .toList(),
       heightCm: (json['heightCm'] as num?)?.toDouble(),
       widthCm: (json['widthCm'] as num?)?.toDouble(),
       depthCm: (json['depthCm'] as num?)?.toDouble(),
@@ -61,6 +69,7 @@ class CeramicDto {
       outcomeNote: json['outcomeNote'] as String? ?? '',
       createdAt: DateTime.tryParse(json['createdAt'] as String? ?? ''),
       updatedAt: DateTime.tryParse(json['updatedAt'] as String? ?? ''),
+      lastViewedAt: DateTime.tryParse(json['lastViewedAt'] as String? ?? ''),
     );
   }
 
@@ -83,6 +92,7 @@ class CeramicDto {
       'outcomeNote': outcomeNote,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'lastViewedAt': lastViewedAt?.toIso8601String(),
     };
   }
 }

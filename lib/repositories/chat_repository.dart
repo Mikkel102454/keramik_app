@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:ceramic_app/api/api_client.dart';
 import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/objects/chat_report_dto.dart';
@@ -6,6 +8,106 @@ import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/utils/web.dart';
 
 class ChatRepository {
+  static Future<DirectChatResolutionDto> resolveDirect(String userId) async {
+    final response = await ApiClient.dio.get('/api/chat/direct/with/$userId');
+    checkSuccess(response);
+    return DirectChatResolutionDto.fromJson(response.data['data']);
+  }
+
+  static Future<DirectConversationDto> openDirect(String userId) async {
+    final resolved = await resolveDirect(userId);
+    if (resolved.conversation case final existing?) return existing;
+    if (resolved.otherUser.relationshipState == 'FRIENDS') {
+      return createDirect(userId);
+    }
+    return DirectConversationDto.draft(resolved.otherUser);
+  }
+
+  static Future<DirectConversationDto> sendDirect(
+    String userId,
+    String clientMessageId,
+    String body,
+  ) async {
+    final response = await ApiClient.dio.post(
+      '/api/chat/direct/messages',
+      data: {
+        'userId': userId,
+        'clientMessageId': clientMessageId,
+        'body': body,
+      },
+    );
+    checkSuccess(response);
+    return DirectConversationDto.fromJson(response.data['data']);
+  }
+
+  static Future<bool> mediaAvailable() async {
+    final response = await ApiClient.dio.get('/api/chat/media');
+    checkSuccess(response);
+    return response.data['data']['available'] == true;
+  }
+
+  static Future<ChatMessageDto> sendAttachment(
+    String conversation,
+    String clientId,
+    String type,
+    File file,
+  ) async {
+    final response = await ApiClient.dio.post(
+      '/api/chat/conversations/$conversation/attachments',
+      data: FormData.fromMap({
+        'clientMessageId': clientId,
+        'type': type,
+        'file': await MultipartFile.fromFile(
+          file.path,
+          filename: type == 'IMAGE' ? 'image.jpg' : 'voice.m4a',
+          contentType: type == 'IMAGE'
+              ? DioMediaType('image', 'jpeg')
+              : DioMediaType('audio', 'mp4'),
+        ),
+      }),
+    );
+    checkSuccess(response);
+    return ChatMessageDto.fromJson(
+      Map<String, dynamic>.from(response.data['data']),
+    );
+  }
+
+  static Future<void> downloadAttachment(
+    String conversation,
+    String message,
+    File target,
+    CancelToken cancelToken,
+  ) async {
+    try {
+      final response = await ApiClient.dio
+          .download(
+            '/api/chat/conversations/$conversation/messages/$message/attachment',
+            target.path,
+            options: Options(
+              followRedirects: false,
+              receiveTimeout: const Duration(seconds: 30),
+            ),
+            cancelToken: cancelToken,
+            deleteOnError: true,
+          )
+          .timeout(
+            const Duration(seconds: 45),
+            onTimeout: () {
+              cancelToken.cancel();
+              throw const FileSystemException('Attachment unavailable');
+            },
+          );
+      if (response.statusCode != 200) {
+        throw const FileSystemException('Attachment unavailable');
+      }
+    } catch (_) {
+      try {
+        if (await target.exists()) await target.delete();
+      } catch (_) {}
+      rethrow;
+    }
+  }
+
   static Future<int> getBadgeCount() async {
     return (await getBadge()).count;
   }
@@ -13,9 +115,7 @@ class ChatRepository {
   static Future<ChatBadgeDto> getBadge() async {
     final response = await ApiClient.dio.get('/api/chat/badge');
     checkSuccess(response);
-    return ChatBadgeDto.fromJson(
-      response.data['data'] as Map<String, dynamic>,
-    );
+    return ChatBadgeDto.fromJson(response.data['data'] as Map<String, dynamic>);
   }
 
   static Future<CursorPage<DirectConversationDto>> getConversations({
@@ -179,7 +279,9 @@ class ChatRepository {
       },
     );
     checkSuccess(response);
-    return ChatMessageDto.fromJson(response.data['data'] as Map<String, dynamic>);
+    return ChatMessageDto.fromJson(
+      response.data['data'] as Map<String, dynamic>,
+    );
   }
 
   static Future<SharedCeramicDetailDto> getSharedCeramic(

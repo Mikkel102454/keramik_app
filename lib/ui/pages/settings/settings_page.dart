@@ -1,3 +1,4 @@
+import 'package:ceramic_app/repositories/ceramic_repository.dart';
 import 'package:ceramic_app/config/constants/app_constants.dart';
 import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
@@ -80,6 +81,36 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
     if (value != null) await _controller.save(update(value));
+  }
+
+  Future<void> _clearViews() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(context.l10n.clearRecentlyViewed),
+        content: Text(context.l10n.clearRecentlyViewedQuestion),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(context.l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(context.l10n.clearRecentlyViewed),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await CeramicRepository.clearViews();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.viewSyncFailed)));
+      }
+    }
   }
 
   Future<void> _logout() async {
@@ -232,6 +263,11 @@ class _SettingsPageState extends State<SettingsPage> {
                 icon: Icons.block_outlined,
                 label: context.l10n.blockedAccounts,
                 onTap: () => _open(const BlockedAccountsPage()),
+              ),
+              _SettingsRow(
+                icon: Icons.history,
+                label: context.l10n.clearRecentlyViewed,
+                onTap: _clearViews,
               ),
               _Heading(context.l10n.contentAndDisplay),
               _SettingsRow(

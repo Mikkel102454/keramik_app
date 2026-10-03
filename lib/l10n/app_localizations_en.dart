@@ -290,7 +290,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataExportDescription =>
-      'Your ZIP includes JSON/CSV records, preferences, relationships, accessible conversation data, and server-stored profile, ceramic, and clay images.';
+      'Your ZIP includes JSON/CSV records, preferences, relationships, viewing history, accessible conversations, and server-stored images and voice clips, including chat media.';
 
   @override
   String get dataExportLimit =>
@@ -2453,4 +2453,159 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get usernameSessionNotice =>
       'Changing your username keeps this device signed in and signs out your other sessions.';
+
+  @override
+  String get sortRecentlyViewed => 'Recently viewed';
+
+  @override
+  String get clearRecentlyViewed => 'Clear recently viewed';
+
+  @override
+  String get clearRecentlyViewedQuestion =>
+      'Clear viewing history for all your pieces on all devices?';
+
+  @override
+  String get viewSyncFailed => 'Viewing history could not sync. Please retry.';
+
+  @override
+  String get pushUnavailable =>
+      'Push is unavailable until Firebase setup and acceptance are complete.';
+
+  @override
+  String get pushPermission => 'Android permission';
+
+  @override
+  String get enableOnDevice => 'Enable on this device';
+
+  @override
+  String get disableOnDevice => 'Disable on this device';
+
+  @override
+  String get androidNotificationSettings => 'Android notification settings';
+
+  @override
+  String get pushSyncFailed =>
+      'Push registration could not sync. Please retry.';
+
+  @override
+  String get playVoiceMessage => 'Play voice message';
+
+  @override
+  String get pauseVoiceMessage => 'Pause voice message';
+
+  @override
+  String get voiceRecordingFailed =>
+      'Recording could not start or was interrupted. Try again.';
+
+  @override
+  String get voiceRecordingLocked =>
+      'Recording locked. Tap Stop to send. Sends automatically at 1 minute.';
+
+  @override
+  String get voiceRecordingHint =>
+      'Record up to 1 minute. Release to send. Drag left and release to cancel, or drag up to lock.';
+
+  @override
+  String get voiceSlideToCancel => 'Drag left to cancel';
+
+  @override
+  String get voiceSlideToLock => 'Drag up to lock';
+
+  @override
+  String get chatImageLimit => 'Choose one photo, up to 5 MiB.';
+
+  @override
+  String get voiceMessage => 'Voice message';
+
+  @override
+  String get chatImage => 'Image';
+
+  @override
+  String get chatMediaLimits =>
+      'One attachment, up to 5 MiB. Voice clips may be up to two minutes.';
+
+  @override
+  String get chatMediaFailed =>
+      'Media could not be sent. Your preview is kept; retry Send or Cancel.';
+
+  @override
+  String get chatMessageNotSent => 'Not sent';
+
+  @override
+  String get chatMessageSending => 'Sending…';
+
+  @override
+  String get chatMessageSendFailed =>
+      'This message could not be sent. Check your connection and try again.';
+
+  @override
+  String get recording => 'Recording';
+
+  @override
+  String get stopRecording => 'Stop';
+
+  @override
+  String get recordVoice => 'Record voice';
+
+  @override
+  String get preview => 'Play preview';
+
+  @override
+  String get attachmentUnavailable => 'Attachment unavailable. Retry';
+
+  @override
+  String get emojiPicker => 'Emoji';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get permissionAllowed => 'Allowed';
+
+  @override
+  String get permissionDenied => 'Denied or not requested';
+
+  @override
+  String get permissionUnknown => 'Not requested';
+
+  @override
+  String get permissionLimited => 'Limited';
+
+  @override
+  String get chatRequestGuidance =>
+      'Your first message sends a request. You can send three text messages before it is accepted.';
+
+  @override
+  String chatRequestMessagesRemaining(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count messages remaining',
+      one: '1 message remaining',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatRequestAcceptToReply =>
+      'Accept this message request to reply.';
+
+  @override
+  String get chatRequestWaiting =>
+      'Waiting for the recipient to accept this request.';
+
+  @override
+  String get chatRequestDeclined => 'This message request was declined.';
+
+  @override
+  String get chatMessagingUnavailable => 'Messaging is unavailable.';
+
+  @override
+  String get chatProfileUnavailable => 'This profile is unavailable.';
 }

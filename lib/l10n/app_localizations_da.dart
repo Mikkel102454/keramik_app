@@ -290,7 +290,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get dataExportDescription =>
-      'Din ZIP-fil indeholder JSON-/CSV-poster, indstillinger, relationer, tilgængelige samtaledata samt profil-, keramik- og lerbilleder gemt på serveren.';
+      'Din ZIP indeholder JSON/CSV-data, præferencer, relationer, visningshistorik, tilgængelige samtaler og serverens kopier af billeder og talebeskeder, inklusive chatmedier.';
 
   @override
   String get dataExportLimit =>
@@ -2457,4 +2457,162 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get usernameSessionNotice =>
       'Når du ændrer dit brugernavn, forbliver denne enhed logget ind, og dine andre sessioner bliver logget ud.';
+
+  @override
+  String get sortRecentlyViewed => 'Senest sete';
+
+  @override
+  String get clearRecentlyViewed => 'Ryd senest sete';
+
+  @override
+  String get clearRecentlyViewedQuestion =>
+      'Ryd visningshistorik for alle dine værker på alle enheder?';
+
+  @override
+  String get viewSyncFailed =>
+      'Visningshistorikken kunne ikke synkroniseres. Prøv igen.';
+
+  @override
+  String get pushUnavailable =>
+      'Push er ikke tilgængelig, før Firebase er konfigureret og afprøvet.';
+
+  @override
+  String get pushPermission => 'Android-tilladelse';
+
+  @override
+  String get enableOnDevice => 'Aktivér på denne enhed';
+
+  @override
+  String get disableOnDevice => 'Deaktivér på denne enhed';
+
+  @override
+  String get androidNotificationSettings =>
+      'Android-notifikationsindstillinger';
+
+  @override
+  String get pushSyncFailed =>
+      'Push-registreringen kunne ikke synkroniseres. Prøv igen.';
+
+  @override
+  String get playVoiceMessage => 'Afspil talebesked';
+
+  @override
+  String get pauseVoiceMessage => 'Sæt talebesked på pause';
+
+  @override
+  String get voiceRecordingFailed =>
+      'Optagelsen kunne ikke starte eller blev afbrudt. Prøv igen.';
+
+  @override
+  String get voiceRecordingLocked =>
+      'Optagelsen er låst. Tryk på Stop for at sende. Sendes automatisk efter 1 minut.';
+
+  @override
+  String get voiceRecordingHint =>
+      'Optag op til 1 minut. Slip for at sende. Træk til venstre og slip for at annullere, eller træk op for at låse.';
+
+  @override
+  String get voiceSlideToCancel => 'Træk til venstre for at annullere';
+
+  @override
+  String get voiceSlideToLock => 'Træk op for at låse';
+
+  @override
+  String get chatImageLimit => 'Vælg ét foto på op til 5 MiB.';
+
+  @override
+  String get voiceMessage => 'Talebesked';
+
+  @override
+  String get chatImage => 'Billede';
+
+  @override
+  String get chatMediaLimits =>
+      'En vedhæftning, op til 5 MiB. Talebeskeder må vare op til to minutter.';
+
+  @override
+  String get chatMediaFailed =>
+      'Mediet kunne ikke sendes. Forhåndsvisningen bevares; prøv Send igen eller Annuller.';
+
+  @override
+  String get chatMessageNotSent => 'Ikke sendt';
+
+  @override
+  String get chatMessageSending => 'Sender…';
+
+  @override
+  String get chatMessageSendFailed =>
+      'Beskeden kunne ikke sendes. Kontrollér din forbindelse, og prøv igen.';
+
+  @override
+  String get recording => 'Optager';
+
+  @override
+  String get stopRecording => 'Stop';
+
+  @override
+  String get recordVoice => 'Optag tale';
+
+  @override
+  String get preview => 'Afspil forhåndsvisning';
+
+  @override
+  String get attachmentUnavailable =>
+      'Vedhæftningen er utilgængelig. Prøv igen';
+
+  @override
+  String get emojiPicker => 'Emoji';
+
+  @override
+  String get camera => 'Kamera';
+
+  @override
+  String get gallery => 'Galleri';
+
+  @override
+  String get close => 'Luk';
+
+  @override
+  String get permissionAllowed => 'Tilladt';
+
+  @override
+  String get permissionDenied => 'Afvist eller ikke anmodet';
+
+  @override
+  String get permissionUnknown => 'Ikke anmodet';
+
+  @override
+  String get permissionLimited => 'Begrænset';
+
+  @override
+  String get chatRequestGuidance =>
+      'Din første besked sender en anmodning. Du kan sende tre tekstbeskeder, før den accepteres.';
+
+  @override
+  String chatRequestMessagesRemaining(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count beskeder tilbage',
+      one: '1 besked tilbage',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatRequestAcceptToReply =>
+      'Acceptér denne beskedanmodning for at svare.';
+
+  @override
+  String get chatRequestWaiting =>
+      'Venter på, at modtageren accepterer denne anmodning.';
+
+  @override
+  String get chatRequestDeclined => 'Denne beskedanmodning blev afvist.';
+
+  @override
+  String get chatMessagingUnavailable => 'Beskeder er ikke tilgængelige.';
+
+  @override
+  String get chatProfileUnavailable => 'Denne profil er ikke tilgængelig.';
 }

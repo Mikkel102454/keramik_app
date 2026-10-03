@@ -1,3 +1,5 @@
+import 'package:ceramic_app/app/chat_media_controller.dart';
+import 'package:ceramic_app/app/push_controller.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dio/dio.dart';
@@ -113,9 +115,11 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   Future<void> logout() async {
     try {
+      await PushController.instance.logout();
       final response = await _dio.post('/api/auth/logout');
       checkSuccess(response);
       await _cookieJar.deleteAll();
+      await ChatMediaDownload.clear();
       CombinationApplicationController.clearSession();
       deletionPending = false;
       emit(const AuthenticationState.unauthenticated());

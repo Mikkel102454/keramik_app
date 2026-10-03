@@ -33,6 +33,26 @@ class CeramicViewPageController extends ChangeNotifier {
   List<CeramicStageHistoryDto> stageHistory = [];
 
   bool hasChanged = false;
+  bool _disposed = false;
+  bool viewRecorded = false;
+  bool viewSyncFailed = false;
+  bool _viewPending = false;
+
+  Future<void> recordDisplayedView() async {
+    if (_disposed || viewRecorded || _viewPending) return;
+    _viewPending = true;
+    try {
+      ceramic.lastViewedAt = await CeramicRepository.recordView(ceramic.id);
+      viewRecorded = true;
+      viewSyncFailed = false;
+      hasChanged = true;
+    } catch (_) {
+      viewSyncFailed = true;
+    } finally {
+      _viewPending = false;
+    }
+    if (!_disposed) notifyListeners();
+  }
 
   bool _isLoading = false;
   String? _error;
@@ -448,6 +468,12 @@ class CeramicViewPageController extends ChangeNotifier {
     } catch (e) {
       return false;
     }
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
   }
 
   bool get isLoading => _isLoading;

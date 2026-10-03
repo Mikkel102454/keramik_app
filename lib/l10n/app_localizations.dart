@@ -635,7 +635,7 @@ abstract class AppLocalizations {
   /// No description provided for @dataExportDescription.
   ///
   /// In en, this message translates to:
-  /// **'Your ZIP includes JSON/CSV records, preferences, relationships, accessible conversation data, and server-stored profile, ceramic, and clay images.'**
+  /// **'Your ZIP includes JSON/CSV records, preferences, relationships, viewing history, accessible conversations, and server-stored images and voice clips, including chat media.'**
   String get dataExportDescription;
 
   /// No description provided for @dataExportLimit.
@@ -4212,6 +4212,276 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Changing your username keeps this device signed in and signs out your other sessions.'**
   String get usernameSessionNotice;
+
+  /// No description provided for @sortRecentlyViewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently viewed'**
+  String get sortRecentlyViewed;
+
+  /// No description provided for @clearRecentlyViewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear recently viewed'**
+  String get clearRecentlyViewed;
+
+  /// No description provided for @clearRecentlyViewedQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear viewing history for all your pieces on all devices?'**
+  String get clearRecentlyViewedQuestion;
+
+  /// No description provided for @viewSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing history could not sync. Please retry.'**
+  String get viewSyncFailed;
+
+  /// No description provided for @pushUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Push is unavailable until Firebase setup and acceptance are complete.'**
+  String get pushUnavailable;
+
+  /// No description provided for @pushPermission.
+  ///
+  /// In en, this message translates to:
+  /// **'Android permission'**
+  String get pushPermission;
+
+  /// No description provided for @enableOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable on this device'**
+  String get enableOnDevice;
+
+  /// No description provided for @disableOnDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable on this device'**
+  String get disableOnDevice;
+
+  /// No description provided for @androidNotificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Android notification settings'**
+  String get androidNotificationSettings;
+
+  /// No description provided for @pushSyncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Push registration could not sync. Please retry.'**
+  String get pushSyncFailed;
+
+  /// No description provided for @playVoiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Play voice message'**
+  String get playVoiceMessage;
+
+  /// No description provided for @pauseVoiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause voice message'**
+  String get pauseVoiceMessage;
+
+  /// No description provided for @voiceRecordingFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording could not start or was interrupted. Try again.'**
+  String get voiceRecordingFailed;
+
+  /// No description provided for @voiceRecordingLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording locked. Tap Stop to send. Sends automatically at 1 minute.'**
+  String get voiceRecordingLocked;
+
+  /// No description provided for @voiceRecordingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Record up to 1 minute. Release to send. Drag left and release to cancel, or drag up to lock.'**
+  String get voiceRecordingHint;
+
+  /// No description provided for @voiceSlideToCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag left to cancel'**
+  String get voiceSlideToCancel;
+
+  /// No description provided for @voiceSlideToLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag up to lock'**
+  String get voiceSlideToLock;
+
+  /// No description provided for @chatImageLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose one photo, up to 5 MiB.'**
+  String get chatImageLimit;
+
+  /// No description provided for @voiceMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice message'**
+  String get voiceMessage;
+
+  /// No description provided for @chatImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get chatImage;
+
+  /// No description provided for @chatMediaLimits.
+  ///
+  /// In en, this message translates to:
+  /// **'One attachment, up to 5 MiB. Voice clips may be up to two minutes.'**
+  String get chatMediaLimits;
+
+  /// No description provided for @chatMediaFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Media could not be sent. Your preview is kept; retry Send or Cancel.'**
+  String get chatMediaFailed;
+
+  /// No description provided for @chatMessageNotSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Not sent'**
+  String get chatMessageNotSent;
+
+  /// No description provided for @chatMessageSending.
+  ///
+  /// In en, this message translates to:
+  /// **'Sending…'**
+  String get chatMessageSending;
+
+  /// No description provided for @chatMessageSendFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'This message could not be sent. Check your connection and try again.'**
+  String get chatMessageSendFailed;
+
+  /// No description provided for @recording.
+  ///
+  /// In en, this message translates to:
+  /// **'Recording'**
+  String get recording;
+
+  /// No description provided for @stopRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stopRecording;
+
+  /// No description provided for @recordVoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Record voice'**
+  String get recordVoice;
+
+  /// No description provided for @preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Play preview'**
+  String get preview;
+
+  /// No description provided for @attachmentUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachment unavailable. Retry'**
+  String get attachmentUnavailable;
+
+  /// No description provided for @emojiPicker.
+  ///
+  /// In en, this message translates to:
+  /// **'Emoji'**
+  String get emojiPicker;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @permissionAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get permissionAllowed;
+
+  /// No description provided for @permissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Denied or not requested'**
+  String get permissionDenied;
+
+  /// No description provided for @permissionUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Not requested'**
+  String get permissionUnknown;
+
+  /// No description provided for @permissionLimited.
+  ///
+  /// In en, this message translates to:
+  /// **'Limited'**
+  String get permissionLimited;
+
+  /// No description provided for @chatRequestGuidance.
+  ///
+  /// In en, this message translates to:
+  /// **'Your first message sends a request. You can send three text messages before it is accepted.'**
+  String get chatRequestGuidance;
+
+  /// No description provided for @chatRequestMessagesRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 message remaining} other{{count} messages remaining}}'**
+  String chatRequestMessagesRemaining(int count);
+
+  /// No description provided for @chatRequestAcceptToReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept this message request to reply.'**
+  String get chatRequestAcceptToReply;
+
+  /// No description provided for @chatRequestWaiting.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting for the recipient to accept this request.'**
+  String get chatRequestWaiting;
+
+  /// No description provided for @chatRequestDeclined.
+  ///
+  /// In en, this message translates to:
+  /// **'This message request was declined.'**
+  String get chatRequestDeclined;
+
+  /// No description provided for @chatMessagingUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Messaging is unavailable.'**
+  String get chatMessagingUnavailable;
+
+  /// No description provided for @chatProfileUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This profile is unavailable.'**
+  String get chatProfileUnavailable;
 }
 
 class _AppLocalizationsDelegate

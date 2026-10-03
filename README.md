@@ -1,5 +1,122 @@
 # Keramik Android client
 
+## Unified messaging
+
+Profiles use one Message button for friends and eligible non-friends. Existing
+pending, accepted non-friend and terminal chats resolve first. Opening/cancelling
+a non-friend draft creates no request; sending creates it. The initiator can
+send three text messages total before acceptance. Recipients accept before
+replying, and pending requests disable media and ceramic sharing. Message
+acceptance does not create friendship. Text retries keep their UUID across lost
+responses, including the third message. The complete direct-chat title (avatar, name and intervening space), received
+avatars and group sender labels open fresh UUID profiles and refresh the chat
+on return.
+
+The additive backend resolution/first-send endpoints must be available before
+releasing this client. No migration or dependency change is needed for messaging.
+Validation: full Flutter analysis is clean and all 191 tests pass; the backend
+test/build passes 317 active tests with 39 opt-in skips and its packaged-media
+check. Manual Android/two-device acceptance remains pending.
+See [backend contracts](../keramik_app_backend/API_FEATURES.md#unified-direct-messaging)
+and [acceptance status](MOBILE_TESTING.md#unified-messaging-and-chat-profile-links-2026-10-03).
+
+## Chat appearance
+
+Direct and group chats follow `../reference/Chat` with Keramik theme colors:
+fully rounded text bubbles, received messages on the left with a small sender
+avatar at the bottom, and your messages on the right without an avatar.
+System events and date separators keep their existing presentation. Group
+sender names and received avatars open fresh profiles. The complete direct-chat
+header title is one accessible profile button with no pressed animation.
+
+Photos have rounded corners and no surrounding bubble padding; previews retain
+the complete aspect ratio within available width, up to 250 by 340 logical
+pixels. Loading and retry states occupy the same dimensions. Tapping a photo
+opens the existing zoom viewer. Voice messages use a compact play/pause pill,
+decorative audio bars and an `m:ss` duration, at the same height as a one-line
+text bubble, including loading/retry and enlarged text.
+
+The shared `v2` `MessageComposer` groups input and message controls in one rounded
+bar, with a separate camera shortcut alongside it.
+Empty drafts show microphone, photo, emoji and ceramic sharing. Any text
+(including whitespace or an inserted emoji) replaces microphone/photo with Send;
+whitespace-only Send stays disabled. Successful text sends clear the draft and
+restore media controls; failures preserve it for retry. Multiline input, the
+2,000 Unicode code-point limit, keyboard focus and existing availability/request
+restrictions remain in place. A camera shortcut beside the empty bar opens the
+camera directly. The photo icon opens the device's photo grid directly; selecting
+one image opens a rounded preview with Cancel and Send. Cancelling the initial
+selection returns to chat. Send closes the photo preview immediately and shows
+the prepared image in the conversation while uploading. Failed sends keep that
+image and its retry UUID in the chat.
+The grid/albums presentation follows the device's native picker, with no new
+photo-library permission or dependency.
+
+Voice recording is inline: hold the microphone to record, release to send, drag
+left to open the animated trash lid, then release to discard, or drag up to lock.
+Dragging back disarms cancellation; capture continues until release.
+The bar shows elapsed time and a cancel/lock guide. A tap or keyboard activation starts locked recording as an accessible
+alternative. Tapping Stop on a locked recording ends and sends it automatically.
+The client caps recordings at one minute and sends both held and locked clips
+at that limit; armed cancellations discard. Failed uploads retain a playable
+preview and the retry UUID. Backgrounding or opening another chat surface stops
+to preview without uploading. Releasing during startup/permission handling
+cancels the pending recording. Received avatars and voice playback controls have
+no pressed highlight. No API, database or dependency change is required.
+
+The backend also fixes a concurrent direct-chat read-marker error that could
+show Internal server error during the refresh after a voice send. It reloads the
+participant row/version while acquiring its lock under READ_COMMITTED, retaining
+monotonic read markers and the existing authorization checks.
+
+Chats lay out from the bottom on the first history frame, with the newest row at
+scroll position zero. They fetch only the latest 50 messages initially and build
+rows/media lazily around the viewport. Scrolling toward the oldest loaded rows
+fetches one older cursor page at a time; Load earlier remains an explicit fallback.
+Older-page failures keep the cursor/history for retry, and refresh preserves
+already loaded history and the visible message. Text,
+image, voice and ceramic sends appear immediately as local outgoing messages,
+with a small Sending label while the server responds. Failures retain the row
+with a right-aligned theme-error-colored Not sent label, neutral explanation and
+Retry, following `reference/Chat/fail.jpg`. The text/voice draft remains available.
+Retries reuse the logical UUID and replace the local preview with the server
+receipt. New sends and failure details scroll into view after layout; ordinary
+incoming/refresh events preserve the current reading position.
+
+Local delivery state lasts for the open chat session; it is not a durable offline
+queue or proof of delivery. Only server messages enter read markers, pagination,
+reporting or shared-card navigation. A lost response can leave an uncertain send
+marked Not sent until retried; the existing idempotent endpoint resolves it.
+The reference's moderation notice is not fabricated. No API/dependency change
+or backend runtime change is required.
+
+Full Flutter analysis is clean and all 272 tests pass. Validation details and
+outstanding Android device acceptance are recorded in
+[MOBILE_TESTING.md](MOBILE_TESTING.md#bottom-first-lazy-chat-history-2026-10-03).
+
+## Android push, chat media, and Recently viewed
+
+Compatible client/backend changes add optional FCM delivery, encrypted image/voice
+messages with preview and authenticated playback/download, an offline categorized
+emoji picker, and private Recently viewed journal sorting/clearing. Pending message
+requests stay text-only. Recently updated remains the default. Push and media
+writes default off; builds without Firebase configuration remain supported.
+
+See [configuration and contracts](../keramik_app_backend/PUSH_MEDIA_VIEW.md),
+[validation status](../PUSH_MEDIA_VIEW_STATUS.md) and
+[installed Android evidence](MOBILE_TESTING.md) and
+[manual test checklist](../MANUAL_TESTING.md). The local V22-V24 migration and
+compatible backend restart completed after
+explicit approval, encrypted backup and isolated restore rehearsal. Other
+existing databases require their own approval. The local test backend now enables
+media writes; return to Chats and reopen the conversation to refresh controls.
+Default/production media configuration stays disabled until accepted.
+Firebase provisioning, real FCM acceptance and rollout to other environments
+remain pending.
+Flutter analysis and all 173 tests pass; Android debug packaging succeeds without
+Firebase. Added packages and generated platform registrants are recorded in
+`pubspec.yaml`/`pubspec.lock`; recording/playback are supported on Android.
+
 Flutter client for the Keramik ceramics journal. Android is the supported MVP target.
 
 ## Run
@@ -44,7 +161,7 @@ for installed Android evidence.
 
 ## Current MVP boundary
 
-Ceramics, clays, glazes, images, session login by email or username, profiles, profile photos, account search, friend requests, friendships, blocking, unblocking, encrypted direct messaging, encrypted group chat, message-scoped ceramic sharing, message reporting, authenticated WebSocket invalidations, REST backfill, category-aware request/unread badges, account settings, and English/Danish localization are functional. The ceramic journal has a unified grid with client-side search across titles, notes, outcomes, tags, clay, and glaze names; multi-category filters; title/rating/stage/created/updated sorting; improved empty/error states; and finished-pieces grids on self and visible public profiles. Signup with a required email address, account administration, temporary-password replacement, and report review are available through the backend's Thymeleaf website. Shop, native signup forms, richer public ceramic details/showcases, push delivery, and background execution while the app is suspended remain intentionally incomplete.
+Ceramics, clays, glazes, images, session login by email or username, profiles, profile photos, account search, friend requests, friendships, blocking, unblocking, encrypted direct messaging, encrypted group chat, message-scoped ceramic sharing, message reporting, authenticated WebSocket invalidations, REST backfill, category-aware request/unread badges, account settings, and English/Danish localization are functional. The ceramic journal has a unified grid with client-side search across titles, notes, outcomes, tags, clay, and glaze names; multi-category filters; title/rating/stage/created/updated/recently-viewed sorting; improved empty/error states; and finished-pieces grids on self and visible public profiles. Signup with a required email address, account administration, temporary-password replacement, and report review are available through the backend's Thymeleaf website. Shop, native signup forms, richer public ceramic details/showcases, Firebase provisioning and real-device push acceptance remain pending; configured background notifications use FCM system display.
 
 Ceramic detail records support optional dimensions, ordered repeatable glaze applications with coat counts, outcome notes, planned/completed firing records, server timestamps, and read-only stage history. Owners can save reusable planning-only project templates, create numbered batches of up to 50 ceramics, and safely batch-edit owned journal entries after reviewing a preview. Templates intentionally exclude images, ratings, outcomes, completed firings, stage history, publication, engagement, chat references, and timestamps. Batch edits skip protected glaze/firing work instead of replacing it. Journal selection mode also offers a separate permanent batch-delete workflow with a title review, explicit acknowledgement, stale-item protection, and all-or-nothing ownership enforcement.
 
@@ -78,9 +195,9 @@ The private Practice analytics page aggregates only the signed-in member's recor
 
 Materials now includes an optional append-only inventory ledger. Clay is stored canonically in kilograms; each glaze inventory chooses kilograms or litres. Purchases, confirmed usage, edits recorded as reversal/replacement pairs, and explicit reversals explain the stock balance. Purchase and usage costs use decimal strings and a currency selected from a dropdown. Weighted-average usage combines positive costed purchase history, converts its original currencies into the selected estimate currency using the backend's cached ECB reference rates, and then calculates the quantity's cost. Original purchase amounts remain unchanged. Cost and analytics screens also request an estimate in the preferred currency. Usage can be linked through an owned-ceramic picker but is never inferred automatically. When opened from a ceramic, that ceramic is preselected but remains changeable. The Metric/Imperial setting converts kilogram input/display at the boundary.
 
-The titleless Profile tab uses a compact TikTok-inspired overview with avatar, username, explicit-save profile editor, a tappable friend count, and a three-line Settings and privacy menu. Account search remains on Chats. The settings destination covers account details, in-app password change with website fallback, exports, scheduled deletion/cancellation, privacy audiences, blocked accounts, category-aware notifications, system/light/dark appearance, metric/imperial units, language, preferred currency, support/privacy/about links, and recoverable logout. Preferred currency defaults to Automatic, which follows the device region with EUR as the safe fallback, and can be changed to a fixed dropdown value. Push delivery remains labeled Coming later. Edit Profile validates and saves private forename/surname (1-100 Unicode code points) and public username (3-50) together. It trims surrounding whitespace, checks changed usernames after a 500 ms debounce, retains failed drafts, and confirms before discarding unsaved text. Photos remain immediate and preserve text drafts; the public UUID stays read-only. A username change keeps this device signed in, expires other sessions and reconnects chat; name-only edits leave sessions unchanged. Username/photo visibility follows existing settings and blocking rules. Search accepts username prefixes of at least three characters and returns only accounts allowed by server-side discoverability. Opening a visible result uses the same profile-style presentation and adds a read-only grid containing only that member's Finished-piece image, title, stage, clay, and rating; no public journal-detail route is provided.
+The titleless Profile tab uses a compact TikTok-inspired overview with avatar, username, explicit-save profile editor, a tappable friend count, and a three-line Settings and privacy menu. Account search remains on Chats. The settings destination covers account details, in-app password change with website fallback, exports, scheduled deletion/cancellation, privacy audiences, blocked accounts, category-aware notifications, system/light/dark appearance, metric/imperial units, language, preferred currency, support/privacy/about links, and recoverable logout. Preferred currency defaults to Automatic, which follows the device region with EUR as the safe fallback, and can be changed to a fixed dropdown value. Push has per-device Enable/Disable, Android permission/status/settings controls and an unavailable state when unconfigured. Clear recently viewed confirms before clearing private view timestamps. Edit Profile validates and saves private forename/surname (1-100 Unicode code points) and public username (3-50) together. It trims surrounding whitespace, checks changed usernames after a 500 ms debounce, retains failed drafts, and confirms before discarding unsaved text. Photos remain immediate and preserve text drafts; the public UUID stays read-only. A username change keeps this device signed in, expires other sessions and reconnects chat; name-only edits leave sessions unchanged. Username/photo visibility follows existing settings and blocking rules. Search accepts username prefixes of at least three characters and returns only accounts allowed by server-side discoverability. Opening a visible result uses the same profile-style presentation and adds a read-only grid containing only that member's Finished-piece image, title, stage, clay, and rating; no public journal-detail route is provided.
 
-The Chats tab uses the shared page-title styling and lists direct and group conversations with All/Unread/Groups filters, pagination, pull-to-refresh, unread counts, request routing, and per-user archives. Friend requests and incoming one-message requests share the Requests panel. Friends can open an active direct chat from a profile; non-friends can send one preview and must wait for acceptance. New group is available from the Chats overflow menu and selects 1–49 friends. Every active group member can rename, add their own friends, leave, archive, and send; generated group avatars, member counts, sender labels, and centered system events preserve group context. Former members retain read-only membership-period history, while absence gaps remain hidden after rejoin. The composer ceramic action opens the owner's journal as standard cards, confirms disclosure, and sends an idempotent ceramic message. Live chat cards preserve the complete image aspect ratio and open a complete read-only detail page whose spaced image pager also avoids cropping, displays weight using the member's Metric/Imperial preference, and starts stage history collapsed. The detail has no edit, stage, upload, delete, tag, glaze, firing, or reshare controls; deleted ceramics remain as localized unavailable cards. The inbox uses the message type for a localized preview. The shared navigation badge uses the backend aggregate rather than the first inbox page. Authenticated WebSocket events contain no content; they invalidate the badge, inbox, and matching open conversation, which then reconcile over REST. Stable event IDs are deduplicated, reconnects use bounded exponential backoff, and returning to the foreground performs backfill. Microphone and emoji controls remain future placeholders.
+The Chats tab uses the shared page-title styling and lists direct and group conversations with All/Unread/Groups filters, pagination, pull-to-refresh, unread counts, request routing, and per-user archives. Friend requests and incoming message requests share the Requests panel. Profiles have one Message button that resolves existing conversations first. Friends without a chat create an active conversation; eligible non-friends open a local text draft, and opening or cancelling it creates nothing. The first successful send creates a request and loads its persisted messages. Its initiator may send three text messages total before acceptance; recipients must accept before replying. Pending requests disable media and ceramic sharing. Declined and blocked conversations stay read-only. Accepting a message request does not create a friendship. Failed text sends retain their UUID for retry, including retries after the third message was committed but its response was lost. The complete direct-chat title, received avatars and group sender labels on text, image, voice, ceramic and publication messages load a fresh profile by UUID; returning refreshes the chat. Unavailable profiles show localized feedback. New group is available from the Chats overflow menu and selects 1–49 friends. Every active group member can rename, add their own friends, leave, archive, and send; generated group avatars, member counts, sender labels, and centered system events preserve group context. Former members retain read-only membership-period history, while absence gaps remain hidden after rejoin. The composer ceramic action opens the owner's journal as standard cards, confirms disclosure, and sends an idempotent ceramic message. Live chat cards preserve the complete image aspect ratio and open a complete read-only detail page whose spaced image pager also avoids cropping, displays weight using the member's Metric/Imperial preference, and starts stage history collapsed. The detail has no edit, stage, upload, delete, tag, glaze, firing, or reshare controls; deleted ceramics remain as localized unavailable cards. The inbox uses the message type for a localized preview. The shared navigation badge uses the backend aggregate rather than the first inbox page. Authenticated WebSocket events contain no content; they invalidate the badge, inbox, and matching open conversation, which then reconcile over REST. Stable event IDs are deduplicated, reconnects use bounded exponential backoff, and returning to the foreground performs backfill. The composer supports gated image/voice draft previews and an offline categorized emoji picker without persisted recents. Sent media follows shared-chat retention; report evidence and authorized exports include media.
 
 Long-pressing another account's text bubble or ceramic card exposes **Report message**. The form sends one of the six supported categories, requires an explanation for Other, previews the selected content, and keeps reporting separate from blocking. For ceramics it discloses that every current journal field and image is copied immutably with the same-period surrounding context. Messages sent by the current user and group system events are not reportable.
 
@@ -219,3 +336,60 @@ formatting passed. `flutter analyze --no-pub` passed with no issues and
 build also passed (241 active tests; seven opt-in tests skipped). Browser/app/Stripe
 and disposable-MariaDB entitlement acceptance remain pre-enablement gates;
 enforcement is still disabled.
+
+
+Voice-send troubleshooting follow-up: the isolated direct/group upload regression
+and full backend build pass (310 active tests, 39 opt-in skips). The reported
+emulator Send failure remains under investigation; the next manual retry is
+needed for its method/status-only trace. See
+[task status](../PUSH_MEDIA_VIEW_STATUS.md) for the current findings.
+
+### Voice retry trace update - 2026-10-03
+
+The emulator retry reached the local backend: two POST requests returned 400,
+with no service exception logged. A newer 19,640-byte draft has mono AAC-LC
+metadata and a 2,043 ms duration; a reconstruction containing only structural
+headers and zero-filled audio samples passes the validator. Audio samples,
+private metadata, cookies and debug capabilities were not copied.
+
+The backend exception handler now offers DEBUG diagnostics containing fixed
+rejection categories or exception class names only. Submitted values, exception
+messages, identifiers and recording contents are never logged. This logging is
+off by default; the verified local process enables it temporarily alongside
+method/status-only access logging. Flyway remains disabled. The full backend
+`test build` passed (310 active tests, 39 opt-in skips). The emulator-specific
+failure is still unresolved: a further Send on the retained preview is needed
+to distinguish malformed multipart handling from media validation. Disable the
+temporary local logging after diagnosis; do not clear or reinstall the app
+while its draft is pending.
+
+### Packaged backend voice validation fix - 2026-10-03
+
+The retained-preview retry returned HTTP 400 with the fixed category
+`MEDIA_FORMAT`. The same synthetic MP4 layout reproduced a parser configuration
+failure when launched through the executable JAR, although it passed on the
+ordinary test classpath. mp4parser 1.9.56 loads its default box mapping with the
+system class loader, which cannot see the nested dependency resource. This is
+a backend packaging issue; no audio content or authentication change is needed.
+
+`ChatMediaValidator` now initializes the library's supported box-mapping cache
+from its own class loader before parsing. Codec, channel count, duration, size,
+box bounds, authorization and encrypted storage rules remain in force. No API,
+schema, dependency version or Flutter source change is required. Temporary
+exception-handler diagnostics have been removed.
+
+The new `packagedMediaCheck` runs `PackagedMediaSmoke` through the built
+executable JAR's loader, without starting Spring, contacting Docker or using
+persistent data. It checks valid mono AAC, normalized-output validation and
+rejection of stereo/overlong clips. The task has a 60-second timeout and runs as
+part of `check`/`build`. Targeted media tests, the emulator metadata reconstruction
+under the executable JAR, and the full backend `test build` passed: 310 active
+tests, 39 opt-in skips, zero failures, plus the packaged check. The fixed backend
+is running locally and reports healthy; media remains enabled and Flyway remains
+disabled. Existing database/storage and the emulator draft were preserved.
+The user's retained-draft Send remains the final live acceptance check. Flutter
+runtime code is unchanged; its prior analysis/173-test results were not rerun
+for this backend-only fix.
+
+Library references: [mp4parser box parser](https://github.com/sannies/mp4parser/blob/master/isoparser/src/main/java/org/mp4parser/PropertyBoxParserImpl.java)
+and [Spring Boot executable JARs](https://docs.spring.io/spring-boot/specification/executable-jar/).

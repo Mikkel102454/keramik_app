@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/pages/settings/push_device_controls.dart';
 import 'dart:async';
 
 import 'package:ceramic_app/api/api_client.dart';
@@ -191,9 +192,8 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
           ),
           const SizedBox(height: 12),
           TextButton.icon(
-            onPressed: () => openWebPage(
-              '${AppConstants.api.apiDomain}/account/password',
-            ),
+            onPressed: () =>
+                openWebPage('${AppConstants.api.apiDomain}/account/password'),
             icon: const Icon(Icons.open_in_new, size: 18),
             label: Text(context.l10n.websitePasswordPage),
           ),
@@ -319,8 +319,8 @@ class _DataExportPageState extends State<DataExportPage> {
                           export.expiresAt!.toLocal().toString(),
                         ),
                       ),
-                trailing: export.status == 'PENDING' ||
-                        export.status == 'PROCESSING'
+                trailing:
+                    export.status == 'PENDING' || export.status == 'PROCESSING'
                     ? IconButton(
                         tooltip: context.l10n.refreshStatus,
                         onPressed: _refresh,
@@ -368,12 +368,12 @@ class _DataExportPageState extends State<DataExportPage> {
 
   static String _exportStatus(BuildContext context, String status) =>
       switch (status) {
-    'PENDING' => context.l10n.exportQueued,
-    'PROCESSING' => context.l10n.exportCreating,
-    'READY' => context.l10n.exportReady,
-    'EXPIRED' => context.l10n.exportExpired,
-    _ => context.l10n.exportFailed,
-  };
+        'PENDING' => context.l10n.exportQueued,
+        'PROCESSING' => context.l10n.exportCreating,
+        'READY' => context.l10n.exportReady,
+        'EXPIRED' => context.l10n.exportExpired,
+        _ => context.l10n.exportFailed,
+      };
 }
 
 class DeleteAccountPage extends StatefulWidget {
@@ -537,13 +537,7 @@ class NotificationsSettingsPage extends StatelessWidget {
                 ),
               ),
               const Divider(),
-              ListTile(
-                enabled: false,
-                leading: const Icon(Icons.notifications_active_outlined),
-                title: Text(context.l10n.pushNotifications),
-                subtitle: Text(context.l10n.pushNotificationsComingLater),
-                trailing: const Switch(value: false, onChanged: null),
-              ),
+              const PushDeviceControls(),
             ],
           );
         },
@@ -653,10 +647,7 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
 }
 
 class _LanguageOption {
-  const _LanguageOption({
-    required this.languageTag,
-    required this.nativeName,
-  });
+  const _LanguageOption({required this.languageTag, required this.nativeName});
 
   final String languageTag;
   final String nativeName;

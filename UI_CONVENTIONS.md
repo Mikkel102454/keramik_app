@@ -47,6 +47,88 @@ SelectFieldWidget<int>(
 )
 ```
 
+## Chat
+
+Use `MessageComposer` from the `v2` library for chat input. The page owns and
+disposes its draft controller, clears it only after successful sending, and
+supplies availability-gated callbacks. The shared bar listens to controller
+changes (including programmatic emoji insertion/clearing), keeps multiline input
+and a 2,000-code-point limit, and prevents draft edits during sending without
+closing the keyboard. Empty drafts show media controls; any text swaps those
+controls for Send while retaining emoji and ceramic sharing. Disable Send for
+trimmed-empty text. Nullable media/share callbacks retain request/server gates.
+An available camera shortcut sits beside the empty bar and opens the camera
+directly; the photo icon opens the native photo grid directly, followed by a
+single-image preview and Cancel/Send. Do not add a source-choice screen before
+these actions or broaden gallery permissions to imitate a platform-specific grid.
+
+`MessageComposer` keeps its pointer listener mounted when a voice bar replaces
+the text input. Hold starts recording; pointer up sends; an 80-pixel left drag
+arms cancellation and animates the trash lid without stopping capture. Release
+while armed discards; moving back disarms. A 70-pixel upward drag locks. An armed
+recording also discards at the one-minute limit. Pointer cancellation discards. Avoid a
+microphone Tooltip long-press recognizer competing with recording; provide the
+accessible name and gesture hint through semantics. Tap/keyboard activation is a
+locked-recording alternative. `ChatVoiceDraftController` owns permission/start/
+stop/upload coordination, timers and app-cache cleanup, with a stable UUID per
+recording. `ChatVoiceComposer` displays time, cancel/lock guidance, locked Stop,
+preview playback and Send/retry. Record for at most one minute. Locked Stop and
+the held/locked time limit send automatically while foregrounded and allowed.
+Interruptions stop to preview; failed uploads retain a retry preview and UUID.
+Cancellation during asynchronous
+startup/Stop must suppress upload. Preserve failed drafts, prevent duplicate
+uploads and stop microphone capture when the chat is disposed/backgrounded.
+
+Direct/group message rows share fully rounded bubbles and theme colors. Every
+received non-system message has a bottom-aligned `ProfileAvatar`; own messages
+and system events have none. Direct avatars use conversation profile data,
+group avatars use message sender data. Keep group names linked to fresh profiles,
+and route avatars through the same UUID fetch and refresh-on-return behavior.
+The direct header is one accessible, keyboard-operable profile target covering
+the avatar, name, gap and remaining title width; suppress splash and state
+highlights. Received-avatar and voice-playback targets also suppress pressed
+highlights. Group headers retain their existing actions.
+
+Photos own their rounded clip without surrounding bubble color/padding. Preserve
+the full aspect ratio with available-width/250-pixel and 340-pixel-height bounds;
+loading/error previews retain the same geometry. Voice pills own their surface,
+circular playback control, decorative (not recorded waveform) bars and `m:ss`
+duration, with localized playback/retry semantics. Match a one-line text bubble's
+height (the scaled text line plus 20 pixels), including loading/retry states.
+Preserve reporting gestures,
+card navigation and loading/retry feedback. Images and interrupted/failed voice
+drafts use preview/Send; held recordings use release-to-send.
+
+Keep local outgoing previews in `ConversationPageController.localSends`, separate
+from acknowledged server history. Show them immediately with Sending, then either
+replace with the receipt or retain Not sent in the theme's error color, neutral
+localized feedback and Retry. Match `reference/Chat/fail.jpg`'s failure placement;
+do not invent its moderation restriction. Preserve UUIDs and text/voice drafts.
+Photo Send transfers its private file to the local send and closes the preview;
+retain it on failure, deleting it after acknowledgment or chat disposal. Await
+an in-flight upload before disposal cleanup. Voice files remain recording-owned;
+discard removes their local row. Local cards cannot open server detail routes.
+Never use local IDs for read markers, pagination or reporting. This state is
+session-only, with no background/durable send queue. Unknown delivery after a
+lost response is resolved by explicit idempotent retry.
+
+Chat history uses a reversed `ListView.builder`: index zero is the newest row
+and scroll position zero is the bottom on the first frame. Do not render the top
+and jump afterward or build older messages to estimate total height. Fetch only
+the latest 50 messages, then load a single cursor page when scrolling within 200
+pixels of the older edge; keep an explicit Load earlier action. Ignore duplicate
+in-flight triggers, stop at a null cursor, and require explicit retry after failure.
+Merge by server ID, retaining older loaded history/cursors during latest-page
+refresh. Build media only with lazy rows near the viewport. Stable row keys retain
+attachment state; anchor reading position to message content, excluding date
+separators that can move during pagination.
+
+Local enqueue, acknowledgment and failure details advance the send revision and
+animate to scroll position zero after layout. Initial loading and ordinary incoming
+reconciliation do not animate to the bottom. Preserve a visible message anchor
+when ordinary refreshes arrive while reading older history. Check compact widths,
+large text, keyboard, locales and both themes.
+
 ## Similar functionality uses similar pages
 
 Glaze entries, glaze combinations and test tiles share the create → open →

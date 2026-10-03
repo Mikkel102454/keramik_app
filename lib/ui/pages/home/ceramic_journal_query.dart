@@ -2,7 +2,14 @@ import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
 
-enum CeramicJournalSort { recentlyUpdated, title, rating, stage, created }
+enum CeramicJournalSort {
+  recentlyUpdated,
+  recentlyViewed,
+  title,
+  rating,
+  stage,
+  created,
+}
 
 class CeramicJournalQuery {
   const CeramicJournalQuery({
@@ -44,13 +51,21 @@ class CeramicJournalQuery {
     List<ClayDto> clays,
     List<GlazeDto> glazes,
   ) {
-    final clayNames = {for (final clay in clays) clay.id: _normalize(clay.title)};
-    final glazeNames = {for (final glaze in glazes) glaze.id: _normalize(glaze.title)};
+    final clayNames = {
+      for (final clay in clays) clay.id: _normalize(clay.title),
+    };
+    final glazeNames = {
+      for (final glaze in glazes) glaze.id: _normalize(glaze.title),
+    };
     final term = _normalize(search);
 
     final result = ceramics.where((ceramic) {
-      if (stageIds.isNotEmpty && !stageIds.contains(ceramic.stageId)) return false;
-      if (clayIds.isNotEmpty && !clayIds.contains(ceramic.clayTypeId)) return false;
+      if (stageIds.isNotEmpty && !stageIds.contains(ceramic.stageId)) {
+        return false;
+      }
+      if (clayIds.isNotEmpty && !clayIds.contains(ceramic.clayTypeId)) {
+        return false;
+      }
       if (glazeIds.isNotEmpty &&
           !ceramic.glazes.any((entry) => glazeIds.contains(entry.glazeId))) {
         return false;
@@ -75,12 +90,27 @@ class CeramicJournalQuery {
     }).toList();
 
     result.sort((left, right) {
+      if (sort == CeramicJournalSort.recentlyViewed) {
+        if (left.lastViewedAt == null && right.lastViewedAt != null) return 1;
+        if (right.lastViewedAt == null && left.lastViewedAt != null) return -1;
+        final byView = _date(
+          right.lastViewedAt,
+        ).compareTo(_date(left.lastViewedAt));
+        return byView != 0 ? byView : left.id.compareTo(right.id);
+      }
       final comparison = switch (sort) {
-        CeramicJournalSort.recentlyUpdated => _date(left.updatedAt).compareTo(_date(right.updatedAt)),
-        CeramicJournalSort.title => left.title.toLowerCase().compareTo(right.title.toLowerCase()),
+        CeramicJournalSort.recentlyViewed => 0,
+        CeramicJournalSort.recentlyUpdated => _date(
+          left.updatedAt,
+        ).compareTo(_date(right.updatedAt)),
+        CeramicJournalSort.title => left.title.toLowerCase().compareTo(
+          right.title.toLowerCase(),
+        ),
         CeramicJournalSort.rating => left.rating.compareTo(right.rating),
         CeramicJournalSort.stage => left.stageId.compareTo(right.stageId),
-        CeramicJournalSort.created => _date(left.createdAt).compareTo(_date(right.createdAt)),
+        CeramicJournalSort.created => _date(
+          left.createdAt,
+        ).compareTo(_date(right.createdAt)),
       };
       final directed = descending ? -comparison : comparison;
       return directed != 0 ? directed : left.id.compareTo(right.id);

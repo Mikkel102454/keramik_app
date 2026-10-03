@@ -19,6 +19,7 @@ class DirectConversationDto {
     this.lastMessageType,
     this.lastMessageAt,
     this.readOnlyReason,
+    this.requestMessagesRemaining = 0,
   });
 
   final String id;
@@ -37,6 +38,50 @@ class DirectConversationDto {
   final bool incomingRequest;
   final bool readOnly;
   final String? readOnlyReason;
+  final int requestMessagesRemaining;
+  bool get isDraft => id.isEmpty;
+  bool get canShare => !isDraft && status == 'ACTIVE' && !readOnly;
+
+  factory DirectConversationDto.draft(UserProfileDto user) =>
+      DirectConversationDto(
+        id: '',
+        status: 'PENDING',
+        type: 'DIRECT',
+        title: user.username,
+        avatarInitials: user.avatarInitials,
+        avatarColor: user.avatarColor,
+        otherUser: user,
+        unreadCount: 0,
+        archived: false,
+        incomingRequest: false,
+        readOnly: false,
+        requestMessagesRemaining: 3,
+      );
+
+  DirectConversationDto copyWith({
+    int? unreadCount,
+    int? requestMessagesRemaining,
+    bool? readOnly,
+  }) => DirectConversationDto(
+    id: id,
+    status: status,
+    type: type,
+    title: title,
+    avatarInitials: avatarInitials,
+    avatarColor: avatarColor,
+    memberCount: memberCount,
+    otherUser: otherUser,
+    lastMessagePreview: lastMessagePreview,
+    lastMessageType: lastMessageType,
+    lastMessageAt: lastMessageAt,
+    unreadCount: unreadCount ?? this.unreadCount,
+    archived: archived,
+    incomingRequest: incomingRequest,
+    readOnly: readOnly ?? this.readOnly,
+    readOnlyReason: readOnlyReason,
+    requestMessagesRemaining:
+        requestMessagesRemaining ?? this.requestMessagesRemaining,
+  );
 
   factory DirectConversationDto.fromJson(Map<String, dynamic> json) {
     final otherUser = json['otherUser'] == null
@@ -47,8 +92,10 @@ class DirectConversationDto {
       status: json['status'] as String,
       type: json['type'] as String? ?? 'DIRECT',
       title: json['title'] as String? ?? otherUser?.username ?? 'Conversation',
-      avatarInitials: json['avatarInitials'] as String? ?? otherUser?.avatarInitials ?? '?',
-      avatarColor: json['avatarColor'] as String? ?? otherUser?.avatarColor ?? '#6D597A',
+      avatarInitials:
+          json['avatarInitials'] as String? ?? otherUser?.avatarInitials ?? '?',
+      avatarColor:
+          json['avatarColor'] as String? ?? otherUser?.avatarColor ?? '#6D597A',
       memberCount: (json['memberCount'] as num?)?.toInt() ?? 2,
       otherUser: otherUser,
       lastMessagePreview: json['lastMessagePreview'] as String?,
@@ -61,8 +108,28 @@ class DirectConversationDto {
       incomingRequest: json['incomingRequest'] as bool? ?? false,
       readOnly: json['readOnly'] as bool? ?? false,
       readOnlyReason: json['readOnlyReason'] as String?,
+      requestMessagesRemaining:
+          (json['requestMessagesRemaining'] as num?)?.toInt() ?? 0,
     );
   }
+}
+
+class DirectChatResolutionDto {
+  const DirectChatResolutionDto({required this.otherUser, this.conversation});
+  final UserProfileDto otherUser;
+  final DirectConversationDto? conversation;
+
+  factory DirectChatResolutionDto.fromJson(Map<String, dynamic> json) =>
+      DirectChatResolutionDto(
+        otherUser: UserProfileDto.fromJson(
+          json['otherUser'] as Map<String, dynamic>,
+        ),
+        conversation: json['conversation'] == null
+            ? null
+            : DirectConversationDto.fromJson(
+                json['conversation'] as Map<String, dynamic>,
+              ),
+      );
 }
 
 class ChatMessageDto {
@@ -80,6 +147,7 @@ class ChatMessageDto {
     this.senderAvatarColor,
     this.ceramic,
     this.publication,
+    this.attachment,
   });
 
   final String id;
@@ -95,6 +163,7 @@ class ChatMessageDto {
   final String? senderAvatarColor;
   final ChatCeramicCardDto? ceramic;
   final ChatPublicationCardDto? publication;
+  final ChatAttachmentDto? attachment;
 
   factory ChatMessageDto.fromJson(Map<String, dynamic> json) {
     return ChatMessageDto(
@@ -105,13 +174,20 @@ class ChatMessageDto {
       sequence: (json['sequence'] as num).toInt(),
       mine: json['mine'] as bool,
       type: json['type'] as String? ?? 'TEXT',
+      attachment: json['attachment'] == null
+          ? null
+          : ChatAttachmentDto.fromJson(
+              Map<String, dynamic>.from(json['attachment']),
+            ),
       senderUsername: json['senderUsername'] as String?,
       senderAvatarUrl: json['senderAvatarUrl'] as String?,
       senderAvatarInitials: json['senderAvatarInitials'] as String?,
       senderAvatarColor: json['senderAvatarColor'] as String?,
       ceramic: json['ceramic'] == null
           ? null
-          : ChatCeramicCardDto.fromJson(json['ceramic'] as Map<String, dynamic>),
+          : ChatCeramicCardDto.fromJson(
+              json['ceramic'] as Map<String, dynamic>,
+            ),
       publication: json['publication'] == null
           ? null
           : ChatPublicationCardDto.fromJson(
@@ -182,6 +258,7 @@ class ChatMessagePageDto {
     );
   }
 }
+
 class ChatBadgeDto {
   const ChatBadgeDto({
     required this.count,
@@ -204,4 +281,27 @@ class ChatBadgeDto {
     friendRequests: (json['friendRequests'] as num?)?.toInt() ?? 0,
     groupActivity: (json['groupActivity'] as num?)?.toInt() ?? 0,
   );
+}
+
+class ChatAttachmentDto {
+  const ChatAttachmentDto({
+    required this.type,
+    required this.size,
+    this.width,
+    this.height,
+    this.durationMs,
+  });
+  final String type;
+  final int size;
+  final int? width;
+  final int? height;
+  final int? durationMs;
+  factory ChatAttachmentDto.fromJson(Map<String, dynamic> json) =>
+      ChatAttachmentDto(
+        type: json['type'] as String,
+        size: (json['size'] as num).toInt(),
+        width: (json['width'] as num?)?.toInt(),
+        height: (json['height'] as num?)?.toInt(),
+        durationMs: (json['durationMs'] as num?)?.toInt(),
+      );
 }

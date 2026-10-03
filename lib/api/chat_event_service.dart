@@ -27,6 +27,10 @@ class ChatEventService with WidgetsBindingObserver {
   int _attempt = 0;
   bool _observingLifecycle = false;
 
+  void reconcile() {
+    if (_running) _emit(ChatEventDto.reconcile());
+  }
+
   void start() {
     if (_running) return;
     _running = true;

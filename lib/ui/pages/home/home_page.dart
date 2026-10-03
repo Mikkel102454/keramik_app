@@ -49,6 +49,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _controller.load();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -479,7 +484,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Future<void> _openCeramic(CeramicDto ceramic) async {
-    final result = await Navigator.push<bool>(
+    await Navigator.push<bool>(
       context,
       MaterialPageRoute(
         builder: (_) => CeramicViewPage(
@@ -490,7 +495,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
       ),
     );
-    if (result == true && mounted) await _controller.load();
+    if (mounted) await _controller.load();
   }
 
   Future<void> _showFilters() async {
@@ -623,6 +628,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   static String _sortLabel(BuildContext context, CeramicJournalSort sort) =>
       switch (sort) {
+        CeramicJournalSort.recentlyViewed => context.l10n.sortRecentlyViewed,
         CeramicJournalSort.recentlyUpdated => context.l10n.sortRecentlyUpdated,
         CeramicJournalSort.title => context.l10n.title,
         CeramicJournalSort.rating => context.l10n.rating,

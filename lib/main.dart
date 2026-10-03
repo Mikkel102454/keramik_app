@@ -1,3 +1,10 @@
+import 'dart:async';
+import 'package:ceramic_app/ui/pages/notification/notification_controller_page.dart';
+import 'package:ceramic_app/app/chat_media_controller.dart';
+import 'package:ceramic_app/app/push_controller.dart';
+import 'package:ceramic_app/repositories/chat_repository.dart';
+import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
+import 'package:ceramic_app/ui/pages/notification/friend_requests_page.dart';
 import 'package:flutter/material.dart';
 import 'package:ceramic_app/ui/widgets/v2/form_field_style.dart';
 import 'package:ceramic_app/app/entitlement_controller.dart';
@@ -20,6 +27,45 @@ void main() async {
   final appRouter = AppRouter();
   await AppSettingsController.instance.initializeLocale();
   await ApiClient.init();
+  await ChatMediaDownload.clear();
+  await PushController.instance.initialize();
+  PushController.instance.onTap = (destination) async {
+    unawaited(appRouter.replace(const NotificationRoute()));
+    await WidgetsBinding.instance.endOfFrame;
+    final context = appRouter.navigatorKey.currentContext;
+    if (context == null || !context.mounted) return;
+    if (destination['destination'] == 'FRIEND_REQUESTS') {
+      final controller = NotificationControllerPage();
+      try {
+        await controller.load();
+        if (context.mounted) {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => FriendRequestsPage(controller: controller),
+            ),
+          );
+        }
+      } finally {
+        controller.dispose();
+      }
+    } else if (destination['destination'] == 'CONVERSATION') {
+      try {
+        final conversation = await ChatRepository.getConversation(
+          destination['conversationId'] as String,
+        );
+        if (context.mounted) {
+          await Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) =>
+                  ConversationPage(initialConversation: conversation),
+            ),
+          );
+        }
+      } catch (_) {
+        /* Chats remains the safe fallback. */
+      }
+    }
+  };
   final authenticationCubit = AuthenticationCubit();
   ApiClient.onUnauthorized = authenticationCubit.sessionExpired;
   ApiClient.onSubscriptionError = (error) {
@@ -63,18 +109,25 @@ class MyApp extends StatelessWidget {
           authenticated: () {
             EntitlementController.instance.start();
             ChatEventService.instance.start();
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => PushController.instance.start(),
+            );
             NavigationBadgeController.instance.refresh();
             AppSettingsController.instance.load();
           },
           unauthenticated: () {
             EntitlementController.instance.reset();
             ChatEventService.instance.stop();
+            PushController.instance.stop();
+            ChatMediaDownload.clear();
             NavigationBadgeController.instance.setCount(0);
             AppSettingsController.instance.resetForLogout();
           },
           logout: () {
             EntitlementController.instance.reset();
             ChatEventService.instance.stop();
+            PushController.instance.stop();
+            ChatMediaDownload.clear();
             NavigationBadgeController.instance.setCount(0);
             AppSettingsController.instance.resetForLogout();
           },

@@ -30,6 +30,17 @@ class CeramicRepository {
     return CeramicDto.fromJson(response.data['data']);
   }
 
+  static Future<DateTime> recordView(int id) async {
+    final response = await ApiClient.dio.post('/api/ceramics/$id/view');
+    checkSuccess(response);
+    return DateTime.parse(response.data['data'] as String);
+  }
+
+  static Future<void> clearViews() async {
+    final response = await ApiClient.dio.delete('/api/ceramics/views');
+    checkSuccess(response);
+  }
+
   static Future<void> deleteCeramic(int id) async {
     final response = await ApiClient.dio.delete('/api/ceramics/$id');
 
@@ -40,12 +51,9 @@ class CeramicRepository {
     required CeramicDto ceramic,
     required List<XFile> images,
   }) async {
-
     final formData = FormData.fromMap({
-
       'data': MultipartFile.fromString(
         jsonEncode({
-
           'title': ceramic.title,
           'clayTypeId': ceramic.clayTypeId,
           'weight': ceramic.weight,
@@ -53,13 +61,9 @@ class CeramicRepository {
           'rating': ceramic.rating,
           'stageId': ceramic.stageId,
 
-          'tags': ceramic.tags
-              .map((e) => e.toJson())
-              .toList(),
+          'tags': ceramic.tags.map((e) => e.toJson()).toList(),
 
-          'glazes': ceramic.glazes
-              .map((e) => e.toJson())
-              .toList(),
+          'glazes': ceramic.glazes.map((e) => e.toJson()).toList(),
           'heightCm': ceramic.heightCm,
           'widthCm': ceramic.widthCm,
           'depthCm': ceramic.depthCm,
@@ -67,16 +71,11 @@ class CeramicRepository {
           'outcomeNote': ceramic.outcomeNote,
         }),
 
-        contentType: DioMediaType(
-          'application',
-          'json',
-        ),
+        contentType: DioMediaType('application', 'json'),
       ),
-
 
       'images': await Future.wait(
         images.map((image) async {
-
           return MultipartFile.fromFile(
             image.path,
             filename: image.name,
@@ -86,20 +85,13 @@ class CeramicRepository {
       ),
     });
 
-    final response = await ApiClient.dio.post(
-      '/api/ceramics',
-      data: formData,
-    );
+    final response = await ApiClient.dio.post('/api/ceramics', data: formData);
 
     checkSuccess(response);
-    return CeramicDto.fromJson(
-      response.data['data'] as Map<String, dynamic>,
-    );
+    return CeramicDto.fromJson(response.data['data'] as Map<String, dynamic>);
   }
 
-  static Future<void> updateCeramic({
-    required CeramicDto ceramic
-  }) async {
+  static Future<void> updateCeramic({required CeramicDto ceramic}) async {
     final id = ceramic.id;
     final payload = <String, dynamic>{
       'title': ceramic.title,
@@ -111,7 +103,10 @@ class CeramicRepository {
     };
     final previous = _updateQueues[id] ?? Future<void>.value();
     final request = previous.catchError((_) {}).then((_) async {
-      final response = await ApiClient.dio.put('/api/ceramics/$id', data: payload);
+      final response = await ApiClient.dio.put(
+        '/api/ceramics/$id',
+        data: payload,
+      );
       checkSuccess(response);
     });
     _updateQueues[id] = request;
@@ -142,7 +137,6 @@ class CeramicRepository {
     required int ceramicId,
     required File file,
   }) async {
-
     final XFile compressed = await compressFile(file);
     try {
       final fileName = compressed.path.split(Platform.pathSeparator).last;
@@ -165,9 +159,7 @@ class CeramicRepository {
     }
   }
 
-  static Future<void> deleteCeramicImage({
-    required ImageDto image
-  }) async {
+  static Future<void> deleteCeramicImage({required ImageDto image}) async {
     final response = await ApiClient.dio.delete(
       '/api/ceramics/${image.objectId}/image/${image.id}',
     );

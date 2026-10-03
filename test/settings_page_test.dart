@@ -129,38 +129,37 @@ void main() {
     expect(find.textContaining('could not be unblocked'), findsOneWidget);
   });
 
-  testWidgets('push placeholder remains and generated languages are available', (
-    tester,
-  ) async {
-    final controller = SettingsController(
-      loader: () async => const AccountSettingsDto(),
-      saver: (settings) async => settings,
-      appSettings: _testAppSettings(),
-    );
-    addTearDown(controller.dispose);
+  testWidgets(
+    'unconfigured push is unavailable and generated languages are available',
+    (tester) async {
+      final controller = SettingsController(
+        loader: () async => const AccountSettingsDto(),
+        saver: (settings) async => settings,
+        appSettings: _testAppSettings(),
+      );
+      addTearDown(controller.dispose);
 
-    await tester.pumpWidget(
-      localizedTestApp(
-        home: NotificationsSettingsPage(controller: controller),
-      ),
-    );
-    expect(find.text('Push notifications'), findsOneWidget);
-    expect(find.textContaining('Coming later'), findsOneWidget);
+      await tester.pumpWidget(
+        localizedTestApp(
+          home: NotificationsSettingsPage(controller: controller),
+        ),
+      );
+      expect(find.text('Push notifications'), findsOneWidget);
+      expect(find.textContaining('Firebase setup'), findsOneWidget);
 
-    await tester.pumpWidget(
-      localizedTestApp(
-        home: LanguageSettingsPage(controller: controller),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('English'), findsOneWidget);
-    expect(find.text('Dansk'), findsOneWidget);
-    expect(find.text('German'), findsNothing);
-    final danish = tester.widget<RadioListTile<String>>(
-      find.widgetWithText(RadioListTile<String>, 'Dansk'),
-    );
-    expect(danish.enabled, isTrue);
-  });
+      await tester.pumpWidget(
+        localizedTestApp(home: LanguageSettingsPage(controller: controller)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('English'), findsOneWidget);
+      expect(find.text('Dansk'), findsOneWidget);
+      expect(find.text('German'), findsNothing);
+      final danish = tester.widget<RadioListTile<String>>(
+        find.widgetWithText(RadioListTile<String>, 'Dansk'),
+      );
+      expect(danish.enabled, isTrue);
+    },
+  );
 
   testWidgets('logout asks for confirmation before ending the session', (
     tester,

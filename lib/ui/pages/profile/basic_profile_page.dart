@@ -1,10 +1,8 @@
-import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/objects/public_ceramic_card_dto.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/repositories/social_repository.dart';
 import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
-import 'package:ceramic_app/ui/pages/notification/message_request_page.dart';
 import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
 import 'package:ceramic_app/ui/pages/discover/publication_detail_page.dart';
 import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
@@ -149,27 +147,15 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
     }
   }
 
-  Future<void> _openMessage({required bool request}) async {
+  Future<void> _openMessage() async {
     setState(() => _busy = true);
     try {
-      DirectConversationDto? conversation;
-      if (request) {
-        if (mounted) {
-          conversation = await Navigator.push<DirectConversationDto>(
-            context,
-            MaterialPageRoute(
-              builder: (_) => MessageRequestPage(user: _profile),
-            ),
-          );
-        }
-      } else {
-        conversation = await ChatRepository.createDirect(_profile.userId);
-      }
-      if (!mounted || conversation == null) return;
+      final conversation = await ChatRepository.openDirect(_profile.userId);
+      if (!mounted) return;
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => ConversationPage(initialConversation: conversation!),
+          builder: (_) => ConversationPage(initialConversation: conversation),
         ),
       );
       if (!mounted) return;
@@ -250,17 +236,12 @@ class _BasicProfilePageState extends State<BasicProfilePage> {
                       ),
                 child: Text(context.l10n.declineRequest),
               ),
-            if (_profile.actions.contains('MESSAGE'))
+            if (_profile.actions.contains('MESSAGE') ||
+                _profile.actions.contains('MESSAGE_REQUEST'))
               OutlinedButton.icon(
-                onPressed: () => _openMessage(request: false),
+                onPressed: _openMessage,
                 icon: const Icon(Icons.chat_bubble_outline),
                 label: Text(context.l10n.message),
-              ),
-            if (_profile.actions.contains('MESSAGE_REQUEST'))
-              OutlinedButton.icon(
-                onPressed: () => _openMessage(request: true),
-                icon: const Icon(Icons.mark_chat_unread_outlined),
-                label: Text(context.l10n.sendMessageRequest),
               ),
             if (_profile.actions.contains('UNFRIEND'))
               TextButton(
