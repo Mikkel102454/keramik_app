@@ -3,6 +3,7 @@ import 'select_field_widget.dart';
 
 class DropdownWidget extends StatefulWidget {
   final String? placeholder;
+  final String? label;
   final String? initialValue;
 
   /// return true = accept
@@ -14,6 +15,7 @@ class DropdownWidget extends StatefulWidget {
   const DropdownWidget({
     super.key,
     this.placeholder,
+    this.label,
     this.initialValue,
     this.onChanged,
     required this.entries,
@@ -100,6 +102,7 @@ class _DropdownWidgetState extends State<DropdownWidget> {
   @override
   Widget build(BuildContext context) {
     return SelectFieldWidget<String>(
+      label: widget.label,
       value: selectedValue,
       placeholder: widget.placeholder,
       onChanged: _handleChanged,

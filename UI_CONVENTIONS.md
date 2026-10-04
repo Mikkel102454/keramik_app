@@ -1,5 +1,29 @@
 # Shared UI and entry-page conventions
 
+## Studio design system
+
+The whole-app social presentation uses `StudioTheme` and shared `Studio*` components
+alongside this `v2` library. Follow [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) for theme
+ownership, adaptive navigation, bounded forms, flat surfaces and safe areas.
+Keep business operations in the existing layers. `EntryPage` retains its actions
+and save rules while `EntrySection` owns shared section spacing. `StudioSurface`
+adds consistent padding without a decorative card. `StudioMediaOverlay` protects
+caption/control contrast over photographs. Keep the same component names rather
+than duplicating a second set for the new visual direction.
+All pages, including Discover, inherit the selected light/dark/system theme.
+Keep the white/near-black surfaces and use the shared cobalt/amber ColorScheme
+for accents; do not add feature-specific forced appearance overrides.
+Use `CeramicPreviewTile` for ceramic photo previews and
+`CeramicPreviewGrid.delegate` for journal/profile grids. Keep crop, caption,
+placeholder, proportions and gutters in that shared widget rather than creating
+page-local card trees. Home's original metadata-panel style is the reference:
+bold title, optional clay, localized stage and star/rating, with a theme-surface
+background. Journal adapters retain this information in accessible labels too.
+Pass the active text scaler to the grid delegate so card height adapts. Public
+profile tiles use their existing authorized stage/rating data and like badges.
+Center empty/loading/failed-photo icons in the remaining photo area after the
+caption is laid out; metadata and text scaling must not shift them off center.
+
 Use the existing UI library at `lib/ui/widgets/v2/ui_library.dart`. Extend a
 shared component when a supported option is missing. Pages pass labels, values,
 limits, validators and callbacks; they do not recreate borders, fill colors,

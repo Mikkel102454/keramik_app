@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
@@ -9,7 +10,8 @@ class ArchivedConversationsPage extends StatefulWidget {
   const ArchivedConversationsPage({super.key});
 
   @override
-  State<ArchivedConversationsPage> createState() => _ArchivedConversationsPageState();
+  State<ArchivedConversationsPage> createState() =>
+      _ArchivedConversationsPageState();
 }
 
 class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
@@ -43,7 +45,11 @@ class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
       await ChatRepository.restore(item.id);
       await _load();
     } catch (exception) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$exception')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
+      }
     }
   }
 
@@ -51,9 +57,13 @@ class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.archivedChats)),
-      body: _loading && _items.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null && _items.isEmpty
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: _loading && _items.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null && _items.isEmpty
               ? Center(
                   child: FilledButton(
                     onPressed: _load,
@@ -84,7 +94,8 @@ class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
                           subtitle: Text(
                             item.lastMessageType == 'CERAMIC'
                                 ? context.l10n.ceramicMessagePreview
-                                : item.lastMessagePreview ?? context.l10n.noMessages,
+                                : item.lastMessagePreview ??
+                                      context.l10n.noMessages,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -96,7 +107,10 @@ class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
                           onTap: () async {
                             await Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => ConversationPage(initialConversation: item)),
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    ConversationPage(initialConversation: item),
+                              ),
                             );
                             if (mounted) await _load();
                           },
@@ -105,6 +119,8 @@ class _ArchivedConversationsPageState extends State<ArchivedConversationsPage> {
                     ],
                   ),
                 ),
+        ),
+      ),
     );
   }
 }

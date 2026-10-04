@@ -7,19 +7,21 @@ import 'package:flutter/material.dart';
 class OwnerPublicationStatusCard extends StatelessWidget {
   const OwnerPublicationStatusCard({
     required this.status,
+    required this.isFinished,
+    required this.hasImage,
     required this.onToggle,
     super.key,
   });
 
   final PublicationStatusDto status;
+  final bool isFinished;
+  final bool hasImage;
   final Future<bool> Function() onToggle;
 
   @override
   Widget build(BuildContext context) {
     final moderationRemoved = status.state == 'MODERATION_REMOVED';
-    final audience = status.currentAudience == 'EVERYONE'
-        ? context.l10n.publicationAudienceEveryone
-        : context.l10n.publicationAudienceFriends;
+    final canPublish = isFinished && hasImage;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -28,7 +30,7 @@ class OwnerPublicationStatusCard extends StatelessWidget {
           children: [
             if (moderationRemoved)
               Text(context.l10n.publicationModerationRemoved)
-            else if (status.current && !status.eligible)
+            else if (status.current && !canPublish)
               Text(context.l10n.publicationTemporarilyUnavailable)
             else
               Text(
@@ -36,11 +38,25 @@ class OwnerPublicationStatusCard extends StatelessWidget {
                     ? context.l10n.navigationDiscover
                     : context.l10n.publishFinishedBody,
               ),
-            const SizedBox(height: 8),
-            Text(audience, style: Theme.of(context).textTheme.bodySmall),
+            if (!moderationRemoved && (!status.current || !canPublish)) ...[
+              const SizedBox(height: 10),
+              _requirement(
+                context.l10n.publicationFinishedRequirement,
+                isFinished,
+              ),
+              const SizedBox(height: 6),
+              _requirement(context.l10n.publicationPhotoRequirement, hasImage),
+            ],
+            if (status.currentAudience != 'EVERYONE') ...[
+              const SizedBox(height: 8),
+              Text(
+                context.l10n.publicationAudienceFriends,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
             const SizedBox(height: 10),
             FilledButton.icon(
-              onPressed: moderationRemoved
+              onPressed: moderationRemoved || (!status.current && !canPublish)
                   ? null
                   : () async {
                       if (!status.current &&
@@ -53,7 +69,7 @@ class OwnerPublicationStatusCard extends StatelessWidget {
                       }
                       if (await onToggle() || !context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(context.l10n.tryAgain)),
+                        SnackBar(content: Text(context.l10n.operationFailed)),
                       );
                     },
               icon: Icon(status.current ? Icons.visibility_off : Icons.public),
@@ -68,4 +84,18 @@ class OwnerPublicationStatusCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _requirement(String label, bool met) => Semantics(
+    checked: met,
+    child: Row(
+      children: [
+        Icon(
+          met ? Icons.check_circle_outline : Icons.radio_button_unchecked,
+          size: 20,
+        ),
+        const SizedBox(width: 8),
+        Expanded(child: Text(label)),
+      ],
+    ),
+  );
 }

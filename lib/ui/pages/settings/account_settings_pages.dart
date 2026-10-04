@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/v2/entry_page_widgets.dart';
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/ui/pages/settings/push_device_controls.dart';
 import 'dart:async';
 
@@ -22,43 +24,52 @@ class AccountInformationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.accountInformation)),
-      body: FutureBuilder<AccountProfileDto>(
-        future: SocialRepository.getMe(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError || snapshot.data == null) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  context.l10n.accountInformationLoadFailed,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            );
-          }
-          final account = snapshot.data!;
-          return ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              _Info(label: context.l10n.username, value: account.username),
-              _Info(
-                label: context.l10n.name,
-                value: '${account.forename} ${account.surname}'.trim(),
-              ),
-              _Info(label: context.l10n.publicUserId, value: account.userId),
-              const SizedBox(height: 16),
-              Text(
-                context.l10n.accountEmailPrivacyNote,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          );
-        },
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: FutureBuilder<AccountProfileDto>(
+            future: SocialRepository.getMe(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError || snapshot.data == null) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      context.l10n.accountInformationLoadFailed,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+              }
+              final account = snapshot.data!;
+              return ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  _Info(label: context.l10n.username, value: account.username),
+                  _Info(
+                    label: context.l10n.name,
+                    value: '${account.forename} ${account.surname}'.trim(),
+                  ),
+                  _Info(
+                    label: context.l10n.publicUserId,
+                    value: account.userId,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    context.l10n.accountEmailPrivacyNote,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -71,10 +82,12 @@ class _Info extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      title: Text(label),
-      subtitle: Text(value.isEmpty ? context.l10n.notSet : value),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: EntryValue(
+        label: label,
+        value: value.isEmpty ? context.l10n.notSet : value,
+      ),
     );
   }
 }
@@ -124,8 +137,6 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
           _message = context.l10n.passwordChanged;
         });
       }
-    } on ApiException catch (error) {
-      if (mounted) setState(() => _message = error.message);
     } catch (_) {
       if (mounted) {
         setState(() => _message = context.l10n.passwordChangeFailed);
@@ -139,65 +150,72 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.passwordAndSecurity)),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          TextField(
-            controller: _current,
-            obscureText: true,
-            enabled: !_saving,
-            decoration: InputDecoration(
-              labelText: context.l10n.currentPassword,
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _next,
-            obscureText: true,
-            enabled: !_saving,
-            decoration: InputDecoration(
-              labelText: context.l10n.newPassword,
-              helperText: context.l10n.passwordLengthHelp,
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _confirmation,
-            obscureText: true,
-            enabled: !_saving,
-            decoration: InputDecoration(
-              labelText: context.l10n.confirmNewPassword,
-            ),
-          ),
-          if (_message != null) ...[
-            const SizedBox(height: 14),
-            Text(
-              _message!,
-              style: TextStyle(
-                color: _success
-                    ? Theme.of(context).colorScheme.primary
-                    : Theme.of(context).colorScheme.error,
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              TextField(
+                controller: _current,
+                obscureText: true,
+                enabled: !_saving,
+                decoration: InputDecoration(
+                  labelText: context.l10n.currentPassword,
+                ),
               ),
-            ),
-          ],
-          const SizedBox(height: 18),
-          FilledButton(
-            onPressed: _saving ? null : _save,
-            child: _saving
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(context.l10n.changePassword),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _next,
+                obscureText: true,
+                enabled: !_saving,
+                decoration: InputDecoration(
+                  labelText: context.l10n.newPassword,
+                  helperText: context.l10n.passwordLengthHelp,
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _confirmation,
+                obscureText: true,
+                enabled: !_saving,
+                decoration: InputDecoration(
+                  labelText: context.l10n.confirmNewPassword,
+                ),
+              ),
+              if (_message != null) ...[
+                const SizedBox(height: 14),
+                Text(
+                  _message!,
+                  style: TextStyle(
+                    color: _success
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.error,
+                  ),
+                ),
+              ],
+              const SizedBox(height: 18),
+              FilledButton(
+                onPressed: _saving ? null : _save,
+                child: _saving
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(context.l10n.changePassword),
+              ),
+              const SizedBox(height: 12),
+              TextButton.icon(
+                onPressed: () => openWebPage(
+                  '${AppConstants.api.apiDomain}/account/password',
+                ),
+                icon: const Icon(Icons.open_in_new, size: 18),
+                label: Text(context.l10n.websitePasswordPage),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          TextButton.icon(
-            onPressed: () =>
-                openWebPage('${AppConstants.api.apiDomain}/account/password'),
-            icon: const Icon(Icons.open_in_new, size: 18),
-            label: Text(context.l10n.websitePasswordPage),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -231,8 +249,6 @@ class _DataExportPageState extends State<DataExportPage> {
     try {
       _export = await AccountRepository.createExport();
       _startPolling();
-    } on ApiException catch (error) {
-      _error = error.message;
     } catch (_) {
       _error = exportRequestFailed;
     } finally {
@@ -253,7 +269,9 @@ class _DataExportPageState extends State<DataExportPage> {
       if (!mounted) return;
       setState(() {
         _export = updated;
-        _error = updated.errorMessage;
+        _error = updated.errorMessage == null
+            ? null
+            : context.l10n.exportFailed;
       });
       if (updated.status == 'READY' ||
           updated.status == 'FAILED' ||
@@ -291,77 +309,84 @@ class _DataExportPageState extends State<DataExportPage> {
     final export = _export;
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.downloadYourData)),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Text(context.l10n.dataExportDescription),
-          const SizedBox(height: 12),
-          Text(
-            context.l10n.dataExportLimit,
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-          if (export != null) ...[
-            const SizedBox(height: 24),
-            Card(
-              child: ListTile(
-                leading: Icon(
-                  export.downloadAvailable
-                      ? Icons.check_circle_outline
-                      : Icons.hourglass_top,
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              Text(context.l10n.dataExportDescription),
+              const SizedBox(height: 12),
+              Text(
+                context.l10n.dataExportLimit,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
-                title: Text(_exportStatus(context, export.status)),
-                subtitle: export.expiresAt == null
-                    ? null
-                    : Text(
-                        context.l10n.availableUntil(
-                          export.expiresAt!.toLocal().toString(),
-                        ),
-                      ),
-                trailing:
-                    export.status == 'PENDING' || export.status == 'PROCESSING'
-                    ? IconButton(
-                        tooltip: context.l10n.refreshStatus,
-                        onPressed: _refresh,
-                        icon: const Icon(Icons.refresh),
-                      )
-                    : null,
               ),
-            ),
-          ],
-          if (_error != null) ...[
-            const SizedBox(height: 12),
-            Text(
-              _error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ],
-          const SizedBox(height: 20),
-          FilledButton.icon(
-            onPressed: _busy
-                ? null
-                : export?.downloadAvailable == true
-                ? _download
-                : export == null || export.status == 'FAILED'
-                ? _create
-                : _refresh,
-            icon: Icon(
-              export?.downloadAvailable == true
-                  ? Icons.download
-                  : Icons.archive_outlined,
-            ),
-            label: Text(
-              _busy
-                  ? context.l10n.pleaseWait
-                  : export?.downloadAvailable == true
-                  ? context.l10n.downloadZip
-                  : export == null || export.status == 'FAILED'
-                  ? context.l10n.createExport
-                  : context.l10n.refreshStatus,
-            ),
+              if (export != null) ...[
+                const SizedBox(height: 24),
+                Card(
+                  child: ListTile(
+                    leading: Icon(
+                      export.downloadAvailable
+                          ? Icons.check_circle_outline
+                          : Icons.hourglass_top,
+                    ),
+                    title: Text(_exportStatus(context, export.status)),
+                    subtitle: export.expiresAt == null
+                        ? null
+                        : Text(
+                            context.l10n.availableUntil(
+                              export.expiresAt!.toLocal().toString(),
+                            ),
+                          ),
+                    trailing:
+                        export.status == 'PENDING' ||
+                            export.status == 'PROCESSING'
+                        ? IconButton(
+                            tooltip: context.l10n.refreshStatus,
+                            onPressed: _refresh,
+                            icon: const Icon(Icons.refresh),
+                          )
+                        : null,
+                  ),
+                ),
+              ],
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _error!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              ],
+              const SizedBox(height: 20),
+              FilledButton.icon(
+                onPressed: _busy
+                    ? null
+                    : export?.downloadAvailable == true
+                    ? _download
+                    : export == null || export.status == 'FAILED'
+                    ? _create
+                    : _refresh,
+                icon: Icon(
+                  export?.downloadAvailable == true
+                      ? Icons.download
+                      : Icons.archive_outlined,
+                ),
+                label: Text(
+                  _busy
+                      ? context.l10n.pleaseWait
+                      : export?.downloadAvailable == true
+                      ? context.l10n.downloadZip
+                      : export == null || export.status == 'FAILED'
+                      ? context.l10n.createExport
+                      : context.l10n.refreshStatus,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -411,8 +436,6 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       if (!mounted) return;
       context.read<AuthenticationCubit>().sessionExpired();
       Navigator.of(context).popUntil((route) => route.isFirst);
-    } on ApiException catch (error) {
-      if (mounted) setState(() => _error = error.message);
     } catch (_) {
       if (mounted) {
         setState(() => _error = context.l10n.deletionScheduleFailed);
@@ -427,68 +450,74 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
     final error = Theme.of(context).colorScheme.error;
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.deleteAccount)),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Icon(Icons.warning_amber_rounded, size: 44, color: error),
-          const SizedBox(height: 14),
-          Text(
-            context.l10n.deletionCancellationPeriod,
-            style: Theme.of(context).textTheme.titleLarge,
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              Icon(Icons.warning_amber_rounded, size: 44, color: error),
+              const SizedBox(height: 14),
+              Text(
+                context.l10n.deletionCancellationPeriod,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 12),
+              Text(context.l10n.deletionSignOutExplanation),
+              const SizedBox(height: 12),
+              Text(context.l10n.deletionRetentionExplanation),
+              const SizedBox(height: 18),
+              CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _understood,
+                onChanged: _busy
+                    ? null
+                    : (value) => setState(() => _understood = value ?? false),
+                title: Text(context.l10n.deletionUnderstand),
+              ),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                enabled: !_busy,
+                decoration: InputDecoration(
+                  labelText: context.l10n.currentPassword,
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: _confirmation,
+                enabled: !_busy,
+                decoration: InputDecoration(
+                  labelText: context.l10n.typeDeleteToConfirm,
+                ),
+                onChanged: (_) => setState(() {}),
+              ),
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(_error!, style: TextStyle(color: error)),
+              ],
+              const SizedBox(height: 20),
+              FilledButton(
+                style: FilledButton.styleFrom(backgroundColor: error),
+                onPressed:
+                    !_understood ||
+                        _busy ||
+                        _confirmation.text != 'DELETE' ||
+                        _password.text.isEmpty
+                    ? null
+                    : _schedule,
+                child: _busy
+                    ? const SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Text(context.l10n.scheduleAccountDeletion),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          Text(context.l10n.deletionSignOutExplanation),
-          const SizedBox(height: 12),
-          Text(context.l10n.deletionRetentionExplanation),
-          const SizedBox(height: 18),
-          CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            value: _understood,
-            onChanged: _busy
-                ? null
-                : (value) => setState(() => _understood = value ?? false),
-            title: Text(context.l10n.deletionUnderstand),
-          ),
-          TextField(
-            controller: _password,
-            obscureText: true,
-            enabled: !_busy,
-            decoration: InputDecoration(
-              labelText: context.l10n.currentPassword,
-            ),
-            onChanged: (_) => setState(() {}),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _confirmation,
-            enabled: !_busy,
-            decoration: InputDecoration(
-              labelText: context.l10n.typeDeleteToConfirm,
-            ),
-            onChanged: (_) => setState(() {}),
-          ),
-          if (_error != null) ...[
-            const SizedBox(height: 12),
-            Text(_error!, style: TextStyle(color: error)),
-          ],
-          const SizedBox(height: 20),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: error),
-            onPressed:
-                !_understood ||
-                    _busy ||
-                    _confirmation.text != 'DELETE' ||
-                    _password.text.isEmpty
-                ? null
-                : _schedule,
-            child: _busy
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : Text(context.l10n.scheduleAccountDeletion),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -502,45 +531,53 @@ class NotificationsSettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.notifications)),
-      body: AnimatedBuilder(
-        animation: controller,
-        builder: (context, _) {
-          final settings = controller.settings;
-          return ListView(
-            children: [
-              SwitchListTile(
-                title: Text(context.l10n.directMessages),
-                value: settings.notifyDirectMessages,
-                onChanged: (value) => controller.save(
-                  controller.settings.copyWith(notifyDirectMessages: value),
-                ),
-              ),
-              SwitchListTile(
-                title: Text(context.l10n.messageRequests),
-                value: settings.notifyMessageRequests,
-                onChanged: (value) => controller.save(
-                  controller.settings.copyWith(notifyMessageRequests: value),
-                ),
-              ),
-              SwitchListTile(
-                title: Text(context.l10n.friendRequests),
-                value: settings.notifyFriendRequests,
-                onChanged: (value) => controller.save(
-                  controller.settings.copyWith(notifyFriendRequests: value),
-                ),
-              ),
-              SwitchListTile(
-                title: Text(context.l10n.groupActivity),
-                value: settings.notifyGroupActivity,
-                onChanged: (value) => controller.save(
-                  controller.settings.copyWith(notifyGroupActivity: value),
-                ),
-              ),
-              const Divider(),
-              const PushDeviceControls(),
-            ],
-          );
-        },
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: AnimatedBuilder(
+            animation: controller,
+            builder: (context, _) {
+              final settings = controller.settings;
+              return ListView(
+                children: [
+                  SwitchListTile(
+                    title: Text(context.l10n.directMessages),
+                    value: settings.notifyDirectMessages,
+                    onChanged: (value) => controller.save(
+                      controller.settings.copyWith(notifyDirectMessages: value),
+                    ),
+                  ),
+                  SwitchListTile(
+                    title: Text(context.l10n.messageRequests),
+                    value: settings.notifyMessageRequests,
+                    onChanged: (value) => controller.save(
+                      controller.settings.copyWith(
+                        notifyMessageRequests: value,
+                      ),
+                    ),
+                  ),
+                  SwitchListTile(
+                    title: Text(context.l10n.friendRequests),
+                    value: settings.notifyFriendRequests,
+                    onChanged: (value) => controller.save(
+                      controller.settings.copyWith(notifyFriendRequests: value),
+                    ),
+                  ),
+                  SwitchListTile(
+                    title: Text(context.l10n.groupActivity),
+                    value: settings.notifyGroupActivity,
+                    onChanged: (value) => controller.save(
+                      controller.settings.copyWith(notifyGroupActivity: value),
+                    ),
+                  ),
+                  const Divider(),
+                  const PushDeviceControls(),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -595,51 +632,57 @@ class _LanguageSettingsPageState extends State<LanguageSettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.language)),
-      body: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) => FutureBuilder<List<_LanguageOption>>(
-          future: _languages,
-          builder: (context, snapshot) {
-            final languages = snapshot.data;
-            if (languages == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return ListView(
-              padding: const EdgeInsets.only(top: 8),
-              children: [
-                if (_controller.error == SettingsError.saveFailed)
-                  MaterialBanner(
-                    content: Text(context.l10n.languageSaveFailed),
-                    actions: [
-                      TextButton(
-                        onPressed: _controller.clearError,
-                        child: Text(context.l10n.ok),
-                      ),
-                    ],
-                  ),
-                RadioGroup<String>(
-                  groupValue: _controller.activeLanguageTag,
-                  onChanged: _select,
-                  child: Column(
-                    children: languages
-                        .map(
-                          (language) => RadioListTile<String>(
-                            value: language.languageTag,
-                            enabled: !_controller.isSaving,
-                            title: Text(language.nativeName),
-                            subtitle:
-                                language.languageTag ==
-                                    _controller.activeLanguageTag
-                                ? Text(context.l10n.currentLanguage)
-                                : null,
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, _) => FutureBuilder<List<_LanguageOption>>(
+              future: _languages,
+              builder: (context, snapshot) {
+                final languages = snapshot.data;
+                if (languages == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return ListView(
+                  padding: const EdgeInsets.only(top: 8),
+                  children: [
+                    if (_controller.error == SettingsError.saveFailed)
+                      MaterialBanner(
+                        content: Text(context.l10n.languageSaveFailed),
+                        actions: [
+                          TextButton(
+                            onPressed: _controller.clearError,
+                            child: Text(context.l10n.ok),
                           ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ],
-            );
-          },
+                        ],
+                      ),
+                    RadioGroup<String>(
+                      groupValue: _controller.activeLanguageTag,
+                      onChanged: _select,
+                      child: Column(
+                        children: languages
+                            .map(
+                              (language) => RadioListTile<String>(
+                                value: language.languageTag,
+                                enabled: !_controller.isSaving,
+                                title: Text(language.nativeName),
+                                subtitle:
+                                    language.languageTag ==
+                                        _controller.activeLanguageTag
+                                    ? Text(context.l10n.currentLanguage)
+                                    : null,
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
         ),
       ),
     );

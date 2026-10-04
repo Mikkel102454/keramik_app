@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Shared by the app theme and the field widgets. Pages supply data, not borders.
 abstract final class FormFieldStyle {
-  static const radius = 14.0;
+  static const radius = 4.0;
   static const textStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
   static const padding = EdgeInsets.symmetric(horizontal: 12, vertical: 12);
 
@@ -13,7 +13,7 @@ abstract final class FormFieldStyle {
     );
     return InputDecorationTheme(
       filled: true,
-      fillColor: colors.surfaceContainerHighest,
+      fillColor: colors.surfaceContainerLow,
       contentPadding: padding,
       hintStyle: textStyle.copyWith(color: colors.onSurfaceVariant),
       suffixStyle: textStyle.copyWith(color: colors.onSurfaceVariant),
@@ -21,7 +21,7 @@ abstract final class FormFieldStyle {
       border: border(),
       enabledBorder: border(),
       disabledBorder: border(),
-      focusedBorder: border(colors.outline),
+      focusedBorder: border(colors.primary),
       errorBorder: border(colors.error),
       focusedErrorBorder: border(colors.error),
     );
@@ -54,12 +54,11 @@ class FieldLabel extends StatelessWidget {
       if (label != null) ...[
         Text(
           label!,
-          style: TextStyle(
-            fontSize: 16,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
       ],
       child,
     ],

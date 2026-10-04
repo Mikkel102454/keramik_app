@@ -14,7 +14,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_app.dart';
 
 void main() {
-  testWidgets('profile exposes menu instead of account search', (tester) async {
+  testWidgets('profile exposes settings instead of account search', (
+    tester,
+  ) async {
     final controller = _ProfileController();
     addTearDown(controller.dispose);
     await tester.pumpWidget(
@@ -23,7 +25,6 @@ void main() {
     await tester.pump();
 
     expect(find.byTooltip('Settings and privacy'), findsOneWidget);
-    expect(find.byIcon(Icons.menu), findsOneWidget);
     expect(find.byTooltip('Search accounts'), findsNothing);
   });
 
@@ -36,7 +37,10 @@ void main() {
     );
     await tester.pump();
 
-    expect(find.text('Chats'), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(AppBar), matching: find.text('Chats')),
+      findsOneWidget,
+    );
     expect(find.byTooltip('Search accounts'), findsOneWidget);
   });
 
@@ -84,6 +88,13 @@ void main() {
     await tester.pumpWidget(
       localizedTestApp(home: SettingsPage(controller: controller)),
     );
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.text('Discoverability'),
+      240,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(find.text('Discoverability'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Discoverability'));
     await tester.pumpAndSettle();
@@ -180,6 +191,8 @@ void main() {
       400,
       scrollable: find.byType(Scrollable).first,
     );
+    await tester.ensureVisible(find.text('Log out'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Log out'));
     await tester.pumpAndSettle();
 

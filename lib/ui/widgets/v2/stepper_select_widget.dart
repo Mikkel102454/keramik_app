@@ -30,12 +30,10 @@ class StepperSelectWidget extends StatefulWidget {
   });
 
   @override
-  State<StepperSelectWidget> createState() =>
-      _StepperSelectWidgetState();
+  State<StepperSelectWidget> createState() => _StepperSelectWidgetState();
 }
 
-class _StepperSelectWidgetState
-    extends State<StepperSelectWidget> {
+class _StepperSelectWidgetState extends State<StepperSelectWidget> {
   late String selectedValue;
 
   late String lastValidValue;
@@ -58,9 +56,7 @@ class _StepperSelectWidgetState
   }
 
   int get selectedIndex {
-    return widget.entries.indexWhere(
-          (entry) => entry.value == selectedValue,
-    );
+    return widget.entries.indexWhere((entry) => entry.value == selectedValue);
   }
 
   Future<void> _handleTap(String value) async {
@@ -104,48 +100,49 @@ class _StepperSelectWidgetState
       scrollDirection: Axis.horizontal,
 
       child: Row(
-        children: List.generate(
-          widget.entries.length,
-              (index) {
-            final entry = widget.entries[index];
+        children: List.generate(widget.entries.length, (index) {
+          final entry = widget.entries[index];
 
-            final isSelected = index <= selectedIndex;
+          final isSelected = index <= selectedIndex;
 
-            return Padding(
-              padding: EdgeInsets.only(
-                right: index == widget.entries.length - 1
-                    ? 0
-                    : widget.spacing,
-              ),
+          return Padding(
+            padding: EdgeInsets.only(
+              right: index == widget.entries.length - 1 ? 0 : widget.spacing,
+            ),
 
-              child: GestureDetector(
+            child: Semantics(
+              button: true,
+              selected: entry.value == selectedValue,
+              child: InkWell(
                 onTap: () => _handleTap(entry.value),
 
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     AnimatedContainer(
-                      duration: const Duration(
-                        milliseconds: 180,
-                      ),
+                      duration: MediaQuery.disableAnimationsOf(context)
+                          ? Duration.zero
+                          : const Duration(milliseconds: 180),
 
-                      width: widget.size,
-                      height: widget.size,
+                      width: widget.size < 48 ? 48 : widget.size,
+                      height: widget.size < 48 ? 48 : widget.size,
 
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
 
                         color: isSelected
-                            ? const Color(0xFF34C759)
-                            : Theme.of(context).colorScheme.surfaceContainerHighest,
+                            ? Theme.of(context).colorScheme.secondary
+                            : Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
                       ),
 
                       child: isSelected
                           ? Icon(
-                        Icons.check,
-                        color: Colors.white,
-                        size: widget.size * 0.5,
-                      )
+                              Icons.check,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                              size: widget.size * 0.5,
+                            )
                           : null,
                     ),
 
@@ -157,16 +154,18 @@ class _StepperSelectWidgetState
                         fontSize: widget.fontSize,
                         fontWeight: widget.fontWeight,
                         fontFamily: widget.fontFamily,
-                        color: widget.color ?? Theme.of(context).colorScheme.onSurface,
+                        color:
+                            widget.color ??
+                            Theme.of(context).colorScheme.onSurface,
                         decoration: widget.decoration,
                       ),
                     ),
                   ],
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        }),
       ),
     );
   }

@@ -1,10 +1,10 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'dart:io';
 
 import 'package:ceramic_app/ui/pages/image_view/image_view_page.dart';
 import 'package:ceramic_app/ui/pages/materials/clays/clays_create/clays_create_page_controller.dart';
 import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:image_picker/image_picker.dart';
@@ -17,6 +17,7 @@ class ClaysCreatePage extends StatefulWidget {
 }
 
 class _ClaysCreatePageState extends State<ClaysCreatePage> {
+  bool _saving = false;
   final ClaysCreatePageController _controller = ClaysCreatePageController();
 
   @override
@@ -33,47 +34,59 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.clayBody),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () {
-              _createClay();
-            },
+    return PopScope(
+      canPop: !_saving,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(context.l10n.clayBody),
+          leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+            icon: const Icon(Icons.arrow_back),
+            onPressed: _saving
+                ? null
+                : () {
+                    Navigator.of(context).pop();
+                  },
           ),
-        ],
-      ),
-      body: SafeArea(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (_, _) {
-            if (_controller.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+          actions: [
+            IconButton(
+              tooltip: context.l10n.save,
+              icon: _saving
+                  ? const SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.check),
+              onPressed: _saving ? null : _createClay,
+            ),
+          ],
+        ),
+        body: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: SafeArea(
+            child: AbsorbPointer(
+              absorbing: _saving,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (_, _) {
+                  if (_controller.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-            if (_controller.error != null) {
-              return Center(
-                child: Text(
-                  context.l10n.errorWithDetails('${_controller.error}'),
-                ),
-              );
-            }
+                  if (_controller.error != null) {
+                    return Center(child: Text(context.l10n.operationFailed));
+                  }
 
-            return RefreshIndicator(
-              onRefresh: () async {
-                _controller.load();
-              },
-              child: _pageContent(_controller),
-            );
-          },
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      _controller.load();
+                    },
+                    child: _pageContent(_controller),
+                  );
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -134,7 +147,9 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
                   iconSize: 42,
                   width: 92,
                   height: 92,
-                  backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  backgroundColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                   onPressed: () async {
                     final source = await showModalBottomSheet<ImageSource>(
                       context: context,
@@ -176,25 +191,15 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Information
           // =========================
-          TextWidget(
-            text: context.l10n.information,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.information),
           const SizedBox(height: 8),
-          TextWidget(
-            text: context.l10n.title,
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 4),
           TextFieldWidget(
+            label: context.l10n.title,
             placeholder: context.l10n.title,
             onChanged: (value) async {
               controller.setTitle(value);
@@ -202,16 +207,10 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
             },
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
 
-          TextWidget(
-            text: context.l10n.supplier,
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 4),
           TextFieldWidget(
+            label: context.l10n.supplier,
             placeholder: context.l10n.supplier,
             onChanged: (value) async {
               controller.setSupplier(value);
@@ -219,19 +218,16 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Notes
           // =========================
-          TextWidget(
-            text: context.l10n.notes,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.notes),
           const SizedBox(height: 8),
 
           TextFieldWidget(
+            semanticsLabel: context.l10n.notes,
             placeholder: context.l10n.clayNotes,
 
             minLines: 3,
@@ -250,6 +246,7 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
   }
 
   Future<void> _createClay() async {
+    if (_saving) return;
     if (_controller.title.trim().isEmpty || _controller.title.length > 255) {
       ScaffoldMessenger.of(
         context,
@@ -257,23 +254,26 @@ class _ClaysCreatePageState extends State<ClaysCreatePage> {
       return;
     }
     if (_controller.supplier.length > 255 || _controller.notes.length > 255) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(context.l10n.materialFieldsTooLong),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.materialFieldsTooLong)),
+      );
       return;
     }
 
+    FocusScope.of(context).unfocus();
+    setState(() => _saving = true);
     try {
       await _controller.create();
       if (!mounted) return;
 
       Navigator.pop(context, true);
-    } catch (e) {
-      debugPrint("Create failed: $e");
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
-      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 }

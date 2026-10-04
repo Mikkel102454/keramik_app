@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
@@ -93,52 +94,78 @@ class _CeramicPickerPageState extends State<CeramicPickerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.chooseCeramic)),
-      body: FutureBuilder<_CeramicPickerData>(
-        future: _load,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: FilledButton(
-                onPressed: () => setState(() => _load = _fetch()),
-                child: Text(context.l10n.retry),
-              ),
-            );
-          }
-          final data = snapshot.requireData;
-          if (data.ceramics.isEmpty) {
-            return Center(child: Text(context.l10n.noCeramicsToShare));
-          }
-          return GridView.builder(
-            padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisSpacing: 12,
-              crossAxisSpacing: 12,
-              childAspectRatio: .72,
-            ),
-            itemCount: data.ceramics.length,
-            itemBuilder: (context, index) {
-              final ceramic = data.ceramics[index];
-              String? stage;
-              String? clay;
-              for (final item in data.stages) {
-                if (item.id == ceramic.stageId) stage = item.title;
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: FutureBuilder<_CeramicPickerData>(
+            future: _load,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
               }
-              for (final item in data.clays) {
-                if (item.id == ceramic.clayTypeId) clay = item.title;
+              if (snapshot.hasError) {
+                return Center(
+                  child: FilledButton(
+                    onPressed: () => setState(() => _load = _fetch()),
+                    child: Text(context.l10n.retry),
+                  ),
+                );
               }
-              return CeramicJournalCard(
-                ceramic: ceramic,
-                stageTitle: localizedStageName(context.l10n, stage ?? ''),
-                clayTitle: clay,
-                onTap: () => Navigator.pop(context, ceramic),
+              final data = snapshot.requireData;
+              if (data.ceramics.isEmpty) {
+                return StudioEmptyState(
+                  icon: Icons.ios_share_outlined,
+                  title: context.l10n.noCeramicsToShare,
+                );
+              }
+              return LayoutBuilder(
+                builder: (context, constraints) => GridView.builder(
+                  padding: const EdgeInsets.all(16),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount:
+                        (constraints.maxWidth /
+                                (230 *
+                                    (MediaQuery.textScalerOf(
+                                              context,
+                                            ).scale(14) /
+                                            14)
+                                        .clamp(1, 1.5)))
+                            .floor()
+                            .clamp(1, 4)
+                            .toInt(),
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    mainAxisExtent:
+                        350.0 +
+                        (MediaQuery.textScalerOf(context).scale(14) / 14 - 1)
+                                .clamp(0, 2)
+                                .toDouble() *
+                            100,
+                  ),
+                  itemCount: data.ceramics.length,
+                  itemBuilder: (context, index) {
+                    final ceramic = data.ceramics[index];
+                    String? stage;
+                    String? clay;
+                    for (final item in data.stages) {
+                      if (item.id == ceramic.stageId) stage = item.title;
+                    }
+                    for (final item in data.clays) {
+                      if (item.id == ceramic.clayTypeId) clay = item.title;
+                    }
+                    return CeramicJournalCard(
+                      ceramic: ceramic,
+                      stageTitle: localizedStageName(context.l10n, stage ?? ''),
+                      clayTitle: clay,
+                      onTap: () => Navigator.pop(context, ceramic),
+                    );
+                  },
+                ),
               );
             },
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -217,7 +244,7 @@ class _ShareCeramicConversationPickerPageState
         _cursor = page.nextCursor;
       });
     } catch (exception) {
-      if (mounted) setState(() => _error = exception.toString());
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -253,7 +280,7 @@ class _ShareCeramicConversationPickerPageState
       _clientIds.remove(conversation.id);
       if (mounted) Navigator.pop(context, true);
     } catch (exception) {
-      if (mounted) setState(() => _error = exception.toString());
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -264,51 +291,61 @@ class _ShareCeramicConversationPickerPageState
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.shareToConversation)),
       body: SafeArea(
-        child: Column(
-          children: [
-            if (_error != null)
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  _error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ),
-            Expanded(
-              child: _items.isEmpty && _loading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _items.isEmpty
-                  ? Center(child: Text(context.l10n.noWritableConversations))
-                  : ListView.builder(
-                      itemCount: _items.length,
-                      itemBuilder: (context, index) {
-                        final item = _items[index];
-                        return ListTile(
-                          enabled: !_sending,
-                          leading: ProfileAvatar(
-                            initials: item.avatarInitials,
-                            colorHex: item.avatarColor,
-                            imageUrl: item.otherUser?.avatarUrl,
-                          ),
-                          title: Text(item.title),
-                          subtitle: Text(
-                            item.type == 'GROUP'
-                                ? context.l10n.memberCount(item.memberCount)
-                                : context.l10n.directConversation,
-                          ),
-                          onTap: () => _share(item),
-                        );
-                      },
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: SafeArea(
+            child: Column(
+              children: [
+                if (_error != null)
+                  Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Text(
+                      _error!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
-            ),
-            if (_cursor != null)
-              TextButton(
-                onPressed: _loading ? null : _load,
-                child: Text(
-                  _loading ? context.l10n.loading : context.l10n.loadMore,
+                  ),
+                Expanded(
+                  child: _items.isEmpty && _loading
+                      ? const Center(child: CircularProgressIndicator())
+                      : _items.isEmpty
+                      ? Center(
+                          child: Text(context.l10n.noWritableConversations),
+                        )
+                      : ListView.builder(
+                          itemCount: _items.length,
+                          itemBuilder: (context, index) {
+                            final item = _items[index];
+                            return ListTile(
+                              enabled: !_sending,
+                              leading: ProfileAvatar(
+                                initials: item.avatarInitials,
+                                colorHex: item.avatarColor,
+                                imageUrl: item.otherUser?.avatarUrl,
+                              ),
+                              title: Text(item.title),
+                              subtitle: Text(
+                                item.type == 'GROUP'
+                                    ? context.l10n.memberCount(item.memberCount)
+                                    : context.l10n.directConversation,
+                              ),
+                              onTap: () => _share(item),
+                            );
+                          },
+                        ),
                 ),
-              ),
-          ],
+                if (_cursor != null)
+                  TextButton(
+                    onPressed: _loading ? null : _load,
+                    child: Text(
+                      _loading ? context.l10n.loading : context.l10n.loadMore,
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ),
       ),
     );

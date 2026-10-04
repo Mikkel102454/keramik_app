@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -45,9 +46,13 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             state.whenOrNull(
               error: (message) {
+                final feedback =
+                    context.read<AuthenticationCubit>().deletionPending
+                    ? context.l10n.operationFailed
+                    : message;
                 ScaffoldMessenger.of(
                   context,
-                ).showSnackBar(SnackBar(content: Text(message)));
+                ).showSnackBar(SnackBar(content: Text(feedback)));
               },
             );
           },
@@ -60,169 +65,189 @@ class _LoginPageState extends State<LoginPage> {
 
             return Center(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 24,
+                ),
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 400),
+                  constraints: const BoxConstraints(maxWidth: 460),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const SizedBox(height: 60),
-
-                      Text(
-                        context.l10n.welcomeBack,
-                        style: theme.textTheme.headlineMedium,
-                        textAlign: TextAlign.center,
-                      ),
-
-                      const SizedBox(height: 8),
-
-                      Text(
-                        context.l10n.signInToAccount,
-                        style: theme.textTheme.bodyMedium,
-                        textAlign: TextAlign.center,
-                      ),
-
-                      const SizedBox(height: 40),
-
-                      TextFieldWidget(
-                        placeholder: context.l10n.emailOrUsername,
-                        keyboardType: TextInputType.text,
-                        maxLines: 1,
-                        onChanged: (value) async {
-                          context.read<AuthenticationCubit>().identifierChanged(
-                            value,
-                          );
-                          return true;
-                        },
-                      ),
-
+                      const Center(child: StudioBrandMark(size: 56)),
                       const SizedBox(height: 16),
-
-                      TextFieldWidget(
-                        placeholder: context.l10n.password,
-                        obscureText: true,
-                        maxLines: 1,
-                        onChanged: (value) async {
-                          context.read<AuthenticationCubit>().passwordChanged(
-                            value,
-                          );
-                          return true;
-                        },
+                      Text(
+                        context.l10n.appTitle,
+                        style: theme.textTheme.headlineSmall,
+                        textAlign: TextAlign.center,
                       ),
-
-                      const SizedBox(height: 12),
-
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: _openingWebsite || isLoading
-                              ? null
-                              : () => _openAccountPage(
-                                  () => AppConstants.api.forgotPasswordUrl,
-                                ),
-                          child: Text(
-                            context.l10n.forgotPassword,
-                            style: TextStyle(
-                              color: theme.colorScheme.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      SizedBox(
-                        height: 48,
-                        child: ElevatedButton(
-                          onPressed: isLoading
-                              ? null
-                              : () {
-                                  context.read<AuthenticationCubit>().login();
-                                },
-                          child: isLoading
-                              ? const CircularProgressIndicator()
-                              : Text(context.l10n.logIn),
-                        ),
-                      ),
-
-                      const SizedBox(height: 24),
-
-                      if (authentication.deletionPending) ...[
-                        Card(
-                          color: theme.colorScheme.errorContainer,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Text(
-                                  context.l10n.accountDeletionPending,
-                                  style: theme.textTheme.titleMedium,
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  context
-                                      .l10n
-                                      .accountDeletionPendingExplanation,
-                                ),
-                                const SizedBox(height: 12),
-                                FilledButton(
-                                  onPressed: isLoading
-                                      ? null
-                                      : authentication.cancelDeletion,
-                                  child: Text(context.l10n.cancelDeletion),
-                                ),
-                                TextButton(
-                                  onPressed: isLoading
-                                      ? null
-                                      : authentication.signOutPendingDeletion,
-                                  child: Text(context.l10n.signOut),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-
-                      Row(
+                      const SizedBox(height: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Expanded(child: Divider()),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Text(context.l10n.or),
+                          Text(
+                            context.l10n.welcomeBack,
+                            style: theme.textTheme.titleLarge,
+                            textAlign: TextAlign.center,
                           ),
-                          const Expanded(child: Divider()),
-                        ],
-                      ),
 
-                      const SizedBox(height: 24),
+                          const SizedBox(height: 8),
 
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 4,
-                        children: [
-                          Text(context.l10n.noAccountQuestion),
-                          TextButton(
-                            onPressed: _openingWebsite || isLoading
-                                ? null
-                                : () => _openAccountPage(
-                                    () => AppConstants.api.signupUrl,
-                                  ),
-                            child: Text(
-                              context.l10n.signUp,
-                              style: TextStyle(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.w600,
+                          Text(
+                            context.l10n.signInToAccount,
+                            style: theme.textTheme.bodyMedium,
+                            textAlign: TextAlign.center,
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          TextFieldWidget(
+                            placeholder: context.l10n.emailOrUsername,
+                            keyboardType: TextInputType.text,
+                            maxLines: 1,
+                            onChanged: (value) async {
+                              context
+                                  .read<AuthenticationCubit>()
+                                  .identifierChanged(value);
+                              return true;
+                            },
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          TextFieldWidget(
+                            placeholder: context.l10n.password,
+                            obscureText: true,
+                            maxLines: 1,
+                            onChanged: (value) async {
+                              context
+                                  .read<AuthenticationCubit>()
+                                  .passwordChanged(value);
+                              return true;
+                            },
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: _openingWebsite || isLoading
+                                  ? null
+                                  : () => _openAccountPage(
+                                      () => AppConstants.api.forgotPasswordUrl,
+                                    ),
+                              child: Text(
+                                context.l10n.forgotPassword,
+                                style: TextStyle(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
+
+                          const SizedBox(height: 16),
+
+                          FilledButton(
+                            onPressed: isLoading
+                                ? null
+                                : () {
+                                    context.read<AuthenticationCubit>().login();
+                                  },
+                            child: isLoading
+                                ? SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: theme.colorScheme.onPrimary,
+                                    ),
+                                  )
+                                : Text(context.l10n.logIn),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          if (authentication.deletionPending) ...[
+                            Card(
+                              color: theme.colorScheme.errorContainer,
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      context.l10n.accountDeletionPending,
+                                      style: theme.textTheme.titleMedium,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      context
+                                          .l10n
+                                          .accountDeletionPendingExplanation,
+                                    ),
+                                    const SizedBox(height: 12),
+                                    FilledButton(
+                                      onPressed: isLoading
+                                          ? null
+                                          : authentication.cancelDeletion,
+                                      child: Text(context.l10n.cancelDeletion),
+                                    ),
+                                    TextButton(
+                                      onPressed: isLoading
+                                          ? null
+                                          : authentication
+                                                .signOutPendingDeletion,
+                                      child: Text(context.l10n.signOut),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+
+                          Row(
+                            children: [
+                              const Expanded(child: Divider()),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Text(context.l10n.or),
+                              ),
+                              const Expanded(child: Divider()),
+                            ],
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 4,
+                            children: [
+                              Text(context.l10n.noAccountQuestion),
+                              TextButton(
+                                onPressed: _openingWebsite || isLoading
+                                    ? null
+                                    : () => _openAccountPage(
+                                        () => AppConstants.api.signupUrl,
+                                      ),
+                                child: Text(
+                                  context.l10n.signUp,
+                                  style: TextStyle(
+                                    color: theme.colorScheme.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ],
                       ),
-
-                      const SizedBox(height: 40),
                     ],
                   ),
                 ),

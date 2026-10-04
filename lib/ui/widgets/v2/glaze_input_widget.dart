@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 import 'text_field_widget.dart';
 
@@ -45,14 +46,9 @@ class GlazeInputWidget extends StatefulWidget {
   /// < 0 = failure
   final Future<int> Function(int glazeId)? onCreate;
 
-  final Future<bool> Function(
-      int glazeEntryId,
-      )? onDelete;
+  final Future<bool> Function(int glazeEntryId)? onDelete;
 
-  final Future<bool> Function(
-      int glazeEntryId,
-      String notes,
-      )? onNotesChanged;
+  final Future<bool> Function(int glazeEntryId, String notes)? onNotesChanged;
 
   // =========================
   // Styling
@@ -61,7 +57,7 @@ class GlazeInputWidget extends StatefulWidget {
   final double titleFontSize;
   final FontWeight titleFontWeight;
   final String? titleFontFamily;
-  final Color titleColor;
+  final Color? titleColor;
   final TextDecoration titleDecoration;
 
   final Duration? debounceDuration;
@@ -69,13 +65,13 @@ class GlazeInputWidget extends StatefulWidget {
   final double dropdownFontSize;
   final FontWeight dropdownFontWeight;
   final String? dropdownFontFamily;
-  final Color dropdownColor;
+  final Color? dropdownColor;
   final TextDecoration dropdownDecoration;
 
   final double iconSize;
 
-  final Color backgroundColor;
-  final Color dropdownBackgroundColor;
+  final Color? backgroundColor;
+  final Color? dropdownBackgroundColor;
 
   final BorderRadius borderRadius;
 
@@ -95,45 +91,33 @@ class GlazeInputWidget extends StatefulWidget {
     this.titleFontSize = 16,
     this.titleFontWeight = FontWeight.w600,
     this.titleFontFamily,
-    this.titleColor = Colors.black,
+    this.titleColor,
     this.titleDecoration = TextDecoration.none,
 
     this.dropdownFontSize = 16,
     this.dropdownFontWeight = FontWeight.w500,
     this.dropdownFontFamily,
-    this.dropdownColor = Colors.black,
+    this.dropdownColor,
     this.dropdownDecoration = TextDecoration.none,
 
     this.iconSize = 22,
 
-    this.backgroundColor = const Color(
-      0xFFF5F5F5,
-    ),
+    this.backgroundColor,
 
-    this.dropdownBackgroundColor =
-    const Color(0xFFF1F1F1),
+    this.dropdownBackgroundColor,
 
-    this.borderRadius =
-    const BorderRadius.all(
-      Radius.circular(14),
-    ),
+    this.borderRadius = const BorderRadius.all(Radius.circular(14)),
 
-    this.itemPadding =
-    const EdgeInsets.all(14),
+    this.itemPadding = const EdgeInsets.all(14),
 
-    this.dropdownPadding =
-    const EdgeInsets.symmetric(
-      horizontal: 16,
-    ),
+    this.dropdownPadding = const EdgeInsets.symmetric(horizontal: 16),
   });
 
   @override
-  State<GlazeInputWidget> createState() =>
-      _GlazeInputWidgetState();
+  State<GlazeInputWidget> createState() => _GlazeInputWidgetState();
 }
 
-class _GlazeInputWidgetState
-    extends State<GlazeInputWidget> {
+class _GlazeInputWidgetState extends State<GlazeInputWidget> {
   late List<GlazeEntry> entries;
 
   late List<GlazeEntry> lastValidEntries;
@@ -146,25 +130,17 @@ class _GlazeInputWidgetState
     lastValidEntries = [...widget.initialValues];
   }
 
-  List<MapEntry<String, int>>
-  get availableEntries {
-    final selectedIds = entries
-        .map((e) => e.glazeId)
-        .toSet();
+  List<MapEntry<String, int>> get availableEntries {
+    final selectedIds = entries.map((e) => e.glazeId).toSet();
 
     return widget.glazeEntries
-        .where(
-          (entry) =>
-      !selectedIds.contains(entry.value),
-    )
+        .where((entry) => !selectedIds.contains(entry.value))
         .toList();
   }
 
-  Future<void> _createGlaze(
-      int glazeId,
-      ) async {
+  Future<void> _createGlaze(int glazeId) async {
     final glaze = widget.glazeEntries.firstWhere(
-          (entry) => entry.value == glazeId,
+      (entry) => entry.value == glazeId,
     );
 
     final optimisticEntry = GlazeEntry(
@@ -177,16 +153,12 @@ class _GlazeInputWidgetState
     final previous = [...lastValidEntries];
 
     setState(() {
-      entries = [
-        ...entries,
-        optimisticEntry,
-      ];
+      entries = [...entries, optimisticEntry];
     });
 
     if (widget.onCreate == null) {
       final updated = optimisticEntry.copyWith(
-        id: DateTime.now()
-            .millisecondsSinceEpoch,
+        id: DateTime.now().millisecondsSinceEpoch,
       );
 
       setState(() {
@@ -199,8 +171,7 @@ class _GlazeInputWidgetState
       return;
     }
 
-    final createdId =
-    await widget.onCreate!(glazeId);
+    final createdId = await widget.onCreate!(glazeId);
 
     if (!mounted) {
       return;
@@ -217,58 +188,37 @@ class _GlazeInputWidgetState
     setState(() {
       entries.removeLast();
 
-      entries.add(
-        optimisticEntry.copyWith(
-          id: createdId,
-        ),
-      );
+      entries.add(optimisticEntry.copyWith(id: createdId));
     });
 
     lastValidEntries = [...entries];
   }
 
-  Future<void> _deleteEntry(
-      GlazeEntry entry,
-      ) async {
-    final confirmed =
-    await showDialog<bool>(
+  Future<void> _deleteEntry(GlazeEntry entry) async {
+    final confirmed = await showDialog<bool>(
       context: context,
 
       builder: (_) {
         return AlertDialog(
-          title: const Text(
-            "Remove glaze?",
-          ),
+          title: Text(context.l10n.removeApplication),
 
-          content: Text(
-            "Remove ${entry.glazeName}?",
-          ),
+          content: Text("Remove ${entry.glazeName}?"),
 
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(
-                  context,
-                  false,
-                );
+                Navigator.pop(context, false);
               },
 
-              child: const Text(
-                "Cancel",
-              ),
+              child: Text(context.l10n.cancel),
             ),
 
             TextButton(
               onPressed: () {
-                Navigator.pop(
-                  context,
-                  true,
-                );
+                Navigator.pop(context, true);
               },
 
-              child: const Text(
-                "Remove",
-              ),
+              child: Text(context.l10n.delete),
             ),
           ],
         );
@@ -282,9 +232,7 @@ class _GlazeInputWidgetState
     final previous = [...lastValidEntries];
 
     setState(() {
-      entries.removeWhere(
-            (e) => e.id == entry.id,
-      );
+      entries.removeWhere((e) => e.id == entry.id);
     });
 
     if (widget.onDelete == null) {
@@ -292,8 +240,7 @@ class _GlazeInputWidgetState
       return;
     }
 
-    final success =
-    await widget.onDelete!(entry.id);
+    final success = await widget.onDelete!(entry.id);
 
     if (!mounted) {
       return;
@@ -310,10 +257,7 @@ class _GlazeInputWidgetState
     lastValidEntries = [...entries];
   }
 
-  Future<bool> _updateNotes(
-      GlazeEntry entry,
-      String notes,
-      ) async {
+  Future<bool> _updateNotes(GlazeEntry entry, String notes) async {
     final previous = [...lastValidEntries];
 
     setState(() {
@@ -322,9 +266,7 @@ class _GlazeInputWidgetState
           return e;
         }
 
-        return e.copyWith(
-          notes: notes,
-        );
+        return e.copyWith(notes: notes);
       }).toList();
     });
 
@@ -333,11 +275,7 @@ class _GlazeInputWidgetState
       return true;
     }
 
-    final success =
-    await widget.onNotesChanged!(
-      entry.id,
-      notes,
-    );
+    final success = await widget.onNotesChanged!(entry.id, notes);
 
     if (!mounted) {
       return false;
@@ -353,18 +291,14 @@ class _GlazeInputWidgetState
     return true;
   }
 
-  void _toggleExpanded(
-      GlazeEntry entry,
-      ) {
+  void _toggleExpanded(GlazeEntry entry) {
     setState(() {
       entries = entries.map((e) {
         if (e.id != entry.id) {
           return e;
         }
 
-        return e.copyWith(
-          expanded: !e.expanded,
-        );
+        return e.copyWith(expanded: !e.expanded);
       }).toList();
     });
 
@@ -376,315 +310,223 @@ class _GlazeInputWidgetState
     return Column(
       children: [
         AnimatedSwitcher(
-          duration: const Duration(
-            milliseconds: 180,
-          ),
+          duration: const Duration(milliseconds: 180),
 
           child: entries.isEmpty
               ? const SizedBox.shrink()
               : Column(
-            children: entries.map((entry) {
-              return Padding(
-                padding:
-                const EdgeInsets.only(
-                  bottom: 12,
-                ),
+                  children: entries.map((entry) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
 
-                child: AnimatedContainer(
-                  duration:
-                  const Duration(
-                    milliseconds: 180,
-                  ),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 180),
 
-                  padding:
-                  widget.itemPadding,
+                        padding: widget.itemPadding,
 
-                  decoration:
-                  BoxDecoration(
-                    color:
-                    widget.backgroundColor,
+                        decoration: BoxDecoration(
+                          color:
+                              widget.backgroundColor ??
+                              Theme.of(context).colorScheme.surfaceContainerLow,
 
-                    borderRadius:
-                    widget.borderRadius,
-                  ),
+                          borderRadius: widget.borderRadius,
+                        ),
 
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment:
-                        CrossAxisAlignment
-                            .center,
+                        child: Column(
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
 
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              behavior: HitTestBehavior.opaque,
+                              children: [
+                                Expanded(
+                                  child: GestureDetector(
+                                    behavior: HitTestBehavior.opaque,
 
-                              onTap: () {
-                                _toggleExpanded(
-                                  entry,
-                                );
-                              },
+                                    onTap: () {
+                                      _toggleExpanded(entry);
+                                    },
 
-                              child: SizedBox(
-                                height: 36,
+                                    child: SizedBox(
+                                      height: 36,
 
-                                child: Row(
-                                children: [
-                                  AnimatedRotation(
-                                    turns: entry
-                                        .expanded
-                                        ? 0.5
-                                        : 0,
+                                      child: Row(
+                                        children: [
+                                          AnimatedRotation(
+                                            turns: entry.expanded ? 0.5 : 0,
 
-                                    duration:
-                                    const Duration(
-                                      milliseconds:
-                                      180,
-                                    ),
+                                            duration: const Duration(
+                                              milliseconds: 180,
+                                            ),
 
-                                    child:
-                                    Icon(
-                                      Icons
-                                          .keyboard_arrow_down,
+                                            child: Icon(
+                                              Icons.keyboard_arrow_down,
 
-                                      size:
-                                      widget
-                                          .iconSize,
-                                    ),
-                                  ),
+                                              size: widget.iconSize,
+                                            ),
+                                          ),
 
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
+                                          const SizedBox(width: 10),
 
-                                  Expanded(
-                                    child: Text(
-                                      entry
-                                          .glazeName,
+                                          Expanded(
+                                            child: Text(
+                                              entry.glazeName,
 
-                                      style:
-                                      TextStyle(
-                                        fontSize:
-                                        widget
-                                            .titleFontSize,
+                                              style: TextStyle(
+                                                fontSize: widget.titleFontSize,
 
-                                        fontWeight:
-                                        widget
-                                            .titleFontWeight,
+                                                fontWeight:
+                                                    widget.titleFontWeight,
 
-                                        fontFamily:
-                                        widget
-                                            .titleFontFamily,
+                                                fontFamily:
+                                                    widget.titleFontFamily,
 
-                                        color:
-                                        widget
-                                            .titleColor,
+                                                color:
+                                                    widget.titleColor ??
+                                                    Theme.of(
+                                                      context,
+                                                    ).colorScheme.onSurface,
 
-                                        decoration:
-                                        widget
-                                            .titleDecoration,
+                                                decoration:
+                                                    widget.titleDecoration,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                ],
+                                ),
+
+                                SizedBox(
+                                  width: 36,
+                                  height: 36,
+
+                                  child: IconButton(
+                                    padding: EdgeInsets.zero,
+
+                                    constraints: const BoxConstraints(),
+
+                                    onPressed: () {
+                                      _deleteEntry(entry);
+                                    },
+
+                                    icon: Icon(
+                                      Icons.close,
+                                      size: widget.iconSize,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            AnimatedCrossFade(
+                              firstChild: const SizedBox.shrink(),
+
+                              secondChild: Padding(
+                                padding: const EdgeInsets.only(top: 14),
+
+                                child: TextFieldWidget(
+                                  initialValue: entry.notes,
+
+                                  placeholder: context.l10n.notes,
+
+                                  minLines: 3,
+                                  maxLines: 5,
+
+                                  debounceDuration: widget.debounceDuration,
+
+                                  onSubmitted: (value) async {
+                                    return await _updateNotes(entry, value);
+                                  },
+
+                                  onChanged: (value) async {
+                                    return await _updateNotes(entry, value);
+                                  },
                                 ),
                               ),
+
+                              crossFadeState: entry.expanded
+                                  ? CrossFadeState.showSecond
+                                  : CrossFadeState.showFirst,
+
+                              duration: const Duration(milliseconds: 180),
                             ),
-                          ),
-
-                          SizedBox(
-                            width: 36,
-                            height: 36,
-
-                            child: IconButton(
-                              padding:
-                              EdgeInsets
-                                  .zero,
-
-                              constraints:
-                              const BoxConstraints(),
-
-                              onPressed: () {
-                                _deleteEntry(
-                                  entry,
-                                );
-                              },
-
-                              icon:
-                              Icon(
-                                Icons.close,
-                                size: widget
-                                    .iconSize,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      AnimatedCrossFade(
-                        firstChild:
-                        const SizedBox
-                            .shrink(),
-
-                        secondChild:
-                        Padding(
-                          padding:
-                          const EdgeInsets
-                              .only(
-                            top: 14,
-                          ),
-
-                          child:
-                          TextFieldWidget(
-                            initialValue:
-                            entry.notes,
-
-                            placeholder:
-                            "Notes",
-
-                            minLines: 3,
-                            maxLines: 5,
-
-                            debounceDuration: widget.debounceDuration,
-
-                            onSubmitted: (value) async {
-                              return await _updateNotes(
-                                entry,
-                                value,
-                              );
-                            },
-
-                            onChanged: (value) async {
-                              return await _updateNotes(
-                                entry,
-                                value,
-                              );
-                            },
-                          ),
-                        ),
-
-                        crossFadeState:
-                        entry.expanded
-                            ? CrossFadeState
-                            .showSecond
-                            : CrossFadeState
-                            .showFirst,
-
-                        duration:
-                        const Duration(
-                          milliseconds:
-                          180,
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    );
+                  }).toList(),
                 ),
-              );
-            }).toList(),
-          ),
         ),
 
         Container(
-          padding:
-          widget.dropdownPadding,
+          padding: widget.dropdownPadding,
 
           decoration: BoxDecoration(
             color:
-            widget.dropdownBackgroundColor,
+                widget.dropdownBackgroundColor ??
+                Theme.of(context).colorScheme.surfaceContainerLow,
 
-            borderRadius:
-            widget.borderRadius,
+            borderRadius: widget.borderRadius,
           ),
 
-          child:
-          DropdownButtonHideUnderline(
+          child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
               value: null,
 
               isExpanded: true,
 
               hint: Text(
-                "Select",
+                context.l10n.select,
 
                 style: TextStyle(
-                  color: const Color(
-                    0xFF9A9A9A,
-                  ),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
 
-                  fontSize:
-                  widget
-                      .dropdownFontSize,
+                  fontSize: widget.dropdownFontSize,
 
-                  fontWeight:
-                  widget
-                      .dropdownFontWeight,
+                  fontWeight: widget.dropdownFontWeight,
 
-                  fontFamily:
-                  widget
-                      .dropdownFontFamily,
+                  fontFamily: widget.dropdownFontFamily,
 
-                  decoration:
-                  widget
-                      .dropdownDecoration,
+                  decoration: widget.dropdownDecoration,
                 ),
               ),
 
               icon: Icon(
-                Icons
-                    .arrow_drop_down,
-                size:
-                widget.iconSize,
-                color: Color(0xFF9A9A9A),
+                Icons.arrow_drop_down,
+                size: widget.iconSize,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
 
-              borderRadius:
-              BorderRadius.circular(
-                14,
-              ),
+              borderRadius: BorderRadius.circular(14),
 
-              onChanged: (
-                  value,
-                  ) async {
+              onChanged: (value) async {
                 if (value == null) {
                   return;
                 }
 
-                await _createGlaze(
-                  value,
-                );
+                await _createGlaze(value);
               },
 
-              items: availableEntries.map((
-                  entry,
-                  ) {
-                return DropdownMenuItem<
-                    int>(
+              items: availableEntries.map((entry) {
+                return DropdownMenuItem<int>(
                   value: entry.value,
 
                   child: Text(
                     entry.key,
 
                     style: TextStyle(
-                      fontSize:
-                      widget
-                          .dropdownFontSize,
+                      fontSize: widget.dropdownFontSize,
 
-                      fontWeight:
-                      widget
-                          .dropdownFontWeight,
+                      fontWeight: widget.dropdownFontWeight,
 
-                      fontFamily:
-                      widget
-                          .dropdownFontFamily,
+                      fontFamily: widget.dropdownFontFamily,
 
                       color:
-                      widget
-                          .dropdownColor,
+                          widget.dropdownColor ??
+                          Theme.of(context).colorScheme.onSurface,
 
-                      decoration:
-                      widget
-                          .dropdownDecoration,
+                      decoration: widget.dropdownDecoration,
                     ),
                   ),
                 );

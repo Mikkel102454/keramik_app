@@ -32,12 +32,22 @@ class _Authentication extends AuthenticationCubit {
   String identifier = '';
   String password = '';
   int logins = 0;
+  int cancellations = 0;
   @override
   void identifierChanged(String value) => identifier = value;
   @override
   void passwordChanged(String value) => password = value;
   @override
   Future<void> login() async => logins++;
+  @override
+  Future<void> cancelDeletion() async {
+    cancellations++;
+    emit(const AuthenticationState.loading());
+    await Future<void>.value();
+    emit(
+      const AuthenticationState.error('private cancellation backend detail'),
+    );
+  }
 }
 
 void main() {
@@ -66,6 +76,38 @@ void main() {
     );
   }
 
+  testWidgets(
+    'pending deletion cancellation errors keep safe recovery controls',
+    (tester) async {
+      authentication.deletionPending = true;
+      await show(tester);
+      await tester.ensureVisible(find.text('Cancel deletion'));
+      await tester.pump();
+      await tester.tap(find.text('Cancel deletion'));
+      await tester.pumpAndSettle();
+      expect(
+        find.text('That action could not be completed. Please try again.'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('private cancellation backend detail'),
+        findsNothing,
+      );
+      expect(find.text('Account deletion pending'), findsOneWidget);
+      expect(authentication.deletionPending, isTrue);
+      expect(authentication.cancellations, 1);
+      expect(
+        tester
+            .widget<FilledButton>(
+              find.widgetWithText(FilledButton, 'Cancel deletion'),
+            )
+            .onPressed,
+        isNotNull,
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('account buttons launch clean website URLs externally', (
     tester,
   ) async {
@@ -75,9 +117,12 @@ void main() {
       'private@example.invalid',
     );
     await tester.enterText(find.byType(TextField).at(1), 'not-sent-to-browser');
+    await tester.ensureVisible(find.text('Forgot password'));
+    await tester.pump();
     await tester.tap(find.text('Forgot password'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('Sign up'));
+    await tester.pump();
     await tester.tap(find.text('Sign up'));
     await tester.pumpAndSettle();
     expect(launcher.urls, [
@@ -108,14 +153,21 @@ void main() {
     final pending = Completer<bool>();
     launcher.result = () => pending.future;
     await show(tester);
+    await tester.ensureVisible(find.text('Forgot password'));
+    await tester.pump();
     await tester.tap(find.text('Forgot password'));
+    await tester.pump();
+    await tester.ensureVisible(find.text('Forgot password'));
     await tester.pump();
     await tester.tap(find.text('Forgot password'));
     await tester.ensureVisible(find.text('Sign up'));
+    await tester.pump();
     await tester.tap(find.text('Sign up'));
     expect(launcher.urls, hasLength(1));
     pending.complete(true);
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Sign up'));
+    await tester.pump();
     await tester.tap(find.text('Sign up'));
     await tester.pumpAndSettle();
     expect(launcher.urls, hasLength(2));
@@ -128,10 +180,14 @@ void main() {
       launcher.result = () async => false;
       await show(tester, language: language);
       final l10n = await AppLocalizations.delegate.load(Locale(language));
+      await tester.ensureVisible(find.text(l10n.forgotPassword));
+      await tester.pump();
       await tester.tap(find.text(l10n.forgotPassword));
       await tester.pumpAndSettle();
       expect(find.text(l10n.accountWebsiteOpenFailed), findsOneWidget);
       launcher.result = () async => throw StateError('platform failure');
+      await tester.ensureVisible(find.text(l10n.forgotPassword));
+      await tester.pump();
       await tester.tap(find.text(l10n.forgotPassword));
       await tester.pumpAndSettle();
       expect(launcher.urls, hasLength(2));
@@ -143,6 +199,8 @@ void main() {
     (tester) async {
       final semantics = tester.ensureSemantics();
       await show(tester);
+      await tester.ensureVisible(find.text('Forgot password'));
+      await tester.pump();
       expect(
         tester.getSemantics(find.text('Forgot password')),
         matchesSemantics(
@@ -156,6 +214,7 @@ void main() {
         ),
       );
       await tester.ensureVisible(find.text('Sign up'));
+      await tester.pump();
       expect(
         tester.getSemantics(find.text('Sign up')),
         matchesSemantics(
@@ -171,6 +230,7 @@ void main() {
       await tester.enterText(find.byType(TextField).at(0), 'existing-member');
       await tester.enterText(find.byType(TextField).at(1), 'existing-password');
       await tester.ensureVisible(find.text('Log in'));
+      await tester.pump();
       await tester.tap(find.text('Log in'));
       expect(authentication.identifier, 'existing-member');
       expect(authentication.password, 'existing-password');

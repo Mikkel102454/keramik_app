@@ -1321,8 +1321,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get publishFinishedTitle => 'Publish this finished piece?';
 
   @override
+  String get publicationFinishedRequirement => 'Set the stage to Finished';
+
+  @override
+  String get publicationPhotoRequirement => 'Add at least one photo';
+
+  @override
+  String get publicationPhotoRequiredTitle => 'Add a photo to publish';
+
+  @override
+  String get publicationPhotoRequiredBody =>
+      'Your piece is saved. Add at least one photo, then publish it from the piece\'s detail page.';
+
+  @override
   String get publishFinishedBody =>
-      'Published pieces can appear in Discover and on your profile. Up to 20 images and the listed public details will be visible.';
+      'Published pieces can appear in Discover and on your profile.';
 
   @override
   String get publicationAudienceEveryone =>
@@ -2608,4 +2621,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatProfileUnavailable => 'This profile is unavailable.';
+
+  @override
+  String get operationFailed =>
+      'That action could not be completed. Please try again.';
+
+  @override
+  String get pieceSavedPublicationUnconfirmed =>
+      'Your piece was saved. Publishing could not be confirmed. Open the piece to check or try again.';
 }

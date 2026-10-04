@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
@@ -82,110 +83,121 @@ class _MaterialInventoryAccountPageState
         icon: const Icon(Icons.add),
         label: Text(context.l10n.recordTransaction),
       ),
-      body: _loading && _transactions.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null && _transactions.isEmpty
-          ? Center(
-              child: FilledButton(
-                onPressed: _load,
-                child: Text(context.l10n.retry),
-              ),
-            )
-          : RefreshIndicator(
-              onRefresh: _load,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
-                children: [
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            _displayQuantity(_account.currentStock),
-                            style: Theme.of(context).textTheme.headlineMedium,
-                          ),
-                          Text(context.l10n.currentStock),
-                          const SizedBox(height: 8),
-                          Text(
-                            _account.lowStockThreshold == null
-                                ? context.l10n.noLowStockThreshold
-                                : context.l10n.thresholdValue(
-                                    _displayQuantity(
-                                      _account.lowStockThreshold!,
-                                    ),
-                                  ),
-                          ),
-                          if (!_account.materialAvailable)
-                            Text(context.l10n.catalogueMaterialRemoved),
-                        ],
-                      ),
-                    ),
+      body: SafeArea(
+        child: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: _loading && _transactions.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null && _transactions.isEmpty
+              ? Center(
+                  child: FilledButton(
+                    onPressed: _load,
+                    child: Text(context.l10n.retry),
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    context.l10n.transactionHistory,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  if (_transactions.isEmpty)
-                    Text(context.l10n.noTransactions)
-                  else
-                    for (final transaction in _transactions)
+                )
+              : RefreshIndicator(
+                  onRefresh: _load,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 100),
+                    children: [
                       Card(
-                        child: ListTile(
-                          leading: Icon(_transactionIcon(transaction.type)),
-                          title: Text(
-                            context.l10n.inventoryTransactionType(
-                              transaction.type,
-                            ),
-                          ),
-                          subtitle: Text(
-                            [
-                              _displaySignedQuantity(transaction.quantityDelta),
-                              DateFormat.yMMMd(
-                                Localizations.localeOf(context).toLanguageTag(),
-                              ).format(transaction.occurredAt),
-                              if (transaction.ceramicTitle != null)
-                                transaction.ceramicTitle!,
-                              if (transaction.reason != null)
-                                transaction.reason!,
-                            ].join(' · '),
-                          ),
-                          trailing:
-                              transaction.type == 'REVERSAL' ||
-                                  reversedTransactionIds.contains(
-                                    transaction.id,
-                                  )
-                              ? null
-                              : PopupMenuButton<String>(
-                                  onSelected: (action) => action == 'edit'
-                                      ? _edit(transaction)
-                                      : _reverse(transaction),
-                                  itemBuilder: (_) => [
-                                    if (transaction.type == 'PURCHASE' ||
-                                        transaction.type == 'USAGE')
-                                      PopupMenuItem(
-                                        value: 'edit',
-                                        child: Text(
-                                          context.l10n.editTransaction,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _displayQuantity(_account.currentStock),
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium,
+                              ),
+                              Text(context.l10n.currentStock),
+                              const SizedBox(height: 8),
+                              Text(
+                                _account.lowStockThreshold == null
+                                    ? context.l10n.noLowStockThreshold
+                                    : context.l10n.thresholdValue(
+                                        _displayQuantity(
+                                          _account.lowStockThreshold!,
                                         ),
                                       ),
-                                    PopupMenuItem(
-                                      value: 'reverse',
-                                      child: Text(
-                                        context.l10n.reverseTransaction,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              ),
+                              if (!_account.materialAvailable)
+                                Text(context.l10n.catalogueMaterialRemoved),
+                            ],
+                          ),
                         ),
                       ),
-                ],
-              ),
-            ),
+                      const SizedBox(height: 12),
+                      Text(
+                        context.l10n.transactionHistory,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 8),
+                      if (_transactions.isEmpty)
+                        Text(context.l10n.noTransactions)
+                      else
+                        for (final transaction in _transactions)
+                          Card(
+                            child: ListTile(
+                              leading: Icon(_transactionIcon(transaction.type)),
+                              title: Text(
+                                context.l10n.inventoryTransactionType(
+                                  transaction.type,
+                                ),
+                              ),
+                              subtitle: Text(
+                                [
+                                  _displaySignedQuantity(
+                                    transaction.quantityDelta,
+                                  ),
+                                  DateFormat.yMMMd(
+                                    Localizations.localeOf(
+                                      context,
+                                    ).toLanguageTag(),
+                                  ).format(transaction.occurredAt),
+                                  if (transaction.ceramicTitle != null)
+                                    transaction.ceramicTitle!,
+                                  if (transaction.reason != null)
+                                    transaction.reason!,
+                                ].join(' · '),
+                              ),
+                              trailing:
+                                  transaction.type == 'REVERSAL' ||
+                                      reversedTransactionIds.contains(
+                                        transaction.id,
+                                      )
+                                  ? null
+                                  : PopupMenuButton<String>(
+                                      onSelected: (action) => action == 'edit'
+                                          ? _edit(transaction)
+                                          : _reverse(transaction),
+                                      itemBuilder: (_) => [
+                                        if (transaction.type == 'PURCHASE' ||
+                                            transaction.type == 'USAGE')
+                                          PopupMenuItem(
+                                            value: 'edit',
+                                            child: Text(
+                                              context.l10n.editTransaction,
+                                            ),
+                                          ),
+                                        PopupMenuItem(
+                                          value: 'reverse',
+                                          child: Text(
+                                            context.l10n.reverseTransaction,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            ),
+                          ),
+                    ],
+                  ),
+                ),
+        ),
+      ),
     );
   }
 
@@ -272,7 +284,7 @@ class _MaterialInventoryAccountPageState
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('$error')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     }
   }
@@ -422,7 +434,7 @@ class _MaterialInventoryAccountPageState
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('$error')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     }
   }
@@ -467,7 +479,7 @@ class _MaterialInventoryAccountPageState
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('$error')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     }
   }

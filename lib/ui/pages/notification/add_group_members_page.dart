@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
@@ -28,6 +29,10 @@ class _AddGroupMembersPageState extends State<AddGroupMembersPage> {
   }
 
   Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final users = <UserProfileDto>[];
       String? cursor;
@@ -38,7 +43,7 @@ class _AddGroupMembersPageState extends State<AddGroupMembersPage> {
       } while (cursor != null);
       if (mounted) setState(() => _friends = users);
     } catch (exception) {
-      if (mounted) setState(() => _error = '$exception');
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -53,7 +58,9 @@ class _AddGroupMembersPageState extends State<AddGroupMembersPage> {
     } catch (exception) {
       if (mounted) {
         setState(() => _adding = false);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$exception')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     }
   }
@@ -71,44 +78,52 @@ class _AddGroupMembersPageState extends State<AddGroupMembersPage> {
           ),
         ],
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : _error != null
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : _error != null
               ? Center(
                   child: FilledButton(
                     onPressed: _load,
                     child: Text(context.l10n.retry),
                   ),
                 )
-              : ListView(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text(context.l10n.chooseFriendsLimit(remaining)),
-                    ),
-                    ..._friends.map((friend) {
-                      final selected = _selected.contains(friend.userId);
-                      return CheckboxListTile(
-                        value: selected,
-                        onChanged: _selected.length >= remaining && !selected
-                            ? null
-                            : (value) => setState(() {
-                                  if (value == true) {
-                                    _selected.add(friend.userId);
-                                  } else {
-                                    _selected.remove(friend.userId);
-                                  }
-                                }),
-                        secondary: ProfileAvatar(
-                          initials: friend.avatarInitials,
-                          colorHex: friend.avatarColor,
-                          imageUrl: friend.avatarUrl,
-                        ),
-                        title: Text(friend.username),
+              : ListView.builder(
+                  itemCount: _friends.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(context.l10n.chooseFriendsLimit(remaining)),
                       );
-                    }),
-                  ],
+                    }
+                    final friend = _friends[index - 1];
+                    final selected = _selected.contains(friend.userId);
+                    return CheckboxListTile(
+                      value: selected,
+                      onChanged: _selected.length >= remaining && !selected
+                          ? null
+                          : (value) => setState(() {
+                              if (value == true) {
+                                _selected.add(friend.userId);
+                              } else {
+                                _selected.remove(friend.userId);
+                              }
+                            }),
+                      secondary: ProfileAvatar(
+                        initials: friend.avatarInitials,
+                        colorHex: friend.avatarColor,
+                        imageUrl: friend.avatarUrl,
+                      ),
+                      title: Text(friend.username),
+                    );
+                  },
                 ),
+        ),
+      ),
     );
   }
 }

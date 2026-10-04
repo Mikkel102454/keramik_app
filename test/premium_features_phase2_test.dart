@@ -53,7 +53,13 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Practice analytics'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.text('Practice analytics'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Created and completed'), findsOneWidget);
     expect(find.byType(ListView), findsOneWidget);
     await tester.scrollUntilVisible(

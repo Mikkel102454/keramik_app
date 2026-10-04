@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/glaze_dto.dart';
@@ -111,122 +112,127 @@ class _ProjectTemplateEditorPageState extends State<ProjectTemplateEditorPage> {
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            if (_error != null) ...[
-              MaterialBanner(
-                content: Text(_error!),
-                actions: [
-                  TextButton(
-                    onPressed: () => setState(() => _error = null),
-                    child: Text(context.l10n.ok),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-            ],
-            TextFormField(
-              controller: _name,
-              maxLength: 100,
-              decoration: InputDecoration(
-                labelText: context.l10n.templateName,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-              ),
-              validator: _required,
-            ),
-            TextFormField(
-              controller: _title,
-              maxLength: 220,
-              decoration: InputDecoration(
-                labelText: context.l10n.templateTitlePattern,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                suffixIcon: Tooltip(
-                  message: localizedTemplateTitlePatternHelp(context.l10n),
-                  child: const Icon(Icons.info_outline),
-                ),
-              ),
-              validator: _required,
-            ),
-            DropdownButtonFormField<int?>(
-              initialValue: _clayId,
-              decoration: InputDecoration(
-                labelText: context.l10n.clay,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-              ),
-              items: [
-                DropdownMenuItem<int?>(
-                  value: null,
-                  child: Text(context.l10n.noClay),
-                ),
-                ...widget.clays.map(
-                  (clay) => DropdownMenuItem<int?>(
-                    value: clay.id,
-                    child: Text(clay.title),
-                  ),
-                ),
-              ],
-              onChanged: (value) => setState(() => _clayId = value),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _note,
-              maxLength: 255,
-              minLines: 2,
-              maxLines: 4,
-              decoration: InputDecoration(
-                labelText: context.l10n.projectNotes,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-              ),
-            ),
-            TextFormField(
-              controller: _tags,
-              decoration: InputDecoration(
-                labelText: context.l10n.tags,
-                floatingLabelBehavior: FloatingLabelBehavior.always,
-                suffixIcon: Tooltip(
-                  message: context.l10n.commaSeparatedTags,
-                  child: const Icon(Icons.info_outline),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              context.l10n.dimensions,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
+      body: SafeArea(
+        child: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              padding: const EdgeInsets.all(16),
               children: [
-                _dimension(_height, context.l10n.height),
-                _dimension(_width, context.l10n.width),
-                _dimension(_depth, context.l10n.depth),
-                _dimension(_diameter, context.l10n.diameter),
+                if (_error != null) ...[
+                  MaterialBanner(
+                    content: Text(_error!),
+                    actions: [
+                      TextButton(
+                        onPressed: () => setState(() => _error = null),
+                        child: Text(context.l10n.ok),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                TextFormField(
+                  controller: _name,
+                  maxLength: 100,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.templateName,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
+                  validator: _required,
+                ),
+                TextFormField(
+                  controller: _title,
+                  maxLength: 220,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.templateTitlePattern,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    suffixIcon: Tooltip(
+                      message: localizedTemplateTitlePatternHelp(context.l10n),
+                      child: const Icon(Icons.info_outline),
+                    ),
+                  ),
+                  validator: _required,
+                ),
+                DropdownButtonFormField<int?>(
+                  initialValue: _clayId,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.clay,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
+                  items: [
+                    DropdownMenuItem<int?>(
+                      value: null,
+                      child: Text(context.l10n.noClay),
+                    ),
+                    ...widget.clays.map(
+                      (clay) => DropdownMenuItem<int?>(
+                        value: clay.id,
+                        child: Text(clay.title),
+                      ),
+                    ),
+                  ],
+                  onChanged: (value) => setState(() => _clayId = value),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _note,
+                  maxLength: 255,
+                  minLines: 2,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.projectNotes,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                  ),
+                ),
+                TextFormField(
+                  controller: _tags,
+                  decoration: InputDecoration(
+                    labelText: context.l10n.tags,
+                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                    suffixIcon: Tooltip(
+                      message: context.l10n.commaSeparatedTags,
+                      child: const Icon(Icons.info_outline),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  context.l10n.dimensions,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  children: [
+                    _dimension(_height, context.l10n.height),
+                    _dimension(_width, context.l10n.width),
+                    _dimension(_depth, context.l10n.depth),
+                    _dimension(_diameter, context.l10n.diameter),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                _sectionHeader(
+                  context.l10n.glazeApplications,
+                  onAdd: widget.glazes.isEmpty ? null : _addGlaze,
+                ),
+                if (_glazes.isEmpty)
+                  Text(context.l10n.noTemplateGlazes)
+                else
+                  for (var index = 0; index < _glazes.length; index++)
+                    _glazeTile(index),
+                const SizedBox(height: 24),
+                _sectionHeader(context.l10n.plannedFirings, onAdd: _addFiring),
+                if (_firings.isEmpty)
+                  Text(context.l10n.noTemplateFirings)
+                else
+                  for (var index = 0; index < _firings.length; index++)
+                    _firingTile(index),
+                const SizedBox(height: 40),
               ],
             ),
-            const SizedBox(height: 24),
-            _sectionHeader(
-              context.l10n.glazeApplications,
-              onAdd: widget.glazes.isEmpty ? null : _addGlaze,
-            ),
-            if (_glazes.isEmpty)
-              Text(context.l10n.noTemplateGlazes)
-            else
-              for (var index = 0; index < _glazes.length; index++)
-                _glazeTile(index),
-            const SizedBox(height: 24),
-            _sectionHeader(context.l10n.plannedFirings, onAdd: _addFiring),
-            if (_firings.isEmpty)
-              Text(context.l10n.noTemplateFirings)
-            else
-              for (var index = 0; index < _firings.length; index++)
-                _firingTile(index),
-            const SizedBox(height: 40),
-          ],
+          ),
         ),
       ),
     );
@@ -527,7 +533,7 @@ class _ProjectTemplateEditorPageState extends State<ProjectTemplateEditorPage> {
           : await ProjectTemplateRepository.update(value);
       if (mounted) Navigator.pop(context, saved);
     } catch (value) {
-      if (mounted) setState(() => _error = value.toString());
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _saving = false);
     }

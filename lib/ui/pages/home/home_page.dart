@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/ceramic_preview_tile.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:auto_route/auto_route.dart';
@@ -12,6 +13,7 @@ import 'package:ceramic_app/ui/pages/home/batch/ceramic_batch_edit_page.dart';
 import 'package:ceramic_app/ui/pages/home/templates/project_templates_page.dart';
 import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
@@ -55,7 +57,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return StudioScaffold(
+      currentPage: NavigationPage.home,
       appBar: AppBar(
         title: Text(
           _selectionMode
@@ -94,26 +97,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             if (_controller.isLoading && _controller.ceramics.isEmpty) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (_controller.error != null) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.cloud_off_outlined, size: 42),
-                      const SizedBox(height: 12),
-                      Text(
-                        context.l10n.journalLoadFailed,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 12),
-                      FilledButton(
-                        onPressed: _controller.load,
-                        child: Text(context.l10n.tryAgain),
-                      ),
-                    ],
-                  ),
+            if (_controller.error != null && _controller.ceramics.isEmpty) {
+              return StudioEmptyState(
+                icon: Icons.cloud_off_outlined,
+                title: context.l10n.journalLoadFailed,
+                action: FilledButton.icon(
+                  onPressed: _controller.load,
+                  icon: const Icon(Icons.refresh),
+                  label: Text(context.l10n.tryAgain),
                 ),
               );
             }
@@ -127,193 +118,274 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       floatingActionButtonLocation: _selectionMode
           ? FloatingActionButtonLocation.centerFloat
           : FloatingActionButtonLocation.endFloat,
-      floatingActionButton: _selectionMode
-          ? _SelectionActions(
-              busy: _selectionBusy,
-              enabled: _selectedIds.isNotEmpty,
-              onDelete: _batchDelete,
-              onEdit: _batchEdit,
-            )
-          : FloatingActionButton(
-              onPressed: _createCeramic,
-              tooltip: context.l10n.createCeramic,
-              child: const Icon(Icons.add),
-            ),
-      bottomNavigationBar: const NavigationWidget(
-        currentPage: NavigationPage.home,
+      floatingActionButton: AnimatedBuilder(
+        animation: _controller,
+        builder: (_, _) => !_selectionMode && _controller.ceramics.isEmpty
+            ? const SizedBox.shrink()
+            : _selectionMode
+            ? _SelectionActions(
+                busy: _selectionBusy,
+                enabled: _selectedIds.isNotEmpty,
+                onDelete: _batchDelete,
+                onEdit: _batchEdit,
+              )
+            : FloatingActionButton(
+                onPressed: _createCeramic,
+                tooltip: context.l10n.createCeramic,
+                child: const Icon(Icons.add),
+              ),
       ),
     );
   }
 
   Widget _pageContent(HomePageController controller) {
     final ceramics = controller.visibleCeramics;
-    return ListView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 96),
-      children: [
-        TextField(
-          controller: _searchController,
-          onChanged: (value) =>
-              controller.updateQuery(controller.query.copyWith(search: value)),
-          decoration: InputDecoration(
-            hintText: context.l10n.journalSearchHint,
-            prefixIcon: const Icon(Icons.search),
-            suffixIcon: controller.query.search.isEmpty
-                ? null
-                : IconButton(
-                    tooltip: context.l10n.clearSearch,
-                    onPressed: () {
-                      _searchController.clear();
-                      controller.updateQuery(
-                        controller.query.copyWith(search: ''),
-                      );
-                    },
-                    icon: const Icon(Icons.close),
-                  ),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Badge(
-              isLabelVisible: controller.query.activeFilterCount > 0,
-              label: Text('${controller.query.activeFilterCount}'),
-              child: OutlinedButton.icon(
-                onPressed: _showFilters,
-                icon: const Icon(Icons.tune),
-                label: Text(context.l10n.filters),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: PopupMenuButton<CeramicJournalSort>(
-                onSelected: (sort) => controller.updateQuery(
-                  controller.query.copyWith(
-                    sort: sort,
-                    descending: switch (sort) {
-                      CeramicJournalSort.title ||
-                      CeramicJournalSort.stage => false,
-                      _ => true,
-                    },
-                  ),
-                ),
-                itemBuilder: (_) => CeramicJournalSort.values
-                    .map(
-                      (sort) => PopupMenuItem(
-                        value: sort,
-                        child: Text(_sortLabel(context, sort)),
-                      ),
-                    )
-                    .toList(),
-                child: InputDecorator(
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                    prefixIcon: Icon(Icons.sort),
-                  ),
-                  child: Text(_sortLabel(context, controller.query.sort)),
-                ),
-              ),
-            ),
-            IconButton(
-              tooltip: controller.query.descending
-                  ? context.l10n.descending
-                  : context.l10n.ascending,
-              onPressed: () => controller.updateQuery(
-                controller.query.copyWith(
-                  descending: !controller.query.descending,
-                ),
-              ),
-              icon: Icon(
-                controller.query.descending ? Icons.south : Icons.north,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Text(
-          context.l10n.pieceCount(ceramics.length),
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
-        const SizedBox(height: 10),
-        if (controller.ceramics.isEmpty)
-          _EmptyJournal(onCreate: _createCeramic)
-        else if (ceramics.isEmpty)
-          _NoMatches(
-            onClear: () {
-              _searchController.clear();
-              controller.updateQuery(
-                controller.query.clearFilters().copyWith(search: ''),
-              );
-            },
-          )
-        else
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final columns = constraints.maxWidth >= 700 ? 4 : 2;
-              return GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: ceramics.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: columns,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: .72,
-                ),
-                itemBuilder: (_, index) {
-                  final ceramic = ceramics[index];
-                  final selected = _selectedIds.contains(ceramic.id);
-                  return Stack(
-                    children: [
-                      Positioned.fill(
-                        child: CeramicJournalCard(
-                          ceramic: ceramic,
-                          stageTitle:
-                              controller.stages
-                                  .where((stage) => stage.id == ceramic.stageId)
-                                  .map((stage) => stage.title)
-                                  .map(
-                                    (title) =>
-                                        localizedStageName(context.l10n, title),
-                                  )
-                                  .firstOrNull ??
-                              context.l10n.unknownStage,
-                          clayTitle: controller.clays
-                              .where((clay) => clay.id == ceramic.clayTypeId)
-                              .map((clay) => clay.title)
-                              .firstOrNull,
-                          onTap: () => _selectionMode
-                              ? _toggleSelection(ceramic.id)
-                              : _openCeramic(ceramic),
+    return StudioContent(
+      maxWidth: CeramicPreviewGrid.maxWidth,
+      child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          if (controller.ceramics.isNotEmpty)
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (controller.isLoading) const LinearProgressIndicator(),
+                    if (controller.error != null) ...[
+                      Text(
+                        context.l10n.journalLoadFailed,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
                         ),
                       ),
-                      if (_selectionMode)
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: IgnorePointer(
-                            child: CircleAvatar(
-                              backgroundColor: selected
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Theme.of(context).colorScheme.surface,
-                              child: Icon(
-                                selected ? Icons.check : Icons.circle_outlined,
-                                color: selected
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.onSurface,
-                              ),
+                      TextButton.icon(
+                        onPressed: controller.load,
+                        icon: const Icon(Icons.refresh),
+                        label: Text(context.l10n.retry),
+                      ),
+                    ],
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _searchController,
+                            onChanged: (value) => controller.updateQuery(
+                              controller.query.copyWith(search: value),
+                            ),
+                            decoration: InputDecoration(
+                              hintText: context.l10n.journalSearchHint,
+                              prefixIcon: const Icon(Icons.search),
+                              suffixIcon: controller.query.search.isEmpty
+                                  ? null
+                                  : IconButton(
+                                      tooltip: context.l10n.clearSearch,
+                                      onPressed: () {
+                                        _searchController.clear();
+                                        controller.updateQuery(
+                                          controller.query.copyWith(search: ''),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.close),
+                                    ),
                             ),
                           ),
                         ),
-                    ],
+                        const SizedBox(width: 8),
+                        Badge(
+                          isLabelVisible:
+                              controller.query.activeFilterCount > 0,
+                          label: Text('${controller.query.activeFilterCount}'),
+                          child: IconButton(
+                            tooltip: context.l10n.filters,
+                            onPressed: _showFilters,
+                            icon: const Icon(Icons.tune),
+                          ),
+                        ),
+                      ],
+                    ),
+                    LayoutBuilder(
+                      builder: (context, constraints) => Wrap(
+                        spacing: 8,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: (constraints.maxWidth - 60)
+                                .clamp(100, 220)
+                                .toDouble(),
+                            child: PopupMenuButton<CeramicJournalSort>(
+                              tooltip: _sortLabel(
+                                context,
+                                controller.query.sort,
+                              ),
+                              onSelected: (sort) => controller.updateQuery(
+                                controller.query.copyWith(
+                                  sort: sort,
+                                  descending: switch (sort) {
+                                    CeramicJournalSort.title ||
+                                    CeramicJournalSort.stage => false,
+                                    _ => true,
+                                  },
+                                ),
+                              ),
+                              itemBuilder: (_) => CeramicJournalSort.values
+                                  .map(
+                                    (sort) => PopupMenuItem(
+                                      value: sort,
+                                      child: Text(_sortLabel(context, sort)),
+                                    ),
+                                  )
+                                  .toList(),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(Icons.sort, size: 18),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: Text(
+                                        _sortLabel(
+                                          context,
+                                          controller.query.sort,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.labelMedium,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            tooltip: controller.query.descending
+                                ? context.l10n.descending
+                                : context.l10n.ascending,
+                            onPressed: () => controller.updateQuery(
+                              controller.query.copyWith(
+                                descending: !controller.query.descending,
+                              ),
+                            ),
+                            icon: Icon(
+                              controller.query.descending
+                                  ? Icons.south
+                                  : Icons.north,
+                              size: 18,
+                            ),
+                          ),
+                          Text(
+                            context.l10n.pieceCount(ceramics.length),
+                            style: Theme.of(context).textTheme.labelMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          if (controller.ceramics.isEmpty)
+            SliverFillRemaining(
+              hasScrollBody: false,
+              child: _EmptyJournal(onCreate: _createCeramic),
+            )
+          else if (ceramics.isEmpty)
+            SliverToBoxAdapter(
+              child: _NoMatches(
+                onClear: () {
+                  _searchController.clear();
+                  controller.updateQuery(
+                    controller.query.clearFilters().copyWith(search: ''),
                   );
                 },
-              );
-            },
-          ),
-      ],
+              ),
+            )
+          else
+            SliverLayoutBuilder(
+              builder: (context, constraints) {
+                return SliverPadding(
+                  padding: EdgeInsets.zero,
+                  sliver: SliverGrid.builder(
+                    itemCount: ceramics.length,
+                    gridDelegate: CeramicPreviewGrid.delegate(
+                      constraints.crossAxisExtent,
+                      MediaQuery.textScalerOf(context),
+                    ),
+                    itemBuilder: (_, index) {
+                      final ceramic = ceramics[index];
+                      final selected = _selectedIds.contains(ceramic.id);
+                      return Stack(
+                        key: ValueKey(ceramic.id),
+                        children: [
+                          Positioned.fill(
+                            child: CeramicJournalCard(
+                              ceramic: ceramic,
+                              stageTitle:
+                                  controller.stages
+                                      .where(
+                                        (stage) => stage.id == ceramic.stageId,
+                                      )
+                                      .map((stage) => stage.title)
+                                      .map(
+                                        (title) => localizedStageName(
+                                          context.l10n,
+                                          title,
+                                        ),
+                                      )
+                                      .firstOrNull ??
+                                  context.l10n.unknownStage,
+                              clayTitle: controller.clays
+                                  .where(
+                                    (clay) => clay.id == ceramic.clayTypeId,
+                                  )
+                                  .map((clay) => clay.title)
+                                  .firstOrNull,
+                              onTap: () => _selectionMode
+                                  ? _toggleSelection(ceramic.id)
+                                  : _openCeramic(ceramic),
+                            ),
+                          ),
+                          if (_selectionMode)
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: IgnorePointer(
+                                child: CircleAvatar(
+                                  backgroundColor: selected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.surface,
+                                  child: Icon(
+                                    selected
+                                        ? Icons.check
+                                        : Icons.circle_outlined,
+                                    color: selected
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary
+                                        : Theme.of(
+                                            context,
+                                          ).colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          if (controller.ceramics.isNotEmpty)
+            const SliverToBoxAdapter(child: SizedBox(height: 112)),
+        ],
+      ),
     );
   }
 
@@ -461,7 +533,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         context: context,
         builder: (dialogContext) => AlertDialog(
           title: Text(context.l10n.batchDeleteFailed),
-          content: Text('${context.l10n.batchDeleteFailedBody}\n\n$value'),
+          content: Text(context.l10n.batchDeleteFailedBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
@@ -519,11 +591,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        context.l10n.filterJournal,
-                        style: Theme.of(context).textTheme.titleLarge,
+                      Expanded(
+                        child: Text(
+                          context.l10n.filterJournal,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
                       ),
-                      const Spacer(),
                       TextButton(
                         onPressed: () => update(query.clearFilters()),
                         child: Text(context.l10n.clear),
@@ -656,8 +729,8 @@ class _SelectionActions extends StatelessWidget {
     child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 520),
       child: Material(
-        elevation: 6,
-        borderRadius: BorderRadius.circular(18),
+        elevation: 0,
+        borderRadius: BorderRadius.circular(StudioSpacing.radius),
         color: Theme.of(context).colorScheme.surfaceContainerHigh,
         child: Padding(
           padding: const EdgeInsets.all(8),
@@ -698,7 +771,7 @@ class _FilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 18),
+    padding: const EdgeInsets.only(top: 12),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -715,29 +788,15 @@ class _EmptyJournal extends StatelessWidget {
   final VoidCallback onCreate;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 70),
-    child: Column(
-      children: [
-        Icon(
-          Icons.handyman_outlined,
-          size: 54,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-        const SizedBox(height: 14),
-        Text(
-          context.l10n.startCeramicJournal,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 7),
-        Text(context.l10n.emptyJournalDescription),
-        const SizedBox(height: 18),
-        FilledButton.icon(
-          onPressed: onCreate,
-          icon: const Icon(Icons.add),
-          label: Text(context.l10n.createFirstPiece),
-        ),
-      ],
+  Widget build(BuildContext context) => StudioEmptyState(
+    scrollable: false,
+    icon: Icons.handyman_outlined,
+    title: context.l10n.startCeramicJournal,
+    message: context.l10n.emptyJournalDescription,
+    action: FilledButton.icon(
+      onPressed: onCreate,
+      icon: const Icon(Icons.add),
+      label: Text(context.l10n.createFirstPiece),
     ),
   );
 }
@@ -747,26 +806,12 @@ class _NoMatches extends StatelessWidget {
   final VoidCallback onClear;
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 70),
-    child: Column(
-      children: [
-        Icon(
-          Icons.search_off,
-          size: 48,
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
-        const SizedBox(height: 12),
-        Text(
-          context.l10n.noMatchingPieces,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-        const SizedBox(height: 10),
-        OutlinedButton(
-          onPressed: onClear,
-          child: Text(context.l10n.clearSearchAndFilters),
-        ),
-      ],
+  Widget build(BuildContext context) => StudioEmptyState(
+    icon: Icons.search_off,
+    title: context.l10n.noMatchingPieces,
+    action: OutlinedButton(
+      onPressed: onClear,
+      child: Text(context.l10n.clearSearchAndFilters),
     ),
   );
 }

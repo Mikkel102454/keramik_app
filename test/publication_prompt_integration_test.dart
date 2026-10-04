@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ceramic_app/objects/ceramic_dto.dart';
 import 'package:ceramic_app/objects/clay_dto.dart';
 import 'package:ceramic_app/objects/image_dto.dart';
@@ -12,6 +14,106 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_app.dart';
 
 void main() {
+  testWidgets(
+    'saving blocks duplicate submission and back until creation completes',
+    (tester) async {
+      final controller = _PendingCreateController();
+      addTearDown(controller.dispose);
+      await tester.pumpWidget(
+        localizedTestApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => CeramicCreatePage(
+                      stages: _stages,
+                      clayTypes: [_clay],
+                      glazes: const [],
+                      controller: controller,
+                    ),
+                  ),
+                ),
+                child: const Text('Create test piece'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Create test piece'));
+      await tester.pumpAndSettle();
+      final save = find.byTooltip('Save');
+      await tester.tap(save);
+      await tester.pump();
+      expect(
+        tester
+            .widget<IconButton>(
+              find.ancestor(of: save, matching: find.byType(IconButton)),
+            )
+            .onPressed,
+        isNull,
+      );
+      await tester.binding.handlePopRoute();
+      await tester.pump();
+      expect(find.byType(CeramicCreatePage), findsOneWidget);
+      expect(controller.calls, 1);
+      controller.result.complete(_ceramic(stageId: 1));
+      await tester.pumpAndSettle();
+      expect(find.byType(CeramicCreatePage), findsNothing);
+      expect(controller.calls, 1);
+    },
+  );
+
+  testWidgets(
+    'failed optional publication keeps the saved piece and returns to journal',
+    (tester) async {
+      final controller = _CreateController();
+      addTearDown(controller.dispose);
+      bool? saved;
+      await tester.pumpWidget(
+        localizedTestApp(
+          home: Builder(
+            builder: (context) => Scaffold(
+              body: TextButton(
+                onPressed: () async {
+                  saved = await Navigator.of(context).push<bool>(
+                    MaterialPageRoute<bool>(
+                      builder: (_) => CeramicCreatePage(
+                        stages: _stages,
+                        clayTypes: [_clay],
+                        glazes: const [],
+                        controller: controller,
+                        publishCeramic: (_) async =>
+                            throw Exception('private transport detail'),
+                      ),
+                    ),
+                  );
+                },
+                child: const Text('Create test piece'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Create test piece'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byTooltip('Save'));
+      await tester.pumpAndSettle();
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      await tester.tap(find.text('Publish'));
+      await tester.pumpAndSettle();
+      expect(saved, isTrue);
+      expect(find.byType(CeramicCreatePage), findsNothing);
+      expect(
+        find.text(
+          'Your piece was saved. Publishing could not be confirmed. Open the piece to check or try again.',
+        ),
+        findsOneWidget,
+      );
+      expect(find.textContaining('private transport'), findsNothing);
+    },
+  );
+
   testWidgets('creating a Finished ceramic asks before publishing', (
     tester,
   ) async {
@@ -44,7 +146,7 @@ void main() {
   });
 
   testWidgets(
-    'successful transition into Finished asks but does not auto-publish',
+    'transition into Finished saves without a publication popup or auto-publish',
     (tester) async {
       final controller = _ViewController();
       addTearDown(controller.dispose);
@@ -65,11 +167,9 @@ void main() {
       await tester.tap(find.text('Finished'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Publish this finished piece?'), findsOneWidget);
-      expect(controller.toggleCount, 0);
-      expect(find.text('Publish'), findsNothing);
-      await tester.tap(find.text('Not now'));
-      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.text('Add a photo to publish'), findsNothing);
+      expect(find.text('Publish this finished piece?'), findsNothing);
       expect(controller.toggleCount, 0);
       expect(controller.ceramic.stageId, 2);
     },
@@ -189,4 +289,15 @@ class _NonFinishedCreateController extends CeramicCreatePageController {
 
   @override
   Future<CeramicDto> create() async => _ceramic(stageId: 1);
+}
+
+class _PendingCreateController extends _NonFinishedCreateController {
+  final result = Completer<CeramicDto>();
+  int calls = 0;
+
+  @override
+  Future<CeramicDto> create() {
+    calls++;
+    return result.future;
+  }
 }

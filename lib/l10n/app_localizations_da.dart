@@ -1323,8 +1323,21 @@ class AppLocalizationsDa extends AppLocalizations {
   String get publishFinishedTitle => 'Vil du udgive dette færdige emne?';
 
   @override
+  String get publicationFinishedRequirement => 'Sæt stadiet til Færdigt';
+
+  @override
+  String get publicationPhotoRequirement => 'Tilføj mindst ét billede';
+
+  @override
+  String get publicationPhotoRequiredTitle => 'Tilføj et billede for at udgive';
+
+  @override
+  String get publicationPhotoRequiredBody =>
+      'Dit emne er gemt. Tilføj mindst ét billede, og udgiv det derefter fra emnets detaljeside.';
+
+  @override
   String get publishFinishedBody =>
-      'Udgivne emner kan vises under Opdag og på din profil. Op til 20 billeder og de angivne offentlige oplysninger bliver synlige.';
+      'Udgivne emner kan vises under Opdag og på din profil.';
 
   @override
   String get publicationAudienceEveryone =>
@@ -2615,4 +2628,11 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get chatProfileUnavailable => 'Denne profil er ikke tilgængelig.';
+
+  @override
+  String get operationFailed => 'Handlingen kunne ikke gennemføres. Prøv igen.';
+
+  @override
+  String get pieceSavedPublicationUnconfirmed =>
+      'Dit værk blev gemt. Udgivelsen kunne ikke bekræftes. Åbn værket for at tjekke eller prøve igen.';
 }

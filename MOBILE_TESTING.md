@@ -948,3 +948,594 @@ Android acceptance remains pending: open long chats and confirm no top-history f
 through several older pages, retry an older-page failure, and check stable reading
 positions after profile return/incoming updates. Repeat with tall media/cards,
 English/Danish, both themes, compact width, enlarged text and keyboard visible.
+
+## Whole-app studio redesign acceptance (2026-10-04)
+
+The redesign preserves Material 3, AutoRoute, the existing feature controllers,
+repositories and authenticated API contracts. `test/studio_layout_test.dart`
+checks the production light/dark themes, all five root destinations, compact and
+wide navigation, large text, system bottom insets, keyboard-visible entry forms,
+journal card placeholders and journal error/retry/empty behavior. Automated
+validation totals are recorded with the final project validation below; these
+checks do not substitute for the native observations in this section.
+
+Native Android evidence uses a read-only, no-snapshot copy of `Medium_Phone_2`
+on `emulator-5560`, a synthetic account, an isolated test-profile H2 backend on
+loopback port 18082 (Flyway disabled), and labeled disposable MinIO without
+mounted persistent storage. The ordinary app, backend on 8080, AVD snapshots,
+database and storage volumes are untouched. The acceptance APK is fingerprinted
+and compiled with `API_BASE_URL=http://10.0.2.2:18082`; it is not the normal
+development APK. Reinstallation uses `adb install -r` to preserve the synthetic
+session and fixture data.
+
+The existing backend acceptance task selected a packaged-media smoke main class
+and exited before serving requests. A temporary ignored Gradle init script sets
+only this isolated `bootTestRun` invocation to `nu.miguel.kemik_app.Main`; no
+backend source, configuration, credentials or API were changed. Native input
+automation also needed an explicit Back immediately after a known-open keyboard:
+the older helper's keyboard visibility probe could otherwise issue an extra Back
+on this Android version. Those fixture issues are distinct from product defects.
+
+Evidence is stored locally in ignored `build/studio-mobile-acceptance/`, with PNG
+screenshots and matching Android accessibility hierarchies. Inspected observations:
+
+| Configuration | Native coverage and result |
+| --- | --- |
+| S22+ equivalent, 1080×2340 pixels, density 450 (384×832 logical), three-button navigation | All five roots in light and dark; settings and the appearance sheet; no important root action behind the Android navigation bar. |
+| S22+ equivalent, dark | Clay list/detail, glaze list/detail, empty combinations notebook, inventory, project templates, practice analytics, profile editor and group creation load through their existing routes and use the shared theme. |
+| S22+ equivalent, dark, software keyboard | The last outcome field in the ceramic creation form accepts long text and remains reachable above the keyboard; the form scrolls without overflow stripes. Account search accepts input with its field visible above the keyboard and shows its empty result. |
+| Small phone, 960×1704 pixels, density 480 (320×568 logical), 2× system font scale | Form labels and long outcome text wrap within a scrollable form; group creation remains scrollable with the keyboard. Initial bottom navigation labels fragmented into short word pieces. The final APK was reinstalled and inspected: the active destination now has its complete label, other destinations retain accessible icon targets, and no fragmented labels remain. |
+| Tablet-equivalent, 1600×2000 pixels, density 320 (800×1000 logical) | The materials hub uses two columns and retains bottom navigation; all destinations remain reachable above the Android tablet taskbar. |
+| Wide landscape, 2560×1600 pixels, density 320 (1280×800 logical) | Materials use two columns with side navigation. A 25-piece synthetic journal uses four lazy columns with image placeholders and long titles; detail navigation remains available. |
+| S22+ equivalent, gesture navigation, dark | Discover and the journal keep app navigation above the Android home indicator. Switching overlays briefly made the native hierarchy unavailable; a subsequent stable screenshot/hierarchy succeeded. |
+| S22+ equivalent, light, initial loading | A three-second pause of only the verified isolated Java process produced a real inbox loading spinner. The process was resumed in `finally`; the inbox then loaded normally with the authenticated session intact. |
+| S22+ equivalent, light, direct conversation and keyboard | An accepted request and seven messages between two synthetic local accounts show incoming/outgoing themed bubbles, newest-message positioning and a multiline draft composer with its Send action above the keyboard and three-button navigation. |
+| S22+ equivalent, dark, real backend unavailable | After stopping only the verified disposable backend at the end of the session, Discover and the journal show clear themed errors with reachable Try again actions. Tapping each action retries and safely returns to the error while the backend remains unavailable. |
+
+Representative evidence includes `materials-s22-light.png`,
+`profile-empty-s22-dark.png`, `appearance-sheet-s22-light.png`,
+`piece-outcome-keyboard-s22-dark.png`, `piece-outcome-small-dark-scale2.png`,
+`clay-detail-s22-dark-final.png`, `glaze-detail-s22-dark-final.png`,
+`notebook-empty-s22-dark-final.png`, `inventory-s22-dark-final.png`,
+`templates-empty-s22-dark-final.png`, `analytics-empty-s22-dark-final.png` and
+`profile-edit-s22-dark-final.png`, `user-search-keyboard-s22-dark-final.png`,
+`new-group-keyboard-small-dark-scale2.png`, `materials-800-dark-final.png`,
+`materials-1280-dark-final.png` and `journal-long-1280-dark-final.png`.
+Screenshots without `final` were captured
+before the last presentation fixes and may show the debug banner.
+
+Latest-source preview and recheck captures use `latest`:
+`materials-small-light-scale2-latest.png`,
+`journal-small-light-scale2-latest.png`, `journal-s22-light-latest.png`,
+`materials-s22-light-latest.png`, `conversation-s22-light-latest.png` and
+`conversation-keyboard-s22-light-latest.png`; dark conversation is
+`conversation-s22-dark-latest.png`. Actual failure/retry evidence is
+`discover-backend-stopped-s22-dark-latest.png`,
+`discover-retry-error-s22-dark-latest.png`, `journal-error-s22-dark-latest.png`
+and `journal-retry-error-s22-dark-latest.png`. The actual loading/recovery frames
+are `chats-loading-s22-light-final.png` and
+`chats-recovered-s22-light-final.png`. The earlier file named
+`discover-loading-delay-s22-dark.png` captured the preceding journal frame during
+navigation, so it is not evidence of a Discover loading state.
+
+Native review found an empty-journal FAB covering the introductory copy. The
+empty journal now hides unused search/filter controls and that FAB, keeping the
+explicit first-piece action visible. Reinstalled-source evidence
+`journal-empty-s22-dark-final.png` was inspected: the overlap is resolved, the
+create action is above both navigation bars and the debug banner is absent.
+
+Final automated validation completed within the configured timeouts:
+
+- Changed-file formatting and localization generation passed.
+- `flutter analyze --no-pub`: no issues, 14.9 seconds.
+- `flutter test --no-pub`: 302 passed, 185 seconds. The final login pending-deletion
+  feedback guard and its new regression were then checked with the five existing
+  login tests: all six passed in five seconds (303 unique tests verified across
+  those runs).
+- The first full-suite attempt exceeded its 300-second limit while a save prompt
+  retained an active spinner. The presentation flow was corrected and the bounded
+  full-suite runs then completed; no timed-out command remains running.
+- Final isolated API-18082 debug APK built successfully. The ordinary API-8080
+  debug APK was subsequently rebuilt successfully in 57.3 seconds and remains at
+  `build/app/outputs/flutter-apk/app-debug.apk`; it was not installed or used to
+  reset the ordinary app.
+
+The final APK's app-process-scoped Flutter runtime log was inspected after the
+normal flows and intentional backend failure. It contains no RenderFlex/overflow,
+framework exception, unhandled exception, failed asset or disposed-state error
+patterns. This is scoped evidence from this session, not a guarantee about every
+possible flow. The backend-unavailable retry was exercised while offline; recovery
+after that specific failure is covered by automated tests. Native initial-loading
+recovery was observed before the backend was stopped.
+
+The documented acceptance cleanup verified ownership, stopped the read-only
+emulator and removed only the labeled unmounted disposable MinIO container and
+encrypted synthetic checkpoint. Screenshots, build fingerprints, runtime logs and
+the non-secret observation list in `results.json` remain in the ignored evidence
+directory. The normal development APK uses port 8080 and the ordinary app/data
+were not installed over, cleared or migrated.
+
+Physical Samsung hardware, TalkBack,
+hardware-keyboard focus order, voice/photo permissions and complete chat delivery
+workflows remain separate device checks. This session does not claim native
+acceptance for iOS/web/desktop: Android is the documented supported MVP platform.
+
+## TikTok-style refinement acceptance — 2026-10-04
+
+This section supersedes the earlier warm studio appearance. The existing Material
+3 theme now uses neutral light/dark surfaces, pink actions, compact flat rows and
+tight journal/profile photo grids. Discover presents the existing image
+publications in independent vertically paged For You/Latest feeds with a side
+action rail. Caption and rail have persistent theme-derived backing for contrast
+over bright images. There are no new video, comment or follower features.
+
+Architecture, controllers, repositories, API/session contracts, localization and
+Android support remain unchanged by this refinement. No dependency, backend
+source change, migration or stored-data change was needed. Backend configuration
+and documentation changes from the earlier local-service restoration remain in
+place; the backend was inspected without further changes for this UI pass.
+
+Automated validation completed within the configured limits:
+
+- Changed-file `dart format` passed; `git diff --check` passed.
+- `flutter analyze --no-pub`: no issues, final recheck 4.4 seconds.
+- `flutter test --no-pub --reporter expanded`: all 316 passed, 37 seconds.
+- Thirteen new feed tests cover independent tab positions, vertical swiping,
+  like identity, hide/Undo and failed-hide recovery, last-page reconciliation,
+  320/384/800-landscape/1280 widths, both app themes, 2× text and system insets.
+- Existing settings tests now scroll to offscreen rows and allow their scroll
+  animation to settle before tapping. Existing pagination tests request more
+  data only after swiping onto the loading page. Their behavioral assertions
+  remain; obsolete duplicate-header expectations were removed.
+- Native accessibility hierarchy review found a duplicate creator-avatar focus
+  target. The avatar now uses one actionable username tooltip and excludes its
+  decorative initials. A new regression verifies the semantics tooltip, button
+  and tap action and absence of the initials node. The older widget test now
+  checks the labeled active IconButton instead of the removed wrapper.
+- Ordinary debug APK build with `--target=lib/main.dart` and
+  `API_BASE_URL=http://10.0.2.2:8080`: passed, final build 13.0 seconds.
+
+The ordinary APK was installed with `adb install -r` on `emulator-5554`, preserving
+the logged-in session, existing pieces and images. All five roots and Settings
+were opened and visually inspected in the existing dark appearance. No messages,
+piece/material changes or preference changes were made. The app is left on Home.
+Backend readiness returned `UP` on port 8080; existing database, storage and cache
+services remain running without migrations or data deletion.
+
+The ordinary artifact at `build/app/outputs/flutter-apk/app-debug.apk` and the
+installed package have SHA-256
+`3f38ea8f94dacd908589d8647bd9ebb26edb6e6bb68289c171914421a069e3a0`.
+It is the normal development build, not the synthetic QA build.
+The final normal package was reinstalled after the avatar semantics fix and its
+Home screen rechecked. App-process-scoped logs contain zero framework exception,
+RenderFlex/overflow, unhandled exception, failed asset or disposed-state patterns
+in this observed session.
+
+Current evidence is in ignored `build/tiktok-mobile-acceptance/`, including the
+full-suite/analysis/build logs and `ordinary-home-final-dark.png`,
+`ordinary-materials-dark.png`, `ordinary-discover-dark.png`,
+`ordinary-chats-dark.png`, `ordinary-profile-dark.png` and
+`ordinary-settings-dark.png`. The ordinary account has no finished public pieces,
+so its Discover/Profile empty states were checked without creating user data.
+
+Additional native state checks use only a read-only, no-snapshot AVD on
+`emulator-5560`. An ignored fixture entry point renders the production widgets
+with synthetic controller/API responses and images served by an ephemeral
+Android-loopback HTTP server. Its adapter never delegates to the ordinary backend.
+The fixture APK is fingerprinted and installed only on that disposable AVD.
+Synthetic images are host-precomputed PNGs: an earlier fixture-only offscreen
+Canvas/toImage startup caused a Windows emulator access violation; replacing that
+fixture generation allowed startup to succeed. The ordinary production build
+started and ran normally throughout. No production workaround was required.
+Android viewport/navigation-overlay changes can recreate this fixture and reopen
+its initial feed. Native automation checks the current hierarchy and returns to
+the fixture launcher before starting a new phase. A gesture-named launcher capture
+was rejected as evidence and replaced only after checking the actual feed.
+
+Inspected native observations for this refinement:
+
+| Configuration | Evidence and result |
+| --- | --- |
+| S22+ equivalent, 1080×2340 pixels, density 450 (384×832 logical), three-button navigation, light and dark app themes | Production journal, materials, profile, settings and feed screenshots show the neutral/pink styling, compact rows, dense photo grids and reachable app navigation above the system bar. Discover deliberately retains its dark media surface in both app modes. |
+| S22+ equivalent, populated feed | Like changes 128→129; vertical swipe moves to the next post; Latest advances independently and For You retains its prior position. Hide/Undo preserves a valid current publication. Information opens the real production detail page and its loopback-served photo. The menu exposes existing hide/report actions. |
+| S22+ equivalent, asynchronous states | Empty and initial loading states render; failed initial loading shows Try again and retry recovers populated content. A missing image shows its placeholder while retaining actions. Failed hide restores the publication and shows localized feedback. |
+| Small phone, 960×1704 pixels, density 480 (320×568 logical), dark, 2× native text scale | Feed, journal, materials, profile and settings remain scrollable. Navigation keeps the complete active label and accessible icon targets. Long material labels wrap, profile statistics wrap, and feed captions/rail can scroll independently. |
+| Small phone, dark, 2× native text scale, software keyboard | The journal search accepts `bowl` with the real IME visible and focus above it. Dismissing the keyboard preserves the query and filters the nine-piece fixture to six results. |
+| S22+ equivalent, light, software keyboard | `home-search-keyboard-s22-light.png` shows the focused `bowl` query above the real IME, six filtered photos and the Create action above the keyboard/system bar. Dismissing the keyboard retains the six results. |
+| Landscape-equivalent, 1600×768 pixels, density 320 (800×384 logical), dark, 2× native text scale | The feed rail scrolls to Share/Information/More without paging the photo. More opens its existing menu. The caption also scrolls; no action is hidden behind app/system navigation. |
+| Final-source S22+ equivalent | `feed-s22-light-final.png/xml` confirms the creator avatar has one clickable/focusable username target and no separate decorative-initials target. The caption username remains a separate intentional creator link. |
+| Final-source S22+ equivalent, gesture navigation | The corrected `feed-s22-light-gesture-final.png/xml` shows the actual populated feed, reachable rail/navigation and the Android home indicator below app navigation. |
+| Tablet-equivalent, 1600×2000 pixels, density 320 (800×1000 logical), dark | Materials, journal and profile retain bottom navigation above the Android tablet taskbar. Flat material rows remain readable and photo grids expand with available width. |
+| Expanded landscape, 2560×1600 pixels, density 320 (1280×800 logical), dark | Feed, materials, profile and journal use the existing adaptive sidebar with the correct selected destination. The contained feed image and side actions remain reachable. The journal shows six lazy photo columns with compact metadata. |
+
+Representative fixture evidence includes `feed-s22-light-final.png`,
+`profile-s22-light.png`, `home-s22-light.png`, `feed-tab-retained-s22-light.png`,
+`feed-undo-s22-light.png`, `feed-detail-s22-light.png`,
+`feed-error-recovered-s22-dark.png`, `feed-hide-error-s22-dark.png`,
+`feed-small-dark-scale2.png`, `home-search-keyboard-small-dark-scale2.png` and
+`feed-landscape-menu-dark-scale2.png`, `home-search-keyboard-s22-light.png`,
+`feed-s22-light-gesture-final.png`, `materials-tablet-dark-final.png` and
+`home-wide-dark.png`. Captures made before the final fixture APK differ only in
+avatar semantics; their visual appearance is unchanged.
+
+PID-scoped Flutter logs for the isolated native fixture, before and after the
+avatar correction, contain zero framework/E-flutter, RenderFlex/overflow,
+unhandled future, failed asset or navigation-error patterns in these observed
+phases. Counts are recorded in `runtime-patterns.json`. Handled synthetic error
+states were tested deliberately and are not hidden or counted as successful data
+loads. The final normal APK is restored at the ordinary build path after fixture
+builds; its installed/build hash is verified independently above.
+Cleanup verified that only the read-only QA emulator on 5560 exited. The ordinary
+emulator on 5554 remains healthy on Home with the final normal APK; the ordinary
+backend and development containers remain running. No account data was written
+by this refinement's acceptance fixtures.
+
+Physical Samsung hardware, TalkBack speech/focus behavior, hardware-keyboard
+navigation, voice/photo permissions and complete two-client messaging delivery
+remain separate acceptance checks. The underlying form/dialog keyboard behavior
+has existing native acceptance above and automated enlarged-text/keyboard
+coverage; every secondary editor was not manually repeated in this refinement.
+Large Android viewports exercise adaptive layout, not support for iOS/web/desktop.
+
+Documentation reviewed and updated with the implementation: `README.md`,
+`UI_CONVENTIONS.md`, `DESIGN_SYSTEM.md`, this guide and the workspace
+`ARCHITECTURE_REVIEW.md`. There is no cross-repository implementation follow-up or
+approval pending for this presentation change.
+
+## Cobalt/amber palette and Discover appearance — 2026-10-04
+
+This refinement supersedes the previous pink/teal accents and the intentional
+dark-only Discover presentation described above. White light-mode surfaces
+(`#FFFFFF`) and existing near-black dark-mode surfaces (`#0C0C0E`) are unchanged.
+Shared primary actions now use cobalt blue (`#2457D6` light, `#8AAEFF` dark), with
+amber tertiary highlights and theme-specific readable container/foreground pairs.
+Neutral secondary surfaces, layouts and existing navigation remain.
+
+Discover's local `Theme(data: StudioTheme.dark())` wrapper caused it to stay dark
+regardless of the user's appearance setting. That wrapper is removed: its app
+bar, photo background, captions, rail, navigation, menus and async states now
+inherit the active light/dark/system theme. Existing theme-derived media backing
+continues protecting photograph/control contrast. No controller, route, API,
+authentication, dependency, localization or backend-source change was needed.
+
+Changed production files are `lib/ui/theme/studio_theme.dart` and
+`lib/ui/pages/discover/discover_page.dart`. Updated tests are
+`test/social_feed_layout_test.dart` and `test/studio_layout_test.dart`. One new
+regression changes the active appearance twice while retaining the visible post;
+existing viewport tests now expect the actual selected brightness. Theme tests
+protect the exact white/near-black surfaces and validate at least 4.5:1 text
+contrast for primary/tertiary actions and containers.
+
+Completed bounded validation:
+
+- Changed-file `dart format` and `git diff --check`: passed.
+- Focused feed/theme/publication tests: all 43 passed, four seconds.
+- `flutter test --no-pub --reporter expanded`: all 317 passed, 25 seconds.
+- `flutter analyze --no-pub`: no issues, 39.4 seconds.
+- Isolated fixture debug build: passed, 45.3 seconds.
+- Regular `lib/main.dart` debug APK, API `http://10.0.2.2:8080`: passed, 28.4 seconds.
+
+Native screenshots use the existing synthetic production-widget fixture on a
+verified read-only/no-snapshot emulator 5560, with a 1080×2340/density-450 S22+
+equivalent viewport and three-button navigation. The fixture uses `ThemeMode.system`;
+switching Android night mode verifies real inherited light/dark presentation.
+Inspected captures include populated Discover, Like (128→129) and its menu in
+both themes, journal/Create in both themes, and Discover's light empty/error/
+retry-recovered states. Bright synthetic photos retain readable caption/rail
+foregrounds in both appearances. Fixture actions never delegate to the live
+backend or create account data. Full physical Samsung/TalkBack acceptance and
+every secondary screen were not repeated for this focused palette change.
+
+Evidence is in ignored `build/palette-mobile-acceptance/`: `discover-light.png`,
+`discover-liked-light.png`, `discover-menu-light.png`, `discover-dark.png`,
+`discover-liked-dark.png`, `discover-menu-dark.png`, `journal-light.png`,
+`journal-dark.png`, `discover-empty-light.png`, `discover-error-light.png` and
+`discover-recovered-light.png`, with corresponding native hierarchies and logs.
+Both process-scoped fixture logs contain zero framework, overflow, unhandled
+exception or missing-asset matches; `runtime-patterns.json` records the counts.
+Only verified emulator 5560 was stopped after QA.
+
+The regular APK was installed with `adb install -r` on emulator 5554 after checking
+the foreground page contained no unsaved form. Login, existing pieces/images and
+the user's appearance preference remain. The ordinary journal and Discover now
+both show the selected light appearance, without any preference writes during
+QA. Screenshots `ordinary-home-current.png` and `ordinary-discover-current.png`
+confirm this live behavior; the app is left on Home. Ordinary app-scoped runtime
+checks also contain zero framework/overflow/unhandled/asset/disposed-state matches.
+Installed package and ordinary build artifact share SHA-256
+`0c91cdffd579c81f6f61ba0ae8b8768ddba628b7cb670f8ea1429a4fc0cc96bc`.
+The API readiness endpoint returned `UP`; ordinary development services remain
+running, without restart or migration.
+
+Reviewed/updated documentation: `README.md`, `UI_CONVENTIONS.md`,
+`DESIGN_SYSTEM.md`, this guide and the workspace `ARCHITECTURE_REVIEW.md`.
+Backend runtime/status was inspected; prior backend documentation edits remain
+untouched. No cross-repository follow-up or approval is pending.
+
+## Publication requirements feedback - 2026-10-04
+
+The owner publication card now displays checked/unmet requirements for setting
+the stage to Finished and adding at least one photo. Publish is disabled until
+both are satisfied. Requirements use current journal stage/image data, so changes
+update the card immediately; the API's `eligible=false` default for an absent
+publication does not incorrectly disable a ready piece. Unpublish remains
+available for an existing episode that loses eligibility, while the moderation
+lock remains enforced. Requirement rows expose checked semantics and wrap their
+text. The photo-free Finished prompt now says "Add a photo to publish" and
+confirms that the journal piece is already saved.
+
+Changed implementation: `owner_publication_status_card.dart`,
+`publication_prompt.dart`, and the card wiring in `ceramic_view_page.dart`.
+English/Danish ARB sources and generated localization files were updated through
+`flutter gen-l10n`. Coverage was updated in `owner_publication_status_test.dart`,
+`publication_prompt_test.dart`, and `publication_prompt_integration_test.dart`.
+
+Validation: formatting of the six affected Dart files passed; full
+`flutter analyze --no-pub` found no issues. The focused `flutter test --no-pub`
+run for owner publication status, prompts, prompt integration and localization
+passed all 17 tests. Coverage includes every missing-requirement combination,
+live readiness changes in English/Danish, absent-publication eligibility, and
+unpublishing a hidden episode. `flutter build apk --debug --no-pub` passed.
+The first sandboxed localization command could not access the Flutter SDK
+launcher lock; it was stopped, and one retry with SDK cache access passed.
+No generated source was edited manually.
+
+The debug APK was installed with `adb install -r` on emulator 5554 after checking
+the foreground hierarchy for an unsaved input form. Existing app data was
+preserved. Native inspection verified the updated card; the screenshot shows a
+Finished piece with no photo, its stage requirement checked, its photo requirement
+unmet, and Publish disabled. Evidence is in ignored
+`build/publish-requirements.png` and `build/publish-after-install.xml` (captured
+at separate moments). APK SHA-256:
+`551df2bfb5e9e14523f158189e7a74e35805cb83c710d37cc26d6020f0bd90ce`.
+No publication, stage or photo changes were performed by this acceptance check.
+Physical-device/TalkBack and every appearance/text-scale combination were not
+repeated for this focused change.
+
+Reviewed documentation: workspace `ARCHITECTURE_REVIEW.md`, `UI_CONVENTIONS.md`,
+`DESIGN_SYSTEM.md`, backend publication documentation and both repository rules.
+Updated documentation: client `README.md` and this guide. Backend publication
+validation/DTOs were inspected and remain compatible; backend source and existing
+data were not changed. No cross-repository follow-up or approval is pending.
+
+## Ceramic audience text refinement - 2026-10-04
+
+At the user's request, the Everyone explanation is omitted from the ceramic
+detail publication card. Friends-only warnings remain applicable. Publication
+requirements and authorization are unchanged; no API, localization generation,
+dependency or backend update is needed. Updated files are
+`owner_publication_status_card.dart`, its existing test, and `README.md` plus
+this guide. Repository instructions and the existing publication documentation
+were reviewed.
+
+Formatting passed, full `flutter analyze --no-pub` found no issues, all six
+`owner_publication_status_test.dart` tests passed, and
+`flutter build apk --debug --no-pub` passed. The debug APK was reinstalled with
+`adb install -r` on emulator 5554 after checking for focused input/keyboard activity,
+preserving existing app data. Physical-device acceptance was not repeated.
+The backend was not changed or revalidated for this presentation-only follow-up;
+no cross-repository follow-up or approval is required.
+
+## Finished stage without publication popup - 2026-10-04
+
+Changing an existing ceramic's stage to Finished now saves directly and does not
+open either the publication prompt or missing-photo dialog. Publishing remains
+an explicit action in the detail card. The separate prompt after creating a new
+Finished ceramic is retained. Removed the detail page's prompt import/helper and
+simplified its stage callback. Updated the existing stage-transition integration
+test to assert the saved Finished stage, no dialog, and no publication call.
+
+Formatting passed; full `flutter analyze --no-pub` found no issues. The focused
+`flutter test --no-pub` run for publication prompt integration, owner publication
+status and publication prompts passed all 13 tests, including creation prompts
+and publication readiness. `flutter build apk --debug --no-pub` passed, and the
+updated APK was installed on emulator 5554 with `adb install -r`, preserving app
+data after checking that no input field was focused or keyboard shown. No live
+ceramic stage was changed for acceptance; the stage interaction is covered by the
+widget integration test. Physical-device acceptance was not repeated.
+
+Modified files: `ceramic_view_page.dart`,
+`publication_prompt_integration_test.dart`, `README.md` and this guide.
+Reviewed project instructions, `UI_CONVENTIONS.md`, `DESIGN_SYSTEM.md`,
+workspace architecture/manual-testing notes and backend publication docs.
+Historical dated acceptance notes describe their original runs; the current
+workflow is documented in the README and this section. Backend source, API,
+data and publication eligibility are unchanged. No cross-repository follow-up
+or approval is pending.
+
+
+## Home and Profile ceramic preview alignment - 2026-10-04
+
+This section records the earlier Profile-based appearance. The user clarified
+that the original Home cards should be retained; the corrected direction is
+recorded in the following section.
+
+Home and the private Profile now use the same ceramic thumbnail appearance:
+cover-cropped photographs, a compact theme-derived title strip, matching loading/
+failed-image placeholders, .72 portrait proportions and two-pixel gutters. Both
+pages share a 900-logical-pixel grid content limit. The shared delegate retains
+three columns on ordinary phones and adapts to narrower/expanded constraints.
+Journal clay/stage/rating metadata remains in localized accessibility labels and
+piece details; filtering, sorting, batch selection and detail routes are unchanged.
+Public Profile tiles retain their optional clay subtitle, like count and publication
+routes. The existing ceramic-sharing picker also uses the journal tile adapter.
+
+Created `lib/ui/widgets/ceramic_preview_tile.dart` and
+`test/ceramic_preview_tile_test.dart`. Updated the existing journal adapter,
+`home_page.dart`, `profile_feature_page.dart`, `basic_profile_page.dart`,
+`profile_widgets.dart` and `studio_layout_test.dart`. Reviewed repository
+instructions, architecture notes, theme/controller/router/API/service/localization
+boundaries, supported platforms and existing tests. Flutter 3.44.6 / Dart 3.12.2,
+Material 3, AutoRoute, Cubit/ChangeNotifier, static repositories and the existing
+Dio/service infrastructure are preserved. No generated code, dependencies,
+backend source, contracts, authentication or persistent data changed. Updated
+`README.md`, `UI_CONVENTIONS.md`, `DESIGN_SYSTEM.md`, workspace
+`ARCHITECTURE_REVIEW.md` and this guide.
+
+Bounded changed-file `dart format` passed. Full `flutter analyze --no-pub` found
+no issues (36 seconds). Full `flutter test --no-pub` passed all 326 tests (46
+seconds), including pixel comparisons between Home/Profile preview rendering
+in both themes at normal and 2x text, failed-photo fallback, metadata semantics,
+tap navigation and the existing journal/profile/sharing regression coverage.
+The first targeted run exposed semantics-handle cleanup in the changed test;
+cleanup was corrected without weakening the metadata or action assertions,
+and the subsequent full suite passed.
+
+Both isolated production-widget and ordinary `lib/main.dart` Android debug APK
+builds passed. The fixture uses synthetic DTOs and loopback-hosted test images;
+its adapter never forwards requests to the real backend. It was installed only
+on verified read-only emulator 5560. Native Home/Profile screenshots were inspected
+in light and dark mode at a Galaxy S22+ equivalent (1080x2340, density 450,
+384 logical pixels wide) with three-button navigation. Matching tile bounds were
+356x495 / 356x494 physical pixels: a one-pixel positioning-rounding difference.
+Batch selection and cancellation were exercised without editing/deleting a piece.
+A small 320x568 logical Android viewport at 2x text was inspected, including Home
+search with keyboard open and the scrolled Profile grid. Evidence is retained in
+ignored `build/preview-mobile-acceptance/`. Both grids were also visually checked
+at 1280x800 logical pixels with the existing sidebar navigation. Fixture runtime
+logs reported zero framework exceptions, overflows, unhandled exceptions or failed
+assets across these configurations. Only the verified disposable emulator was
+stopped after acceptance; the ordinary development emulator and backend remain up.
+
+The ordinary debug APK uses `API_BASE_URL=http://10.0.2.2:8080` and was installed
+with `adb install -r` on emulator 5554 after checking for active input/keyboard
+and an unsaved form action. Existing login, account data and dark appearance were
+preserved; startup Home and its runtime log were verified. Installed SHA256:
+`96b2f0c69645db2be3b78fd06863f60ad3eead627225838bbd487c196d26b286`.
+An ordinary Profile screenshot capture reached its bounded 40-second ADB timeout
+while the isolated emulator was also running. After stopping the disposable
+emulator, the single retry captured both ordinary pages and returned to Home.
+A redundant subsequent Home capture also hit its 30-second ADB limit. The final
+read-only verification reused the fresh successful Home screenshot and kept the
+APK fingerprint, live-data/error-state, hierarchy and runtime-log checks.
+The local backend readiness endpoint returned UP. Backend repository source was
+not inspected or modified for this presentation-only task. No backend migration/restart,
+backend validation or cross-repository source change was needed. Physical Samsung,
+TalkBack and non-Android platforms were not tested in this focused follow-up;
+Android remains the supported target. No cross-repository follow-up or approval
+is pending.
+
+
+## Restore Home previews and apply their style to Profile - 2026-10-04
+
+The user clarified that Home's original previews were the preferred reference.
+Restored their theme-surface metadata panel, bold title, optional clay, localized
+stage and star/rating, two-pixel corners, tools placeholder and responsive card
+sizing. Home's original column thresholds and 1100-pixel content limit are
+retained in the shared delegate; card height grows with text scaling. Profile now
+uses these shared cards and sizing rather than changing Home to title-only tiles.
+Private Profile uses the existing journal adapter, stage list and clay list;
+public Profile uses the existing authorized public DTO stage/rating fields and
+preserves its like badge and publication route. No private fields are requested
+for public profiles. Selection, filters, sorting, sharing and navigation are
+unchanged. The existing ceramic-sharing picker regains the original Home style.
+
+Modified `ceramic_preview_tile.dart`, `ceramic_journal_card.dart`, `home_page.dart`,
+`profile_feature_page.dart`, `basic_profile_page.dart`,
+`ceramic_preview_tile_test.dart` and `studio_layout_test.dart`. Updated README,
+UI conventions, design-system guide, workspace architecture review and this
+acceptance guide; no new source files, dependencies or generated code are needed.
+Reviewed Flutter/Dart versions, existing component/controller/router/theme and
+localization conventions, repository instructions and the matching backend
+public-profile DTO/endpoint/service. Backend code, API contracts, authentication,
+persistence and business controllers are unchanged; no migration or
+cross-repository follow-up is required.
+
+Changed-file formatting passed. The focused preview/layout run passed all 24
+tests, including light/dark pixel parity at 1x and 2x text, visible clay/stage/
+rating, accessible labels, failed-photo fallback, public likes and tap callbacks.
+Full Flutter analysis found no issues (6.8 seconds).
+
+Full `flutter test --no-pub` passed all 326 tests (70 seconds).
+
+Both isolated production-widget and ordinary `lib/main.dart` debug APK builds
+passed (30.5 and 16.7 seconds). Synthetic Home and Profile previews were visually
+checked in light and dark mode on a Galaxy S22+ equivalent, 1080x2340 at density
+450, with three-button navigation. Matching card bounds were 356x548 on Home
+and 356x547 on Profile, differing only through physical-pixel position rounding.
+Small Android, 320x568 logical pixels, was checked at 2x text, including the
+scrolled Profile grid; both use two columns and preserve stage/rating. Native
+screenshots and UI hierarchies are in ignored
+`build/home-preview-mobile-acceptance/`. An unrelated Android Chrome crash dialog
+covered the fixture during its initial 20-second wait; it was dismissed on the
+read-only test emulator and the visual check then succeeded. The fixture's
+synthetic DTOs/loopback images never access the real backend or user data.
+
+Both pages were also visually checked at 1280x800 logical pixels using the
+existing sidebar navigation. The fixture runtime log reported zero framework
+exceptions, layout overflows, unhandled exceptions or failed assets across these
+configurations. Only the verified read-only emulator was stopped after QA.
+Physical Samsung/TalkBack checks were not repeated for this focused correction;
+Android remains the supported platform. No approval is pending.
+
+The corrected ordinary APK was installed with `adb install -r` on emulator 5554
+after checking for focused inputs, a keyboard and an unsaved form action. The
+following force-stop hit its 30-second ADB limit; the installed APK fingerprint
+and live process were verified instead, and foreground launch succeeded. The
+app retained its Profile route, so the first Home-only wait expired; navigating
+to Home resolved that check. Fresh Home and Profile screenshots were captured
+through Android screenshot files, avoiding the earlier intermittent exec-out
+stream. Both actual pages display the restored title/clay/stage/rating panels;
+the app was returned to Home. Existing account data, login and dark appearance
+were preserved. Final verification confirmed live journal data, the APK identity,
+Home visibility and zero framework/overflow/unhandled/asset/disposed-state errors.
+Installed SHA256:
+`362f6ce00386d8bdedb555d66e066a2ef9b1fcc69b3670b4ea9f8046d64d29a5`.
+The app uses `API_BASE_URL=http://10.0.2.2:8080`; backend readiness remained UP.
+The ordinary emulator/backend are left running for testing. No persistent data
+was cleared, no backend source changed and no approval/follow-up remains.
+
+
+## Ceramic preview placeholder centering - 2026-10-04
+
+The no-picture icon was centered over the full card, including the bottom
+metadata panel, which made it appear low in the visible image area. The shared
+preview now lays out the caption at its natural height and centers missing,
+loading and failed-image placeholders in the remaining photo area. Caption
+height responds to actual metadata and text scaling; no fixed offsets or guessed
+text heights are used. Loaded photos retain their previous full-card cover crop
+and caption backing colors. Home, private/public Profile and the ceramic-sharing
+picker inherit the same fix without changing their data, routes or actions.
+
+Modified only `lib/ui/widgets/ceramic_preview_tile.dart` and
+`test/ceramic_preview_tile_test.dart` in source/tests. Regression checks measure
+both coordinates against the visible photo area's center for metadata and
+title-only captions, including null/failed photos, light/dark appearance and
+1x/2x text; existing visual parity and tap/like/semantics checks are retained.
+Reviewed repository instructions, architecture notes, Flutter 3.44.6 / Dart
+3.12.2, existing theme/widgets/controllers/router/services/localization/testing
+and Android support. Updated README, design-system guide, UI conventions and
+this guide. No generated files, dependencies, API contracts, state/navigation
+frameworks, business controllers or backend code need changes; the backend
+repository was not inspected or modified for this layout-only correction.
+
+Bounded changed-file formatting passed. The focused preview/layout run passed
+26 tests; full Flutter analysis found no issues.
+
+The final `flutter test --no-pub` run passed all 328 tests in 43 seconds;
+`flutter analyze --no-pub` passed in 7.2 seconds. The ordinary debug APK built
+successfully with the existing `lib/main.dart` entry point and local Android
+API bridge. Installed with `adb install -r`, preserving login, account data and
+appearance preferences. Installed SHA256:
+`be67f7aad6b83eeab94e80ced0d5e30ed6296f0ce823cd78b43f6de6a9d6d246`.
+
+Native Home and Profile screenshots confirm that the tools icon is centered in
+the gray photo area above the title/clay/stage/rating panel. The existing real
+photo retains its crop and translucent caption. Current dark/gesture-navigation
+appearance and two existing ceramic entries were preserved. Screenshots, test
+output, APK metadata and runtime results are retained in the ignored
+`build/centered-preview-mobile-acceptance/` directory. Two initial accessibility
+inspection attempts failed while the foreground app was blank; a bounded local
+app restart and Flutter Inspector first-frame/widget-readiness checks preceded
+successful screenshots and accessibility verification. No further code changes
+were needed. An optional scripted pixel comparison could not run because Pillow
+is unavailable; visual review and existing widget pixel-parity tests passed.
+
+Final installed-APK verification passed and reported zero framework exceptions,
+layout overflows, unhandled exceptions, failed assets or disposed-state errors.
+The app is left on Home, and local backend readiness is UP at port 8080.
+Physical-device, TalkBack, keyboard, three-button-navigation and native light-mode
+checks were not repeated for this focused alignment fix; widget checks cover
+both themes and increased text scaling. Android remains the supported platform.
+No backend source, shared API or persistent data was changed, no cross-repository
+follow-up is required and no approval is pending.

@@ -107,9 +107,16 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Material inventory'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.text('Material inventory'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('Stoneware'), findsOneWidget);
-    expect(find.byType(ListView), findsOneWidget);
+    expect(find.byType(CustomScrollView), findsOneWidget);
+    expect(find.byType(SliverList), findsOneWidget);
     expect(tester.takeException(), isNull);
     controller.dispose();
   });
@@ -139,23 +146,58 @@ void main() {
     },
   );
 
-  testWidgets('ceramic cost errors include details and remain retryable', (
+  testWidgets('ceramic cost errors show safe feedback and retry reloads data', (
     tester,
   ) async {
+    var fail = true;
+    var costLoads = 0;
+    var inventoryLoads = 0;
     await tester.pumpWidget(
       localizedTestApp(
         home: CeramicMaterialCostPage(
           ceramicId: 7,
           ceramicTitle: 'Usage bowl',
-          costLoader: (_, _) async => throw StateError('cost unavailable'),
-          inventoryLoader: () async => [],
+          costLoader: (ceramicId, _) async {
+            expect(ceramicId, 7);
+            costLoads++;
+            if (fail) throw StateError('cost unavailable');
+            return const CeramicMaterialCostDto(
+              ceramicId: 7,
+              estimatedMaterialCosts: [
+                MoneyAmountDto(currency: 'DKK', amount: '17.25'),
+              ],
+            );
+          },
+          inventoryLoader: () async {
+            inventoryLoads++;
+            return [];
+          },
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('cost unavailable'), findsOneWidget);
+    expect(
+      find.text('Your material inventory could not be loaded.'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('cost unavailable'), findsNothing);
+    expect(find.textContaining('StateError'), findsNothing);
     expect(find.text('Retry'), findsOneWidget);
+    expect(costLoads, 1);
+    expect(inventoryLoads, 1);
+    fail = false;
+    await tester.tap(find.text('Retry'));
+    await tester.pumpAndSettle();
+    expect(costLoads, 2);
+    expect(inventoryLoads, 2);
+    expect(
+      find.text('Your material inventory could not be loaded.'),
+      findsNothing,
+    );
+    expect(find.text('Retry'), findsNothing);
+    expect(find.text('Estimated material cost'), findsOneWidget);
+    expect(find.text('17.25 DKK'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

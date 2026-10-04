@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/repositories/social_repository.dart';
 import 'package:ceramic_app/ui/pages/notification/notification_controller_page.dart';
@@ -18,7 +19,9 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
   Future<void> _openProfile(UserProfileDto profile) async {
     final blocked = await Navigator.push<BlockedAccountResult>(
       context,
-      MaterialPageRoute(builder: (_) => BasicProfilePage(initialProfile: profile)),
+      MaterialPageRoute(
+        builder: (_) => BasicProfilePage(initialProfile: profile),
+      ),
     );
     if (!mounted) return;
     await widget.controller.load();
@@ -42,7 +45,9 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
   }
 
   void _showError(Object exception) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(exception.toString())));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
   }
 
   @override
@@ -63,43 +68,49 @@ class _FriendRequestsPageState extends State<FriendRequestsPage> {
             ],
           ),
         ),
-        body: AnimatedBuilder(
-          animation: widget.controller,
-          builder: (context, _) => TabBarView(
-            children: [
-              _RequestList(
-                requests: widget.controller.incoming,
-                emptyMessage: context.l10n.noReceivedRequests,
-                onOpen: _openProfile,
-                onRefresh: widget.controller.load,
-                onAccept: (request) async {
-                  try {
-                    await widget.controller.accept(request.id);
-                  } catch (exception) {
-                    if (mounted) _showError(exception);
-                  }
-                },
-                onDecline: (request) async {
-                  try {
-                    await widget.controller.decline(request.id);
-                  } catch (exception) {
-                    if (mounted) _showError(exception);
-                  }
-                },
-                onLoadMore: widget.controller.incomingCursor == null
-                    ? null
-                    : () => widget.controller.loadMore('incoming'),
+        body: SafeArea(
+          top: false,
+          child: StudioContent(
+            maxWidth: 820,
+            child: AnimatedBuilder(
+              animation: widget.controller,
+              builder: (context, _) => TabBarView(
+                children: [
+                  _RequestList(
+                    requests: widget.controller.incoming,
+                    emptyMessage: context.l10n.noReceivedRequests,
+                    onOpen: _openProfile,
+                    onRefresh: widget.controller.load,
+                    onAccept: (request) async {
+                      try {
+                        await widget.controller.accept(request.id);
+                      } catch (exception) {
+                        if (mounted) _showError(exception);
+                      }
+                    },
+                    onDecline: (request) async {
+                      try {
+                        await widget.controller.decline(request.id);
+                      } catch (exception) {
+                        if (mounted) _showError(exception);
+                      }
+                    },
+                    onLoadMore: widget.controller.incomingCursor == null
+                        ? null
+                        : () => widget.controller.loadMore('incoming'),
+                  ),
+                  _RequestList(
+                    requests: widget.controller.outgoing,
+                    emptyMessage: context.l10n.noSentRequests,
+                    onOpen: _openProfile,
+                    onRefresh: widget.controller.load,
+                    onLoadMore: widget.controller.outgoingCursor == null
+                        ? null
+                        : () => widget.controller.loadMore('outgoing'),
+                  ),
+                ],
               ),
-              _RequestList(
-                requests: widget.controller.outgoing,
-                emptyMessage: context.l10n.noSentRequests,
-                onOpen: _openProfile,
-                onRefresh: widget.controller.load,
-                onLoadMore: widget.controller.outgoingCursor == null
-                    ? null
-                    : () => widget.controller.loadMore('outgoing'),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -151,7 +162,10 @@ class _RequestList extends StatelessWidget {
                 colorHex: request.user.avatarColor,
                 imageUrl: request.user.avatarUrl,
               ),
-              title: Text(request.user.username, style: const TextStyle(fontWeight: FontWeight.w600)),
+              title: Text(
+                request.user.username,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
               subtitle: Text(
                 onAccept == null
                     ? context.l10n.requestSent

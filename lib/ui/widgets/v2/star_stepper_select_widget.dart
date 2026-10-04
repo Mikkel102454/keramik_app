@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 class StarStepperSelectWidget extends StatefulWidget {
   final int count;
@@ -19,7 +20,7 @@ class StarStepperSelectWidget extends StatefulWidget {
   final IconData selectedIcon;
   final IconData unselectedIcon;
 
-  final Color selectedIconColor;
+  final Color? selectedIconColor;
   final Color? unselectedIconColor;
 
   final bool showLabel;
@@ -43,7 +44,7 @@ class StarStepperSelectWidget extends StatefulWidget {
     this.selectedIcon = Icons.star,
     this.unselectedIcon = Icons.star_border,
 
-    this.selectedIconColor = const Color(0xFF34C759),
+    this.selectedIconColor,
     this.unselectedIconColor,
 
     this.showLabel = false,
@@ -54,8 +55,7 @@ class StarStepperSelectWidget extends StatefulWidget {
       _StarStepperSelectWidgetState();
 }
 
-class _StarStepperSelectWidgetState
-    extends State<StarStepperSelectWidget> {
+class _StarStepperSelectWidgetState extends State<StarStepperSelectWidget> {
   late int selectedValue;
 
   late int lastValidValue;
@@ -105,62 +105,64 @@ class _StarStepperSelectWidgetState
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      spacing: widget.spacing,
+      runSpacing: widget.spacing,
+      children: List.generate(widget.count, (index) {
+        final starValue = index + 1;
 
-      children: List.generate(
-        widget.count,
-            (index) {
-          final starValue = index + 1;
+        final isSelected = starValue <= selectedValue;
 
-          final isSelected = starValue <= selectedValue;
+        return Padding(
+          padding: EdgeInsets.zero,
 
-          return Padding(
-            padding: EdgeInsets.only(
-              right: index == widget.count - 1
-                  ? 0
-                  : widget.spacing,
-            ),
-
-            child: GestureDetector(
+          child: Semantics(
+            button: true,
+            selected: starValue == selectedValue,
+            label: context.l10n.starRating(starValue),
+            child: InkWell(
               onTap: () => _handleTap(starValue),
 
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    isSelected
-                        ? widget.selectedIcon
-                        : widget.unselectedIcon,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isSelected ? widget.selectedIcon : widget.unselectedIcon,
 
-                    size: widget.size,
+                      size: widget.size,
 
-                    color: isSelected
-                        ? widget.selectedIconColor
-                        : widget.unselectedIconColor ??
-                            Theme.of(context).colorScheme.outline,
-                  ),
-
-                  if (widget.showLabel) ...[
-                    const SizedBox(height: 6),
-
-                    Text(
-                      "$starValue",
-                      style: TextStyle(
-                        fontSize: widget.fontSize,
-                        fontWeight: widget.fontWeight,
-                        fontFamily: widget.fontFamily,
-                        color: widget.color ?? Theme.of(context).colorScheme.onSurface,
-                        decoration: widget.decoration,
-                      ),
+                      color: isSelected
+                          ? widget.selectedIconColor ??
+                                Theme.of(context).colorScheme.tertiary
+                          : widget.unselectedIconColor ??
+                                Theme.of(context).colorScheme.outline,
                     ),
+
+                    if (widget.showLabel) ...[
+                      const SizedBox(height: 6),
+
+                      Text(
+                        "$starValue",
+                        style: TextStyle(
+                          fontSize: widget.fontSize,
+                          fontWeight: widget.fontWeight,
+                          fontFamily: widget.fontFamily,
+                          color:
+                              widget.color ??
+                              Theme.of(context).colorScheme.onSurface,
+                          decoration: widget.decoration,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      }),
     );
   }
 }

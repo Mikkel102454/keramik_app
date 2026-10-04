@@ -202,7 +202,7 @@ class _ConversationPageState extends State<ConversationPage>
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('$exception')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     } finally {
       if (mounted) setState(() => _changingRequest = false);
@@ -261,7 +261,7 @@ class _ConversationPageState extends State<ConversationPage>
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text(error)));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     });
   }
@@ -455,7 +455,7 @@ class _ConversationPageState extends State<ConversationPage>
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('$exception')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     }
   }
@@ -488,7 +488,7 @@ class _ConversationPageState extends State<ConversationPage>
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('$exception')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     }
   }
@@ -529,7 +529,7 @@ class _ConversationPageState extends State<ConversationPage>
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('$exception')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     }
   }
@@ -625,76 +625,79 @@ class _ConversationPageState extends State<ConversationPage>
                   ),
               ],
             ),
-            body: Column(
-              children: [
-                Expanded(child: _messageBody()),
-                if (conversation.incomingRequest)
-                  Wrap(
-                    spacing: 8,
-                    children: [
-                      TextButton(
-                        onPressed: _controller.isLoading || _changingRequest
-                            ? null
-                            : () => _changeRequest(false),
-                        child: Text(context.l10n.decline),
-                      ),
-                      FilledButton(
-                        onPressed: _controller.isLoading || _changingRequest
-                            ? null
-                            : () => _changeRequest(true),
-                        child: Text(context.l10n.accept),
-                      ),
-                    ],
-                  ),
-                if (conversation.readOnly &&
-                    !_controller.canRetryPendingText &&
-                    !_voice.active)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(16),
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    child: Text(
-                      _readOnlyLabel(conversation),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+            body: SafeArea(
+              top: false,
+              child: Column(
+                children: [
+                  Expanded(child: _messageBody()),
+                  if (conversation.incomingRequest)
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        TextButton(
+                          onPressed: _controller.isLoading || _changingRequest
+                              ? null
+                              : () => _changeRequest(false),
+                          child: Text(context.l10n.decline),
+                        ),
+                        FilledButton(
+                          onPressed: _controller.isLoading || _changingRequest
+                              ? null
+                              : () => _changeRequest(true),
+                          child: Text(context.l10n.accept),
+                        ),
+                      ],
                     ),
-                  )
-                else
-                  MessageComposer(
-                    controller: _composer,
-                    sending: _controller.isSending || _controller.isLoading,
-                    onSend: _send,
-                    onVoice: _mediaAvailable && conversation.canShare
-                        ? () => _startVoice(lock: true)
-                        : null,
-                    onVoiceHold: () => _startVoice(),
-                    onVoiceRelease: () => unawaited(_voice.release()),
-                    onVoiceCancel: () => unawaited(_voice.cancel()),
-                    onVoiceLock: _voice.lock,
-                    onVoiceCancelArmed: _voice.armCancel,
-                    voiceBar: _voice.active
-                        ? ChatVoiceComposer(
-                            controller: _voice,
-                            canSend:
-                                _mediaAvailable &&
-                                conversation.canShare &&
-                                !_controller.isSending,
-                          )
-                        : null,
-                    onCamera: _mediaAvailable && conversation.canShare
-                        ? () => _media(ImageSource.camera)
-                        : null,
-                    onImage: _mediaAvailable && conversation.canShare
-                        ? () => _media(ImageSource.gallery)
-                        : null,
-                    onEmoji: _emoji,
-                    onCeramic: conversation.canShare && !conversation.archived
-                        ? _shareCeramic
-                        : null,
-                  ),
-              ],
+                  if (conversation.readOnly &&
+                      !_controller.canRetryPendingText &&
+                      !_voice.active)
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      color: Theme.of(context).colorScheme.surfaceContainer,
+                      child: Text(
+                        _readOnlyLabel(conversation),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    )
+                  else
+                    MessageComposer(
+                      controller: _composer,
+                      sending: _controller.isSending || _controller.isLoading,
+                      onSend: _send,
+                      onVoice: _mediaAvailable && conversation.canShare
+                          ? () => _startVoice(lock: true)
+                          : null,
+                      onVoiceHold: () => _startVoice(),
+                      onVoiceRelease: () => unawaited(_voice.release()),
+                      onVoiceCancel: () => unawaited(_voice.cancel()),
+                      onVoiceLock: _voice.lock,
+                      onVoiceCancelArmed: _voice.armCancel,
+                      voiceBar: _voice.active
+                          ? ChatVoiceComposer(
+                              controller: _voice,
+                              canSend:
+                                  _mediaAvailable &&
+                                  conversation.canShare &&
+                                  !_controller.isSending,
+                            )
+                          : null,
+                      onCamera: _mediaAvailable && conversation.canShare
+                          ? () => _media(ImageSource.camera)
+                          : null,
+                      onImage: _mediaAvailable && conversation.canShare
+                          ? () => _media(ImageSource.gallery)
+                          : null,
+                      onEmoji: _emoji,
+                      onCeramic: conversation.canShare && !conversation.archived
+                          ? _shareCeramic
+                          : null,
+                    ),
+                ],
+              ),
             ),
           ),
         );
@@ -779,7 +782,7 @@ class _ConversationPageState extends State<ConversationPage>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(_controller.error!, textAlign: TextAlign.center),
+            Text(context.l10n.operationFailed, textAlign: TextAlign.center),
             const SizedBox(height: 12),
             FilledButton(
               onPressed: _controller.load,

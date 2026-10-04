@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/account_settings_dto.dart';
@@ -26,7 +27,8 @@ class SharedCeramicDetailPage extends StatefulWidget {
   final LoadSharedCeramic? loadDetail;
 
   @override
-  State<SharedCeramicDetailPage> createState() => _SharedCeramicDetailPageState();
+  State<SharedCeramicDetailPage> createState() =>
+      _SharedCeramicDetailPageState();
 }
 
 class _SharedCeramicDetailPageState extends State<SharedCeramicDetailPage> {
@@ -43,48 +45,54 @@ class _SharedCeramicDetailPageState extends State<SharedCeramicDetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.sharedCeramic)),
-      body: FutureBuilder<SharedCeramicDetailDto>(
-        future: _detail,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(context.l10n.sharedCeramicLoadFailed),
-                  const SizedBox(height: 12),
-                  FilledButton(
-                    onPressed: () => setState(() => _detail = _load()),
-                    child: Text(context.l10n.retry),
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: FutureBuilder<SharedCeramicDetailDto>(
+            future: _detail,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState != ConnectionState.done) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(context.l10n.sharedCeramicLoadFailed),
+                      const SizedBox(height: 12),
+                      FilledButton(
+                        onPressed: () => setState(() => _detail = _load()),
+                        child: Text(context.l10n.retry),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          }
-          final detail = snapshot.requireData;
-          if (!detail.available) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.hide_image_outlined, size: 52),
-                    const SizedBox(height: 12),
-                    Text(
-                      context.l10n.ceramicUnavailable,
-                      textAlign: TextAlign.center,
+                );
+              }
+              final detail = snapshot.requireData;
+              if (!detail.available) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.hide_image_outlined, size: 52),
+                        const SizedBox(height: 12),
+                        Text(
+                          context.l10n.ceramicUnavailable,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            );
-          }
-          return _SharedCeramicContent(detail: detail);
-        },
+                  ),
+                );
+              }
+              return _SharedCeramicContent(detail: detail);
+            },
+          ),
+        ),
       ),
     );
   }
@@ -137,9 +145,9 @@ class _SharedCeramicContent extends StatelessWidget {
         const SizedBox(height: 18),
         Text(
           detail.title ?? '',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w800,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800),
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -198,7 +206,9 @@ class _SharedCeramicContent extends StatelessWidget {
                         subtitle: Text(
                           [
                             if (firing.firingDate != null)
-                              DateFormat.yMMMd(locale).format(firing.firingDate!),
+                              DateFormat.yMMMd(
+                                locale,
+                              ).format(firing.firingDate!),
                             if (firing.targetTemperatureC != null)
                               '${firing.targetTemperatureC} °C',
                             if (firing.note.isNotEmpty) firing.note,
@@ -216,7 +226,9 @@ class _SharedCeramicContent extends StatelessWidget {
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: detail.tags.map((tag) => Chip(label: Text(tag))).toList(),
+                    children: detail.tags
+                        .map((tag) => Chip(label: Text(tag)))
+                        .toList(),
                   ),
                 ],
         ),
@@ -264,7 +276,8 @@ class _SharedCeramicContent extends StatelessWidget {
   }
 
   String _centimeters(double? value) => value == null ? '—' : '$value cm';
-  String _text(String? value) => value?.trim().isNotEmpty == true ? value! : '—';
+  String _text(String? value) =>
+      value?.trim().isNotEmpty == true ? value! : '—';
 }
 
 class _Section extends StatelessWidget {
@@ -281,9 +294,9 @@ class _Section extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w800,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 8),
           ...children,

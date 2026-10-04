@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'form_field_style.dart';
+import 'studio_widgets.dart';
 
 Future<bool> confirmEntryDiscard(BuildContext context) async =>
     await showDialog<bool>(
@@ -108,7 +109,11 @@ class EntryPage extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: AbsorbPointer(absorbing: busy, child: content),
+        top: false,
+        child: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: AbsorbPointer(absorbing: busy, child: content),
+        ),
       ),
     );
   }
@@ -121,27 +126,36 @@ class EntrySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 20),
+    padding: const EdgeInsets.only(bottom: StudioSpacing.section),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+        StudioSectionHeading(title: title),
+        StudioSurface(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (var i = 0; i < children.length; i++) ...[
+                if (i > 0) const SizedBox(height: 16),
+                children[i],
+              ],
+            ],
+          ),
         ),
-        const SizedBox(height: 8),
-        for (var i = 0; i < children.length; i++) ...[
-          if (i > 0) const SizedBox(height: 12),
-          children[i],
-        ],
       ],
     ),
   );
 }
 
 class EntryValue extends StatelessWidget {
-  const EntryValue({super.key, required this.label, required this.value});
+  const EntryValue({
+    super.key,
+    required this.label,
+    required this.value,
+    this.selectable = false,
+  });
   final String label, value;
+  final bool selectable;
 
   @override
   Widget build(BuildContext context) => FieldLabel(
@@ -150,13 +164,18 @@ class EntryValue extends StatelessWidget {
       width: double.infinity,
       padding: FormFieldStyle.padding,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: Theme.of(context).colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(FormFieldStyle.radius),
       ),
-      child: Text(
-        value.isEmpty ? context.l10n.notSet : value,
-        style: FormFieldStyle.textStyle,
-      ),
+      child: selectable
+          ? SelectableText(
+              value.isEmpty ? context.l10n.notSet : value,
+              style: FormFieldStyle.textStyle,
+            )
+          : Text(
+              value.isEmpty ? context.l10n.notSet : value,
+              style: FormFieldStyle.textStyle,
+            ),
     ),
   );
 }

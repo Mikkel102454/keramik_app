@@ -5,6 +5,7 @@ import 'package:ceramic_app/l10n/app_localizations.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/objects/project_template_dto.dart';
 import 'package:ceramic_app/ui/pages/home/templates/project_templates_page.dart';
+import 'package:ceramic_app/ui/widgets/v2/entry_page_widgets.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/ui/pages/settings/membership_page.dart';
 import 'package:ceramic_app/ui/pages/notification/ceramic_sharing_pages.dart';
@@ -357,8 +358,28 @@ void main() {
       ],
     );
     await tester.pumpWidget(app(ProjectTemplateReadPage(template: template)));
-    expect(find.text('Saved plan'), findsOneWidget);
-    expect(find.text('Saved private planning note'), findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byType(AppBar),
+        matching: find.text('Saved plan'),
+      ),
+      findsOneWidget,
+    );
+    final planningNote = find.byWidgetPredicate(
+      (widget) =>
+          widget is EntryValue &&
+          widget.label == 'Notes' &&
+          widget.value == template.note,
+    );
+    expect(planningNote, findsOneWidget);
+    expect(tester.widget<EntryValue>(planningNote).selectable, isTrue);
+    expect(
+      find.descendant(
+        of: planningNote,
+        matching: find.text('Saved private planning note'),
+      ),
+      findsOneWidget,
+    );
     await tester.scrollUntilVisible(
       find.text('Saved firing note'),
       180,

@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
@@ -34,6 +35,11 @@ class _NewGroupPageState extends State<NewGroupPage> {
   }
 
   Future<void> _loadFriends() async {
+    if (!mounted) return;
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
     try {
       final users = <UserProfileDto>[];
       String? cursor;
@@ -44,13 +50,14 @@ class _NewGroupPageState extends State<NewGroupPage> {
       } while (cursor != null);
       if (mounted) setState(() => _friends = users);
     } catch (exception) {
-      if (mounted) setState(() => _error = '$exception');
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
   Future<void> _create() async {
+    if (_creating) return;
     final name = _name.text.trim();
     if (name.isEmpty || _selected.isEmpty) return;
     setState(() => _creating = true);
@@ -60,7 +67,9 @@ class _NewGroupPageState extends State<NewGroupPage> {
     } catch (exception) {
       if (mounted) {
         setState(() => _creating = false);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$exception')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
       }
     }
   }
@@ -72,74 +81,96 @@ class _NewGroupPageState extends State<NewGroupPage> {
         title: Text(context.l10n.newGroup),
         actions: [
           TextButton(
-            onPressed: _creating || _name.text.trim().isEmpty || _selected.isEmpty ? null : _create,
+            onPressed:
+                _creating || _name.text.trim().isEmpty || _selected.isEmpty
+                ? null
+                : _create,
             child: Text(context.l10n.create),
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _name,
-              maxLength: 100,
-              onChanged: (_) => setState(() {}),
-              decoration: InputDecoration(
-                labelText: context.l10n.groupName,
-                border: const OutlineInputBorder(),
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: 820,
+          child: CustomScrollView(
+            slivers: [
+              SliverPadding(
+                padding: const EdgeInsets.all(20),
+                sliver: SliverList.list(
+                  children: [
+                    TextField(
+                      controller: _name,
+                      maxLength: 100,
+                      onChanged: (_) => setState(() {}),
+                      decoration: InputDecoration(
+                        labelText: context.l10n.groupName,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    StudioSectionHeading(
+                      title: context.l10n.selectFriendsMemberCount(
+                        _selected.length + 1,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                  context.l10n.selectFriendsMemberCount(_selected.length + 1),
-                  style: const TextStyle(fontWeight: FontWeight.w700)),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Expanded(
-            child: _loading
-                ? const Center(child: CircularProgressIndicator())
-                : _error != null
-                    ? Center(
-                        child: FilledButton(
-                          onPressed: _loadFriends,
-                          child: Text(context.l10n.retry),
+              if (_loading)
+                const SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (_error != null)
+                SliverToBoxAdapter(
+                  child: StudioEmptyState(
+                    icon: Icons.cloud_off_outlined,
+                    title: context.l10n.operationFailed,
+                    action: FilledButton(
+                      onPressed: _loadFriends,
+                      child: Text(context.l10n.retry),
+                    ),
+                  ),
+                )
+              else if (_friends.isEmpty)
+                SliverToBoxAdapter(
+                  child: StudioEmptyState(
+                    icon: Icons.people_outline,
+                    title: context.l10n.addFriendBeforeGroup,
+                  ),
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+                  sliver: SliverList.builder(
+                    itemCount: _friends.length,
+                    itemBuilder: (context, index) {
+                      final friend = _friends[index];
+                      final selected = _selected.contains(friend.userId);
+                      return CheckboxListTile(
+                        value: selected,
+                        onChanged: _selected.length >= 49 && !selected
+                            ? null
+                            : (value) => setState(() {
+                                if (value == true) {
+                                  _selected.add(friend.userId);
+                                } else {
+                                  _selected.remove(friend.userId);
+                                }
+                              }),
+                        secondary: ProfileAvatar(
+                          initials: friend.avatarInitials,
+                          colorHex: friend.avatarColor,
+                          imageUrl: friend.avatarUrl,
                         ),
-                      )
-                    : _friends.isEmpty
-                        ? Center(
-                            child: Text(context.l10n.addFriendBeforeGroup),
-                          )
-                        : ListView(
-                            children: _friends.map((friend) {
-                              final selected = _selected.contains(friend.userId);
-                              return CheckboxListTile(
-                                value: selected,
-                                onChanged: _selected.length >= 49 && !selected
-                                    ? null
-                                    : (value) => setState(() {
-                                          if (value == true) {
-                                            _selected.add(friend.userId);
-                                          } else {
-                                            _selected.remove(friend.userId);
-                                          }
-                                        }),
-                                secondary: ProfileAvatar(
-                                  initials: friend.avatarInitials,
-                                  colorHex: friend.avatarColor,
-                                  imageUrl: friend.avatarUrl,
-                                ),
-                                title: Text(friend.username),
-                              );
-                            }).toList(),
-                          ),
+                        title: Text(friend.username),
+                      );
+                    },
+                  ),
+                ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

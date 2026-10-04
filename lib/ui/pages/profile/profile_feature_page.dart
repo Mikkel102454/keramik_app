@@ -1,13 +1,14 @@
+import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
+import 'package:ceramic_app/ui/widgets/ceramic_preview_tile.dart';
 import 'package:ceramic_app/ui/pages/profile/friends_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_edit_page.dart';
 import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
 import 'package:ceramic_app/ui/pages/analytics/practice_analytics_page.dart';
 import 'package:ceramic_app/ui/pages/settings/settings_page.dart';
 import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page.dart';
-import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
-import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
+import 'package:ceramic_app/ui/pages/profile/profile_widgets.dart';
 import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
-import 'package:collection/collection.dart';
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
@@ -42,224 +43,141 @@ class _ProfileFeaturePageState extends State<ProfileFeaturePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return StudioScaffold(
+      currentPage: NavigationPage.profile,
       appBar: AppBar(
+        title: Text(context.l10n.navigationProfile),
         actions: [
           IconButton(
             tooltip: context.l10n.settingsAndPrivacy,
             onPressed: () => _open(const SettingsPage()),
-            icon: const Icon(Icons.menu),
+            icon: const Icon(Icons.settings_outlined),
           ),
         ],
       ),
       body: SafeArea(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            if (_controller.isLoading && _controller.account == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (_controller.error != null && _controller.account == null) {
-              return _Retry(
-                message: _controller.error!,
-                onRetry: _controller.load,
-              );
-            }
-            final account = _controller.account;
-            if (account == null) return const SizedBox.shrink();
-            return RefreshIndicator(
-              onRefresh: _controller.load,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  const SizedBox(height: 18),
-                  Center(
-                    child: ProfileAvatar(
-                      initials: account.avatarInitials,
-                      colorHex: account.avatarColor,
-                      imageUrl: account.avatarUrl,
-                      radius: 42,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    account.username,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 9),
-                  Center(
-                    child: SizedBox(
-                      height: 34,
-                      child: FilledButton(
-                        onPressed: () =>
-                            _open(ProfileEditPage(controller: _controller)),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.surfaceContainerHighest,
-                          foregroundColor: Theme.of(
-                            context,
-                          ).colorScheme.onSurface,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 22),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(7),
+        top: false,
+        child: StudioContent(
+          maxWidth: CeramicPreviewGrid.maxWidth,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, _) {
+              if (_controller.isLoading && _controller.account == null) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (_controller.error != null && _controller.account == null) {
+                return _Retry(
+                  message: context.l10n.operationFailed,
+                  onRetry: _controller.load,
+                );
+              }
+              final account = _controller.account;
+              if (account == null) return const SizedBox.shrink();
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  return RefreshIndicator(
+                    onRefresh: _controller.load,
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                          sliver: SliverList.list(
+                            children: [
+                              ProfileIdentity(
+                                username: account.username,
+                                initials: account.avatarInitials,
+                                colorHex: account.avatarColor,
+                                imageUrl: account.avatarUrl,
+                                stats: [
+                                  ProfileStat(
+                                    value:
+                                        '${_controller.friends.length}${_controller.friendsCursor == null ? '' : '+'}',
+                                    label: context.l10n.relationshipFriends,
+                                    onTap: () => _open(
+                                      FriendsPage(controller: _controller),
+                                    ),
+                                  ),
+                                ],
+                                actions: OutlinedButton(
+                                  onPressed: () => _open(
+                                    ProfileEditPage(controller: _controller),
+                                  ),
+                                  child: Text(context.l10n.editProfile),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.insights_outlined),
+                                title: Text(context.l10n.practiceAnalytics),
+                                subtitle: Text(
+                                  context.l10n.practiceAnalyticsPrivate,
+                                ),
+                                trailing: const Icon(Icons.chevron_right),
+                                onTap: () =>
+                                    _open(const PracticeAnalyticsPage()),
+                              ),
+                              const Divider(height: 20),
+                              if (_controller.finishedCeramics.isEmpty)
+                                StudioEmptyState(
+                                  icon: Icons.auto_awesome_outlined,
+                                  title: context.l10n.finishedPiecesEmpty,
+                                ),
+                            ],
                           ),
                         ),
-                        child: Text(
-                          context.l10n.editProfile,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                        SliverPadding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          sliver: SliverGrid.builder(
+                            itemCount: _controller.finishedCeramics.length,
+                            gridDelegate: CeramicPreviewGrid.delegate(
+                              constraints.maxWidth,
+                              MediaQuery.textScalerOf(context),
+                            ),
+                            itemBuilder: (_, index) {
+                              final ceramic =
+                                  _controller.finishedCeramics[index];
+                              return CeramicJournalCard(
+                                key: ValueKey(ceramic.id),
+                                ceramic: ceramic,
+                                stageTitle: localizedStageName(
+                                  context.l10n,
+                                  _controller.stages
+                                          .where(
+                                            (stage) =>
+                                                stage.id == ceramic.stageId,
+                                          )
+                                          .map((stage) => stage.title)
+                                          .firstOrNull ??
+                                      'Finished',
+                                ),
+                                clayTitle: _controller.clays
+                                    .where(
+                                      (clay) => clay.id == ceramic.clayTypeId,
+                                    )
+                                    .map((clay) => clay.title)
+                                    .firstOrNull,
+                                onTap: () => _open(
+                                  CeramicViewPage(
+                                    ceramic: ceramic,
+                                    stages: _controller.stages,
+                                    clayTypes: _controller.clays,
+                                    glazes: _controller.glazes,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Center(
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () => _open(FriendsPage(controller: _controller)),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 28,
-                          vertical: 8,
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              _controller.friendsCursor == null
-                                  ? '${_controller.friends.length}'
-                                  : '${_controller.friends.length}+',
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              context.l10n.relationshipFriends,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Card(
-                      margin: EdgeInsets.zero,
-                      child: ListTile(
-                        leading: const Icon(Icons.insights_outlined),
-                        title: Text(context.l10n.practiceAnalytics),
-                        subtitle: Text(context.l10n.practiceAnalyticsPrivate),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: () => _open(const PracticeAnalyticsPage()),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-                  const Divider(height: 1),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 18, 16, 10),
-                    child: Row(
-                      children: [
-                        Text(
-                          context.l10n.finishedPieces,
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        const Spacer(),
-                        Text('${_controller.finishedCeramics.length}'),
                       ],
                     ),
-                  ),
-                  if (_controller.finishedCeramics.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 28, 24, 70),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.auto_awesome_outlined,
-                            size: 40,
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurfaceVariant,
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            context.l10n.finishedPiecesEmpty,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _controller.finishedCeramics.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              childAspectRatio: .72,
-                            ),
-                        itemBuilder: (_, index) {
-                          final ceramic = _controller.finishedCeramics[index];
-                          final stage = _controller.stages
-                              .where((item) => item.id == ceramic.stageId)
-                              .first;
-                          final clay = _controller.clays
-                              .where((item) => item.id == ceramic.clayTypeId)
-                              .map((item) => item.title)
-                              .firstOrNull;
-                          return CeramicJournalCard(
-                            ceramic: ceramic,
-                            stageTitle: localizedStageName(
-                              context.l10n,
-                              stage.title,
-                            ),
-                            clayTitle: clay,
-                            onTap: () => _open(
-                              CeramicViewPage(
-                                ceramic: ceramic,
-                                stages: _controller.stages,
-                                clayTypes: _controller.clays,
-                                glazes: _controller.glazes,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                ],
-              ),
-            );
-          },
+                  );
+                },
+              );
+            },
+          ),
         ),
-      ),
-      bottomNavigationBar: const NavigationWidget(
-        currentPage: NavigationPage.profile,
       ),
     );
   }
@@ -272,15 +190,10 @@ class _Retry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: 12),
-          FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
-        ],
-      ),
+    return StudioEmptyState(
+      icon: Icons.cloud_off_outlined,
+      title: message,
+      action: FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
     );
   }
 }

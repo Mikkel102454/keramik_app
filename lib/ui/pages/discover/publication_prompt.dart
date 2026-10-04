@@ -10,12 +10,15 @@ Future<bool> showFinishedPublicationPrompt(
   final publish = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(context.l10n.publishFinishedTitle),
+      title: Text(
+        hasImage
+            ? context.l10n.publishFinishedTitle
+            : context.l10n.publicationPhotoRequiredTitle,
+      ),
       content: Text(
         hasImage
             ? context.l10n.publishFinishedBody
-            : '${context.l10n.publishFinishedBody}\n\n'
-                  '${context.l10n.publicationTemporarilyUnavailable}',
+            : context.l10n.publicationPhotoRequiredBody,
       ),
       actions: [
         TextButton(

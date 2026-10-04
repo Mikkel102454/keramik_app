@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/project_template_dto.dart';
 import 'package:ceramic_app/repositories/project_template_repository.dart';
@@ -29,74 +30,79 @@ class _TemplateBatchCreatePageState extends State<TemplateBatchCreatePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.createFromTemplate)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Text(
-            widget.template.name,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 16),
-          Text(context.l10n.batchQuantity(_quantity)),
-          Slider(
-            value: _quantity.toDouble(),
-            min: 1,
-            max: 50,
-            divisions: 49,
-            label: '$_quantity',
-            onChanged: _loading
-                ? null
-                : (value) => setState(() => _quantity = value.round()),
-            onChangeEnd: (_) => _refreshPreview(),
-          ),
-          TextFormField(
-            initialValue: '1',
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: context.l10n.startNumber,
-              floatingLabelBehavior: FloatingLabelBehavior.always,
-            ),
-            onChanged: (value) =>
-                _start = int.tryParse(value)?.clamp(1, 9999) ?? 1,
-            onFieldSubmitted: (_) => _refreshPreview(),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            context.l10n.titlePreview,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          const SizedBox(height: 8),
-          if (_loading)
-            const Center(child: CircularProgressIndicator())
-          else if (_error != null)
-            Column(
-              children: [
-                Text(_error!),
-                FilledButton(
-                  onPressed: _refreshPreview,
-                  child: Text(context.l10n.retry),
-                ),
-              ],
-            )
-          else
-            ...?_preview?.titles.map(
-              (title) => ListTile(
-                dense: true,
-                leading: const Icon(Icons.circle, size: 8),
-                title: Text(title),
+      body: SafeArea(
+        child: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Text(
+                widget.template.name,
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-            ),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: _loading || _preview == null ? null : _create,
-            icon: const Icon(Icons.library_add),
-            label: Text(
-              _quantity == 1
-                  ? context.l10n.createOneCeramic
-                  : context.l10n.createCeramicBatch(_quantity),
-            ),
+              const SizedBox(height: 16),
+              Text(context.l10n.batchQuantity(_quantity)),
+              Slider(
+                value: _quantity.toDouble(),
+                min: 1,
+                max: 50,
+                divisions: 49,
+                label: '$_quantity',
+                onChanged: _loading
+                    ? null
+                    : (value) => setState(() => _quantity = value.round()),
+                onChangeEnd: (_) => _refreshPreview(),
+              ),
+              TextFormField(
+                initialValue: '1',
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: context.l10n.startNumber,
+                  floatingLabelBehavior: FloatingLabelBehavior.always,
+                ),
+                onChanged: (value) =>
+                    _start = int.tryParse(value)?.clamp(1, 9999) ?? 1,
+                onFieldSubmitted: (_) => _refreshPreview(),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                context.l10n.titlePreview,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8),
+              if (_loading)
+                const Center(child: CircularProgressIndicator())
+              else if (_error != null)
+                Column(
+                  children: [
+                    Text(_error!),
+                    FilledButton(
+                      onPressed: _refreshPreview,
+                      child: Text(context.l10n.retry),
+                    ),
+                  ],
+                )
+              else
+                ...?_preview?.titles.map(
+                  (title) => ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.circle, size: 8),
+                    title: Text(title),
+                  ),
+                ),
+              const SizedBox(height: 24),
+              FilledButton.icon(
+                onPressed: _loading || _preview == null ? null : _create,
+                icon: const Icon(Icons.library_add),
+                label: Text(
+                  _quantity == 1
+                      ? context.l10n.createOneCeramic
+                      : context.l10n.createCeramicBatch(_quantity),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -114,7 +120,7 @@ class _TemplateBatchCreatePageState extends State<TemplateBatchCreatePage> {
       );
       if (mounted) setState(() => _preview = value);
     } catch (value) {
-      if (mounted) setState(() => _error = value.toString());
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -165,7 +171,7 @@ class _TemplateBatchCreatePageState extends State<TemplateBatchCreatePage> {
         if (mounted) Navigator.pop(context, true);
       }
     } catch (value) {
-      if (mounted) setState(() => _error = value.toString());
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _loading = false);
     }

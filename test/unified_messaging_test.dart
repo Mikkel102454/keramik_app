@@ -284,6 +284,69 @@ void main() {
   );
 
   messagingWidgetTest(
+    'failed request decisions show safe feedback and recover for acceptance',
+    (tester) async {
+      adapter.stored = conversationJson(incoming: true, remaining: 0);
+      await tester.pumpWidget(
+        localizedTestApp(
+          home: ConversationPage(
+            initialConversation: DirectConversationDto.fromJson(
+              adapter.stored!,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      for (final decision in ['Decline', 'Accept']) {
+        adapter.failNextRequestDecision = true;
+        await tester.tap(find.text(decision));
+        await tester.pumpAndSettle();
+        expect(
+          find.text('That action could not be completed. Please try again.'),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining('private request transport detail'),
+          findsNothing,
+        );
+        expect(find.textContaining('DioException'), findsNothing);
+        expect(adapter.stored!['status'], 'PENDING');
+        expect(find.byType(TextField), findsNothing);
+        expect(
+          tester
+              .widget<FilledButton>(find.widgetWithText(FilledButton, 'Accept'))
+              .onPressed,
+          isNotNull,
+        );
+        expect(
+          tester
+              .widget<TextButton>(find.widgetWithText(TextButton, 'Decline'))
+              .onPressed,
+          isNotNull,
+        );
+        tester
+            .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+            .hideCurrentSnackBar();
+        await tester.pumpAndSettle();
+      }
+      await tester.tap(find.widgetWithText(FilledButton, 'Accept'));
+      await tester.pumpAndSettle();
+      expect(adapter.stored!['status'], 'ACTIVE');
+      expect(find.byType(TextField), findsOneWidget);
+      expect(find.text('Accept this message request to reply.'), findsNothing);
+      expect(
+        adapter.posts.where((request) => request.path.endsWith('/accept')),
+        hasLength(2),
+      );
+      expect(
+        adapter.posts.where((request) => request.path.endsWith('/decline')),
+        hasLength(1),
+      );
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  messagingWidgetTest(
     'direct username loads a fresh UUID profile and refreshes chat on return',
     (tester) async {
       adapter.stored = conversationJson(status: 'ACTIVE');
@@ -455,6 +518,7 @@ class MessagingAdapter implements HttpClientAdapter {
   bool friends = false;
   bool loseNextResponse = false;
   bool profileUnavailable = false;
+  bool failNextRequestDecision = false;
   String profileName = 'potter';
 
   Map<String, dynamic> message(String body, int sequence) => {
@@ -509,6 +573,15 @@ class MessagingAdapter implements HttpClientAdapter {
     if (path == '/api/chat/direct') {
       stored = conversationJson(status: 'ACTIVE');
       return response(stored);
+    }
+    if (failNextRequestDecision &&
+        (path.endsWith('/accept') || path.endsWith('/decline'))) {
+      failNextRequestDecision = false;
+      throw DioException(
+        requestOptions: options,
+        type: DioExceptionType.connectionError,
+        message: 'private request transport detail',
+      );
     }
     if (path.endsWith('/accept')) {
       stored = conversationJson(status: 'ACTIVE');

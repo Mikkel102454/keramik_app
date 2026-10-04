@@ -1,5 +1,23 @@
 # Keramik Android client
 
+## Studio redesign
+
+The app now uses a TikTok-inspired monochrome Material 3 theme with cobalt-blue
+actions, warm amber highlights, compact forms, simple bottom navigation and a
+sidebar on wider layouts. Discover
+has a vertically paged photo feed that follows the selected light/dark/system
+appearance; Home and Profile share the same ceramic photo previews and tight
+portrait grids based on the original Home cards. Their theme-surface metadata
+panel shows the title, clay where available, localized stage and star/rating;
+card height adapts to text size. Missing/loading/failed-photo icons are centered
+in the image area above the metadata panel. Public profile thumbnails also retain
+likes. The existing ceramic-sharing picker also reuses the journal preview. Materials, chats and settings use flat rows.
+Shared responsive components retain
+existing routes, controllers, session/API contracts and save workflows. See
+[DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) for component/layout rules and
+[MOBILE_TESTING.md](MOBILE_TESTING.md) for validation evidence. Android remains the
+supported target. No new dependency or backend migration is required.
+
 ## Unified messaging
 
 Profiles use one Message button for friends and eligible non-friends. Existing
@@ -142,6 +160,13 @@ flutter run -d emulator-5554 --no-pub --dart-define=API_BASE_URL=http://10.0.2.2
 
 Use the device ID reported by `flutter devices` if it differs. `--no-pub` assumes packages are already resolved; otherwise run `flutter pub get` first. Backend readiness is available at `http://localhost:8080/actuator/health/readiness` on the host and through `http://10.0.2.2:8080/actuator/health/readiness` from the emulator.
 
+If the app reports a network error, verify backend readiness first: healthy
+Docker containers alone do not start Spring Boot. The existing development
+environment was recovered on 2026-10-04 with migrations disabled; host and
+emulator readiness are `UP`, image storage is reachable and the installed app
+matches the latest debug APK. Services are left running for user testing.
+See [backend recovery and safe restart](../keramik_app_backend/OPERATIONS.md#android-testing-environment-recovery---2026-10-04).
+
 ```powershell
 flutter build apk --release --dart-define=API_BASE_URL=https://api.example.com
 ```
@@ -195,7 +220,7 @@ The private Practice analytics page aggregates only the signed-in member's recor
 
 Materials now includes an optional append-only inventory ledger. Clay is stored canonically in kilograms; each glaze inventory chooses kilograms or litres. Purchases, confirmed usage, edits recorded as reversal/replacement pairs, and explicit reversals explain the stock balance. Purchase and usage costs use decimal strings and a currency selected from a dropdown. Weighted-average usage combines positive costed purchase history, converts its original currencies into the selected estimate currency using the backend's cached ECB reference rates, and then calculates the quantity's cost. Original purchase amounts remain unchanged. Cost and analytics screens also request an estimate in the preferred currency. Usage can be linked through an owned-ceramic picker but is never inferred automatically. When opened from a ceramic, that ceramic is preselected but remains changeable. The Metric/Imperial setting converts kilogram input/display at the boundary.
 
-The titleless Profile tab uses a compact TikTok-inspired overview with avatar, username, explicit-save profile editor, a tappable friend count, and a three-line Settings and privacy menu. Account search remains on Chats. The settings destination covers account details, in-app password change with website fallback, exports, scheduled deletion/cancellation, privacy audiences, blocked accounts, category-aware notifications, system/light/dark appearance, metric/imperial units, language, preferred currency, support/privacy/about links, and recoverable logout. Preferred currency defaults to Automatic, which follows the device region with EUR as the safe fallback, and can be changed to a fixed dropdown value. Push has per-device Enable/Disable, Android permission/status/settings controls and an unavailable state when unconfigured. Clear recently viewed confirms before clearing private view timestamps. Edit Profile validates and saves private forename/surname (1-100 Unicode code points) and public username (3-50) together. It trims surrounding whitespace, checks changed usernames after a 500 ms debounce, retains failed drafts, and confirms before discarding unsaved text. Photos remain immediate and preserve text drafts; the public UUID stays read-only. A username change keeps this device signed in, expires other sessions and reconnects chat; name-only edits leave sessions unchanged. Username/photo visibility follows existing settings and blocking rules. Search accepts username prefixes of at least three characters and returns only accounts allowed by server-side discoverability. Opening a visible result uses the same profile-style presentation and adds a read-only grid containing only that member's Finished-piece image, title, stage, clay, and rating; no public journal-detail route is provided.
+The Profile tab uses a compact TikTok-inspired overview with centered avatar/username, explicit-save profile editor, a real friend count and a Settings and privacy action. The Finished pieces statistic is omitted from the Profile tab; its finished-piece thumbnail grid remains available. Account search remains on Chats. The settings destination covers account details, in-app password change with website fallback, exports, scheduled deletion/cancellation, privacy audiences, blocked accounts, category-aware notifications, system/light/dark appearance, metric/imperial units, language, preferred currency, support/privacy/about links, and recoverable logout. Preferred currency defaults to Automatic, which follows the device region with EUR as the safe fallback, and can be changed to a fixed dropdown value. Push has per-device Enable/Disable, Android permission/status/settings controls and an unavailable state when unconfigured. Clear recently viewed confirms before clearing private view timestamps. Edit Profile validates and saves private forename/surname (1-100 Unicode code points) and public username (3-50) together. It trims surrounding whitespace, checks changed usernames after a 500 ms debounce, retains failed drafts, and confirms before discarding unsaved text. Photos remain immediate and preserve text drafts; the public UUID stays read-only. A username change keeps this device signed in, expires other sessions and reconnects chat; name-only edits leave sessions unchanged. Username/photo visibility follows existing settings and blocking rules. Search accepts username prefixes of at least three characters and returns only accounts allowed by server-side discoverability. Opening a visible result uses the same profile-style presentation and adds a tight grid containing only currently published Finished pieces. Thumbnails use the Home card style and show the image, title, clay, localized stage, rating and likes; their publication detail route retains public rating/outcome information. Private journal details remain owner-only.
 
 The Chats tab uses the shared page-title styling and lists direct and group conversations with All/Unread/Groups filters, pagination, pull-to-refresh, unread counts, request routing, and per-user archives. Friend requests and incoming message requests share the Requests panel. Profiles have one Message button that resolves existing conversations first. Friends without a chat create an active conversation; eligible non-friends open a local text draft, and opening or cancelling it creates nothing. The first successful send creates a request and loads its persisted messages. Its initiator may send three text messages total before acceptance; recipients must accept before replying. Pending requests disable media and ceramic sharing. Declined and blocked conversations stay read-only. Accepting a message request does not create a friendship. Failed text sends retain their UUID for retry, including retries after the third message was committed but its response was lost. The complete direct-chat title, received avatars and group sender labels on text, image, voice, ceramic and publication messages load a fresh profile by UUID; returning refreshes the chat. Unavailable profiles show localized feedback. New group is available from the Chats overflow menu and selects 1–49 friends. Every active group member can rename, add their own friends, leave, archive, and send; generated group avatars, member counts, sender labels, and centered system events preserve group context. Former members retain read-only membership-period history, while absence gaps remain hidden after rejoin. The composer ceramic action opens the owner's journal as standard cards, confirms disclosure, and sends an idempotent ceramic message. Live chat cards preserve the complete image aspect ratio and open a complete read-only detail page whose spaced image pager also avoids cropping, displays weight using the member's Metric/Imperial preference, and starts stage history collapsed. The detail has no edit, stage, upload, delete, tag, glaze, firing, or reshare controls; deleted ceramics remain as localized unavailable cards. The inbox uses the message type for a localized preview. The shared navigation badge uses the backend aggregate rather than the first inbox page. Authenticated WebSocket events contain no content; they invalidate the badge, inbox, and matching open conversation, which then reconcile over REST. Stable event IDs are deduplicated, reconnects use bounded exponential backoff, and returning to the foreground performs backfill. The composer supports gated image/voice draft previews and an offline categorized emoji picker without persisted recents. Sent media follows shared-chat retention; report evidence and authorized exports include media.
 
@@ -265,9 +290,17 @@ members' publications, mark an episode Not interested with a five-second Undo, a
 submit publication reports. Duplicate cards are removed by publication UUID and an
 expired recommendation session replaces—rather than appends to—the old list.
 
-Ceramics are never published automatically. After creating a Finished ceramic or
-moving one into Finished, the app offers an explicit publication prompt. A missing
-image leaves the journal mutation intact and explains why publication is unavailable.
+Ceramics are never published automatically. After creating a Finished ceramic,
+the app offers an explicit publication prompt. Changing an existing piece's stage
+to Finished saves the stage without a popup; publish it using the detail card.
+A missing image leaves creation intact and explains why publication is unavailable.
+The detail publication card shows checked/unmet requirements for the Finished stage
+and at least one photo. Publish stays disabled until both are met, and updates as
+the stage or photos change. A photo-free Finished piece receives an explicit
+"Add a photo to publish" message confirming that the piece is saved. Existing
+publications can still be unpublished when their stage or photos become ineligible.
+The ceramic detail card omits the Everyone audience explanation; the Friends-only
+audience warning is still shown when applicable.
 Private journal details remain private; profiles request only currently authorized
 publication episodes.
 

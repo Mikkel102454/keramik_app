@@ -1,10 +1,10 @@
 import 'dart:io';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class SquareWidget extends StatelessWidget {
-
   final String? title;
   final FontWeight? fontWeight;
   final double? fontSize;
@@ -13,13 +13,13 @@ class SquareWidget extends StatelessWidget {
   final XFile? imageFile;
 
   final String? fontFamily;
-  final Color fontColor;
+  final Color? fontColor;
   final TextDecoration? fontDecoration;
-  final Color backgroundColor;
+  final Color? backgroundColor;
 
   final IconData? icon;
   final double? iconSize;
-  final Color iconColor;
+  final Color? iconColor;
 
   final Future<void> Function()? onPressed;
 
@@ -46,13 +46,13 @@ class SquareWidget extends StatelessWidget {
     this.imageFile,
 
     this.fontFamily,
-    this.fontColor = Colors.white,
+    this.fontColor,
     this.fontDecoration,
-    this.backgroundColor = Colors.blue,
+    this.backgroundColor,
 
     this.icon,
     this.iconSize,
-    this.iconColor = Colors.white,
+    this.iconColor,
 
     this.borderRadius = 8,
     this.opacity = 1,
@@ -63,27 +63,23 @@ class SquareWidget extends StatelessWidget {
     this.height,
 
     this.direction = Axis.vertical,
-    this.mainAxisAlignment =
-        MainAxisAlignment.center,
-    this.crossAxisAlignment =
-        CrossAxisAlignment.center,
+    this.mainAxisAlignment = MainAxisAlignment.center,
+    this.crossAxisAlignment = CrossAxisAlignment.center,
 
     this.spacing = 6,
     this.reverse = false,
   }) : assert(
-  imageUri == null || imageFile == null,
-  'Cannot provide both imageUri and imageFile',
-  );
+         imageUri == null || imageFile == null,
+         'Cannot provide both imageUri and imageFile',
+       );
 
   @override
   Widget build(BuildContext context) {
-
     final children = <Widget>[
-
       if (icon != null)
         Icon(
           icon,
-          color: iconColor,
+          color: iconColor ?? Theme.of(context).colorScheme.onPrimaryContainer,
           size: iconSize,
         ),
 
@@ -92,7 +88,8 @@ class SquareWidget extends StatelessWidget {
           title!,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: fontColor,
+            color:
+                fontColor ?? Theme.of(context).colorScheme.onPrimaryContainer,
             fontSize: fontSize,
             fontWeight: fontWeight,
             fontFamily: fontFamily,
@@ -101,23 +98,14 @@ class SquareWidget extends StatelessWidget {
         ),
     ];
 
-    final orderedChildren =
-    reverse
-        ? children.reversed.toList()
-        : children;
+    final orderedChildren = reverse ? children.reversed.toList() : children;
 
     final spacedChildren = <Widget>[];
 
-    for (int i = 0;
-    i < orderedChildren.length;
-    i++) {
-
-      spacedChildren.add(
-        orderedChildren[i],
-      );
+    for (int i = 0; i < orderedChildren.length; i++) {
+      spacedChildren.add(orderedChildren[i]);
 
       if (i != orderedChildren.length - 1) {
-
         spacedChildren.add(
           direction == Axis.vertical
               ? SizedBox(height: spacing)
@@ -126,90 +114,81 @@ class SquareWidget extends StatelessWidget {
       }
     }
 
-    DecorationImage? backgroundImage;
-
+    Widget? backgroundImage;
+    Widget failedImage() => Center(
+      child: Icon(
+        Icons.broken_image_outlined,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+    );
     if (imageUri != null) {
-
-      backgroundImage = DecorationImage(
-        image: NetworkImage(imageUri!),
+      backgroundImage = Image.network(
+        imageUri!,
         fit: BoxFit.cover,
+        excludeFromSemantics: true,
+        loadingBuilder: (_, child, progress) => progress == null
+            ? child
+            : const Center(child: CircularProgressIndicator()),
+        errorBuilder: (_, _, _) => failedImage(),
       );
-
     } else if (imageFile != null) {
-
-      backgroundImage = DecorationImage(
-        image: FileImage(
-          File(imageFile!.path),
-        ),
+      backgroundImage = Image.file(
+        File(imageFile!.path),
         fit: BoxFit.cover,
+        excludeFromSemantics: true,
+        errorBuilder: (_, _, _) => failedImage(),
       );
     }
 
     return Material(
       color: Colors.transparent,
 
-      borderRadius:
-      BorderRadius.circular(borderRadius),
+      borderRadius: BorderRadius.circular(borderRadius),
 
-      child: InkWell(
-        onTap: onPressed,
+      clipBehavior: Clip.antiAlias,
+      child: Semantics(
+        label: onPressed == null || title != null
+            ? null
+            : backgroundImage != null
+            ? context.l10n.viewPhoto
+            : context.l10n.uploadPhoto,
+        child: InkWell(
+          onTap: onPressed,
 
-        borderRadius:
-        BorderRadius.circular(borderRadius),
+          borderRadius: BorderRadius.circular(borderRadius),
 
-        child: Opacity(
-          opacity: opacity,
-
-          child: Container(
-            width: width ?? double.infinity,
-            height: height ?? double.infinity,
-
-            decoration: BoxDecoration(
-              color: backgroundColor,
-
-              borderRadius:
-              BorderRadius.circular(
-                borderRadius,
-              ),
-
-              image: backgroundImage,
-            ),
-
-            alignment: Alignment.center,
+          child: Opacity(
+            opacity: opacity,
 
             child: Container(
-              width: double.infinity,
-              height: double.infinity,
-
-              padding:
-              const EdgeInsets.all(8),
+              width: width ?? double.infinity,
+              height: height ?? double.infinity,
 
               decoration: BoxDecoration(
-                borderRadius:
-                BorderRadius.circular(
-                  borderRadius,
-                ),
-
                 color:
-                backgroundImage != null
-                    ? Colors.black
-                    .withValues(alpha: 0)
-                    : Colors.transparent,
+                    backgroundColor ??
+                    Theme.of(context).colorScheme.primaryContainer,
+
+                borderRadius: BorderRadius.circular(borderRadius),
               ),
 
-              child: Flex(
-                direction: direction,
+              alignment: Alignment.center,
 
-                mainAxisAlignment:
-                mainAxisAlignment,
-
-                crossAxisAlignment:
-                crossAxisAlignment,
-
-                mainAxisSize:
-                MainAxisSize.max,
-
-                children: spacedChildren,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ?backgroundImage,
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Flex(
+                      direction: direction,
+                      mainAxisAlignment: mainAxisAlignment,
+                      crossAxisAlignment: crossAxisAlignment,
+                      mainAxisSize: MainAxisSize.max,
+                      children: spacedChildren,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

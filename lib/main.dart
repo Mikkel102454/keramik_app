@@ -6,7 +6,7 @@ import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
 import 'package:ceramic_app/ui/pages/notification/friend_requests_page.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/widgets/v2/form_field_style.dart';
+import 'package:ceramic_app/ui/theme/studio_theme.dart';
 import 'package:ceramic_app/app/entitlement_controller.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -138,43 +138,18 @@ class MyApp extends StatelessWidget {
         builder: (context, _) => AppCoordinator(
           appRouter: appRouter,
           child: MaterialApp.router(
+            debugShowCheckedModeBanner: false,
             onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
             routerConfig: appRouter.config(),
             locale: AppSettingsController.instance.locale,
             localizationsDelegates: AppLocalizations.localizationsDelegates,
             supportedLocales: AppLocalizations.supportedLocales,
             themeMode: AppSettingsController.instance.themeMode,
-            theme: _theme(Brightness.light),
-            darkTheme: _theme(Brightness.dark),
+            theme: StudioTheme.light(),
+            darkTheme: StudioTheme.dark(),
           ),
         ),
       ),
-    );
-  }
-
-  ThemeData _theme(Brightness brightness) {
-    final dark = brightness == Brightness.dark;
-    final scheme = ColorScheme.fromSeed(
-      seedColor: const Color(0xff7b5544),
-      brightness: brightness,
-    );
-    return ThemeData(
-      useMaterial3: true,
-      colorScheme: scheme,
-      brightness: brightness,
-      scaffoldBackgroundColor: dark
-          ? const Color(0xff121212)
-          : const Color(0xfffafafa),
-      appBarTheme: AppBarTheme(
-        centerTitle: false,
-        elevation: 0,
-        backgroundColor: dark
-            ? const Color(0xff121212)
-            : const Color(0xfffafafa),
-        foregroundColor: scheme.onSurface,
-      ),
-      dividerTheme: DividerThemeData(color: scheme.outlineVariant),
-      inputDecorationTheme: FormFieldStyle.theme(scheme),
     );
   }
 }

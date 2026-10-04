@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/ui/pages/materials/glazes/notebook/combination_application_dialog.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
@@ -14,7 +15,6 @@ import 'package:ceramic_app/ui/widgets/v2/star_stepper_select_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/stepper_select_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/tag_input_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
@@ -45,6 +45,8 @@ class CeramicCreatePage extends StatefulWidget {
 }
 
 class _CeramicCreatePageState extends State<CeramicCreatePage> {
+  bool _saving = false;
+  bool _choosingPublication = false;
   late final CeramicCreatePageController _controller =
       widget.controller ?? CeramicCreatePageController();
 
@@ -62,43 +64,52 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.ceramic),
+    return PopScope(
+      canPop: !_saving,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(context.l10n.createCeramic),
 
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.check),
-            onPressed: () {
-              _createCeramic();
-            },
+          actions: [
+            IconButton(
+              tooltip: context.l10n.save,
+              icon: _saving && !_choosingPublication
+                  ? const SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.check),
+              onPressed: _saving ? null : _createCeramic,
+            ),
+          ],
+        ),
+
+        body: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: SafeArea(
+            child: AbsorbPointer(
+              absorbing: _saving,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (_, _) {
+                  if (_controller.isLoading) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (_controller.error != null) {
+                    return Center(child: Text(context.l10n.operationFailed));
+                  }
+
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      _controller.load();
+                    },
+                    child: _pageContent(_controller, widget),
+                  );
+                },
+              ),
+            ),
           ),
-        ],
-      ),
-
-      body: SafeArea(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (_, _) {
-            if (_controller.isLoading) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            if (_controller.error != null) {
-              return Center(
-                child: Text(
-                  context.l10n.errorWithDetails('${_controller.error}'),
-                ),
-              );
-            }
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                _controller.load();
-              },
-              child: _pageContent(_controller, widget),
-            );
-          },
         ),
       ),
     );
@@ -221,16 +232,12 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Progress
           // =========================
-          TextWidget(
-            text: context.l10n.progress,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.progress),
           const SizedBox(height: 8),
           StepperSelectWidget(
             initialValue: "1",
@@ -250,25 +257,15 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
               return true;
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Information
           // =========================
-          TextWidget(
-            text: context.l10n.information,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.information),
           const SizedBox(height: 8),
-          TextWidget(
-            text: context.l10n.title,
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 4),
           TextFieldWidget(
+            label: context.l10n.title,
             placeholder: context.l10n.title,
             onChanged: (value) async {
               controller.setTitle(value);
@@ -278,15 +275,8 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
           const SizedBox(height: 12),
 
-          TextWidget(
-            text: context.l10n.clayType,
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 4),
-
           DropdownWidget(
+            label: context.l10n.clayType,
             placeholder: context.l10n.select,
 
             entries: [
@@ -302,15 +292,8 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
 
           const SizedBox(height: 12),
 
-          TextWidget(
-            text: context.l10n.weight,
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 4),
-
           TextFieldWidget(
+            label: context.l10n.weight,
             placeholder: "0.0",
             suffix:
                 AppSettingsController.instance.measurementSystem.weightSymbol,
@@ -324,7 +307,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
@@ -422,20 +405,16 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             ],
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Rating
           // =========================
-          TextWidget(
-            text: context.l10n.rate,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.rate),
           StarStepperSelectWidget(
             initialValue: 0,
 
-            selectedIconColor: Colors.green,
+            selectedIconColor: Theme.of(context).colorScheme.primary,
 
             onChanged: (value) async {
               controller.setRating(value);
@@ -443,23 +422,19 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Tags
           // =========================
-          TextWidget(
-            text: context.l10n.tags,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.tags),
           const SizedBox(height: 8),
 
           TagInputWidget(
             horizontalPadding: 10,
             verticalPadding: 6,
 
-            borderRadius: 5,
+            borderRadius: StudioSpacing.radius,
 
             fontSize: 16,
             fontWeight: FontWeight.normal,
@@ -470,7 +445,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             ).colorScheme.surfaceContainerHighest,
 
             removeIconSize: 20,
-            removeIconColor: Colors.red,
+            removeIconColor: Theme.of(context).colorScheme.error,
 
             onCreate: (value) async {
               return controller.addTag(value);
@@ -481,19 +456,16 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Notes
           // =========================
-          TextWidget(
-            text: context.l10n.notes,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.notes),
           const SizedBox(height: 8),
 
           TextFieldWidget(
+            semanticsLabel: context.l10n.notes,
             placeholder: context.l10n.projectNotes,
 
             minLines: 3,
@@ -534,6 +506,7 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
   }
 
   Future<void> _createCeramic() async {
+    if (_saving) return;
     if (_controller.images.isNotEmpty &&
         (!await requireFeature(
               context,
@@ -544,6 +517,8 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
             !mounted)) {
       return;
     }
+    // A second tap may have awaited the same entitlement check.
+    if (_saving || !mounted) return;
     if (_controller.title.trim().isEmpty || _controller.title.length > 255) {
       ScaffoldMessenger.of(
         context,
@@ -567,6 +542,8 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
       return;
     }
 
+    FocusScope.of(context).unfocus();
+    setState(() => _saving = true);
     try {
       final created = await _controller.create();
       if (!mounted) {
@@ -577,17 +554,30 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
           .where((stage) => stage.id == created.stageId)
           .any((stage) => stage.title.toLowerCase() == 'finished');
       if (finished) {
+        setState(() => _choosingPublication = true);
         final publish = await showFinishedPublicationPrompt(
           context,
           hasImage: created.images.isNotEmpty,
         );
+        if (!mounted) return;
+        setState(() => _choosingPublication = false);
         if (publish) {
           final publisher =
               widget.publishCeramic ??
               (ceramicId) async {
                 await PublicationRepository.publish(ceramicId);
               };
-          await publisher(created.id);
+          try {
+            await publisher(created.id);
+          } catch (_) {
+            if (!mounted) return;
+            // Creation already succeeded. Do not offer to create it again.
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(context.l10n.pieceSavedPublicationUnconfirmed),
+              ),
+            );
+          }
         }
       }
 
@@ -595,21 +585,27 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
         return;
       }
       Navigator.pop(context, true);
-    } catch (e) {
-      debugPrint("Create failed: $e");
+    } catch (_) {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString().replaceFirst('Exception: ', ''))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
+    } finally {
+      if (mounted) {
+        setState(() {
+          _saving = false;
+          _choosingPublication = false;
+        });
+      }
     }
   }
 
   Widget _dimensionField(String label, ValueChanged<String> onChanged) {
     final units = AppSettingsController.instance.measurementSystem;
     return TextFieldWidget(
-      placeholder: label,
+      label: label,
       suffix: units.lengthSymbol,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [

@@ -2450,10 +2450,34 @@ abstract class AppLocalizations {
   /// **'Publish this finished piece?'**
   String get publishFinishedTitle;
 
+  /// No description provided for @publicationFinishedRequirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the stage to Finished'**
+  String get publicationFinishedRequirement;
+
+  /// No description provided for @publicationPhotoRequirement.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one photo'**
+  String get publicationPhotoRequirement;
+
+  /// No description provided for @publicationPhotoRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a photo to publish'**
+  String get publicationPhotoRequiredTitle;
+
+  /// No description provided for @publicationPhotoRequiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your piece is saved. Add at least one photo, then publish it from the piece\'s detail page.'**
+  String get publicationPhotoRequiredBody;
+
   /// No description provided for @publishFinishedBody.
   ///
   /// In en, this message translates to:
-  /// **'Published pieces can appear in Discover and on your profile. Up to 20 images and the listed public details will be visible.'**
+  /// **'Published pieces can appear in Discover and on your profile.'**
   String get publishFinishedBody;
 
   /// No description provided for @publicationAudienceEveryone.
@@ -4482,6 +4506,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'This profile is unavailable.'**
   String get chatProfileUnavailable;
+
+  /// No description provided for @operationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'That action could not be completed. Please try again.'**
+  String get operationFailed;
+
+  /// No description provided for @pieceSavedPublicationUnconfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your piece was saved. Publishing could not be confirmed. Open the piece to check or try again.'**
+  String get pieceSavedPublicationUnconfirmed;
 }
 
 class _AppLocalizationsDelegate

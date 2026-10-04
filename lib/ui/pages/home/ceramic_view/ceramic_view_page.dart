@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/ui/pages/materials/glazes/notebook/combination_application_dialog.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
@@ -20,14 +21,12 @@ import 'package:ceramic_app/ui/widgets/v2/star_stepper_select_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/stepper_select_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/tag_input_widget.dart';
 import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
 import 'package:ceramic_app/utils/measurement.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/repositories/project_template_repository.dart';
-import 'package:ceramic_app/ui/pages/discover/publication_prompt.dart';
 import 'package:ceramic_app/ui/pages/discover/owner_publication_status_card.dart';
 import 'package:ceramic_app/ui/pages/materials/inventory/ceramic_material_cost_page.dart';
 import 'package:image_picker/image_picker.dart';
@@ -85,6 +84,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
         appBar: AppBar(
           title: Text(context.l10n.ceramic),
           leading: IconButton(
+            tooltip: MaterialLocalizations.of(context).backButtonTooltip,
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
               Navigator.of(context).pop(_controller.hasChanged);
@@ -92,46 +92,73 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           ),
 
           actions: [
-            IconButton(
-              tooltip: context.l10n.saveAsTemplate,
-              icon: const Icon(Icons.content_copy_outlined),
-              onPressed: _saveAsTemplate,
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete),
-              color: Colors.red,
-              onPressed: () async {
-                final confirmed = await showDialog<bool>(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: Text(context.l10n.deleteCeramic),
-                    content: Text(context.l10n.deleteCeramicQuestion),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: Text(context.l10n.cancel),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: Text(context.l10n.delete),
-                      ),
-                    ],
-                  ),
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (_, _) {
+                final mutationsEnabled =
+                    !_controller.isLoading && _controller.error == null;
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      tooltip: context.l10n.saveAsTemplate,
+                      icon: const Icon(Icons.content_copy_outlined),
+                      onPressed: mutationsEnabled ? _saveAsTemplate : null,
+                    ),
+                    IconButton(
+                      tooltip: context.l10n.delete,
+                      icon: const Icon(Icons.delete),
+                      color: Theme.of(context).colorScheme.error,
+                      onPressed: !mutationsEnabled
+                          ? null
+                          : () async {
+                              if (_controller.isLoading ||
+                                  _controller.error != null) {
+                                return;
+                              }
+                              final confirmed = await showDialog<bool>(
+                                context: context,
+                                builder: (_) => AlertDialog(
+                                  title: Text(context.l10n.deleteCeramic),
+                                  content: Text(
+                                    context.l10n.deleteCeramicQuestion,
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, false),
+                                      child: Text(context.l10n.cancel),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, true),
+                                      child: Text(context.l10n.delete),
+                                    ),
+                                  ],
+                                ),
+                              );
+
+                              if (confirmed != true) {
+                                return;
+                              }
+
+                              final success = await _controller.deleteCeramic();
+
+                              if (success && context.mounted) {
+                                Navigator.of(context).pop(true);
+                              } else if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      context.l10n.deleteCeramicFailed,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                    ),
+                  ],
                 );
-
-                if (confirmed != true) {
-                  return;
-                }
-
-                final success = await _controller.deleteCeramic();
-
-                if (success && context.mounted) {
-                  Navigator.of(context).pop(true);
-                } else if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(context.l10n.deleteCeramicFailed)),
-                  );
-                }
               },
             ),
             IconButton(
@@ -155,41 +182,40 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             ),
           ],
         ),
-        body: SafeArea(
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (_, _) {
-              if (_controller.isLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+        body: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: SafeArea(
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (_, _) {
+                if (_controller.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              if (_controller.error != null) {
-                return Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        context.l10n.errorWithDetails('${_controller.error}'),
-                      ),
-                      FilledButton(
-                        onPressed: () => _controller.load(null, null),
-                        child: Text(context.l10n.retry),
-                      ),
-                    ],
-                  ),
+                if (_controller.error != null) {
+                  return StudioEmptyState(
+                    icon: Icons.cloud_off_outlined,
+                    title: context.l10n.operationFailed,
+                    action: FilledButton.icon(
+                      onPressed: () =>
+                          _controller.load(widget.ceramic, widget.stages),
+                      icon: const Icon(Icons.refresh),
+                      label: Text(context.l10n.retry),
+                    ),
+                  );
+                }
+
+                if (!_controller.viewRecorded && !_controller.viewSyncFailed) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    if (mounted) _controller.recordDisplayedView();
+                  });
+                }
+                return RefreshIndicator(
+                  onRefresh: () => _controller.load(null, null),
+                  child: _pageContent(_controller, widget),
                 );
-              }
-
-              if (!_controller.viewRecorded && !_controller.viewSyncFailed) {
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) _controller.recordDisplayedView();
-                });
-              }
-              return RefreshIndicator(
-                onRefresh: () => _controller.load(null, null),
-                child: _pageContent(_controller, widget),
-              );
-            },
+              },
+            ),
           ),
         ),
       ),
@@ -209,6 +235,10 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
 
         children: [
+          StudioPageHeader(
+            title: controller.ceramic.title,
+            icon: Icons.handyman_outlined,
+          ),
           if (controller.viewSyncFailed)
             MaterialBanner(
               content: Text(context.l10n.viewSyncFailed),
@@ -222,6 +252,12 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
           if (controller.publicationStatus case final status?) ...[
             OwnerPublicationStatusCard(
               status: status,
+              isFinished: controller.stages.any(
+                (stage) =>
+                    stage.id == controller.ceramic.stageId &&
+                    stage.title.toLowerCase() == 'finished',
+              ),
+              hasImage: controller.ceramic.images.isNotEmpty,
               onToggle: controller.togglePublication,
             ),
             const SizedBox(height: 14),
@@ -327,16 +363,12 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
               ],
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Progress
           // =========================
-          TextWidget(
-            text: context.l10n.progress,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.progress),
           const SizedBox(height: 8),
           StepperSelectWidget(
             initialValue: controller.ceramic.stageId.toString(),
@@ -351,40 +383,17 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
                 ),
             ],
 
-            onChanged: (value) async {
-              final stageId = int.parse(value);
-              final wasFinished = controller.stages
-                  .where((stage) => stage.id == controller.ceramic.stageId)
-                  .any((stage) => stage.title.toLowerCase() == 'finished');
-              final success = await controller.setStage(stageId);
-              final isFinished = controller.stages
-                  .where((stage) => stage.id == stageId)
-                  .any((stage) => stage.title.toLowerCase() == 'finished');
-              if (success && !wasFinished && isFinished && context.mounted) {
-                await _offerPublication(controller);
-              }
-              return success;
-            },
+            onChanged: (value) => controller.setStage(int.parse(value)),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Information
           // =========================
-          TextWidget(
-            text: context.l10n.information,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.information),
           const SizedBox(height: 8),
-          TextWidget(
-            text: context.l10n.title,
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 4),
           TextFieldWidget(
+            label: context.l10n.title,
             placeholder: context.l10n.title,
             initialValue: controller.ceramic.title,
             debounceDuration: Duration(milliseconds: 300),
@@ -399,15 +408,8 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
           const SizedBox(height: 12),
 
-          TextWidget(
-            text: context.l10n.clayType,
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 4),
-
           DropdownWidget(
+            label: context.l10n.clayType,
             placeholder: context.l10n.select,
             initialValue: controller.ceramic.clayTypeId.toString(),
             entries: [
@@ -422,15 +424,8 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
 
           const SizedBox(height: 12),
 
-          TextWidget(
-            text: context.l10n.weight,
-            fontSize: 16,
-            fontWeight: FontWeight.normal,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: 4),
-
           TextFieldWidget(
+            label: context.l10n.weight,
             placeholder: "0.0",
             suffix:
                 AppSettingsController.instance.measurementSystem.weightSymbol,
@@ -456,7 +451,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           ExpansionTile(
             tilePadding: EdgeInsets.zero,
@@ -646,43 +641,35 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Rating
           // =========================
-          TextWidget(
-            text: context.l10n.rate,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.rate),
           StarStepperSelectWidget(
             initialValue: controller.ceramic.rating,
 
-            selectedIconColor: Colors.green,
+            selectedIconColor: Theme.of(context).colorScheme.primary,
 
             onChanged: (value) async {
               return controller.setRating(value);
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Tags
           // =========================
-          TextWidget(
-            text: context.l10n.tags,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.tags),
           const SizedBox(height: 8),
 
           TagInputWidget(
             horizontalPadding: 10,
             verticalPadding: 6,
 
-            borderRadius: 5,
+            borderRadius: StudioSpacing.radius,
 
             fontSize: 16,
             fontWeight: FontWeight.normal,
@@ -693,7 +680,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             ).colorScheme.surfaceContainerHighest,
 
             removeIconSize: 20,
-            removeIconColor: Colors.red,
+            removeIconColor: Theme.of(context).colorScheme.error,
 
             initialValues: [
               for (final tags in controller.ceramic.tags)
@@ -707,19 +694,16 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
             },
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           // =========================
           // Notes
           // =========================
-          TextWidget(
-            text: context.l10n.notes,
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-          ),
+          StudioSectionHeading(title: context.l10n.notes),
           const SizedBox(height: 8),
 
           TextFieldWidget(
+            semanticsLabel: context.l10n.notes,
             placeholder: context.l10n.projectNotes,
             initialValue: controller.ceramic.note,
             debounceDuration: Duration(milliseconds: 300),
@@ -788,6 +772,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
   }
 
   Future<void> _saveAsTemplate() async {
+    if (_controller.isLoading || _controller.error != null) return;
     if (!await requireFeature(context, Features.projectTemplates) || !mounted) {
       return;
     }
@@ -863,18 +848,10 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text(value.toString())));
+          ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
         }
       }
     }
-  }
-
-  Future<void> _offerPublication(CeramicViewPageController controller) async {
-    final publish = await showFinishedPublicationPrompt(
-      context,
-      hasImage: controller.ceramic.images.isNotEmpty,
-    );
-    if (publish) await controller.togglePublication();
   }
 
   Widget _dimensionField(
@@ -887,7 +864,7 @@ class _CeramicViewPageState extends State<CeramicViewPage> {
         ? null
         : Measurement.lengthFromCentimeters(value, units);
     return TextFieldWidget(
-      placeholder: label,
+      label: label,
       initialValue: displayValue == null
           ? null
           : Measurement.format(displayValue),

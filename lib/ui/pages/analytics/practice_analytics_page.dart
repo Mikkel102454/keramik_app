@@ -5,6 +5,7 @@ import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/practice_analytics_dto.dart';
 import 'package:ceramic_app/ui/pages/analytics/practice_analytics_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/utils/measurement.dart';
 import 'package:intl/intl.dart';
 
@@ -48,66 +49,76 @@ class _PracticeAnalyticsPageState extends State<PracticeAnalyticsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.practiceAnalytics)),
-      body: FeatureGate(
-        feature: Features.practiceAnalytics,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, _) {
-            if (_controller.loading && _controller.data == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            if (_controller.error != null && _controller.data == null) {
-              return _Retry(onRetry: _controller.load);
-            }
-            final data = _controller.data;
-            if (data == null) return const SizedBox.shrink();
-            return RefreshIndicator(
-              onRefresh: _controller.load,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
-                children: [
-                  _rangeSelector(),
-                  if (_controller.loading) const LinearProgressIndicator(),
-                  if (_controller.error != null)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12),
-                      child: Text(
-                        context.l10n.analyticsRefreshFailed,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
+      body: SafeArea(
+        top: false,
+        child: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: FeatureGate(
+            feature: Features.practiceAnalytics,
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (context, _) {
+                if (_controller.loading && _controller.data == null) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (_controller.error != null && _controller.data == null) {
+                  return _Retry(onRetry: _controller.load);
+                }
+                final data = _controller.data;
+                if (data == null) return const SizedBox.shrink();
+                return RefreshIndicator(
+                  onRefresh: _controller.load,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+                    children: [
+                      StudioPageHeader(
+                        title: context.l10n.practiceAnalytics,
+                        icon: Icons.insights_outlined,
                       ),
-                    ),
-                  const SizedBox(height: 16),
-                  if (!data.hasAnyData)
-                    _Empty()
-                  else ...[
-                    if (data.dataQuality.legacyBaselineCount > 0)
-                      Card(
-                        child: ListTile(
-                          leading: const Icon(Icons.info_outline),
-                          title: Text(context.l10n.incompleteHistory),
-                          subtitle: Text(
-                            context.l10n.incompleteHistoryBody(
-                              data.dataQuality.legacyBaselineCount,
+                      _rangeSelector(),
+                      if (_controller.loading) const LinearProgressIndicator(),
+                      if (_controller.error != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Text(
+                            context.l10n.analyticsRefreshFailed,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
                             ),
                           ),
                         ),
-                      ),
-                    _activity(data),
-                    _stages(data),
-                    _durations(data),
-                    _ratings(data),
-                    _materials(data),
-                    _inventory(data),
-                    _combinations(data),
-                    _firings(data),
-                  ],
-                ],
-              ),
-            );
-          },
+                      const SizedBox(height: 16),
+                      if (!data.hasAnyData)
+                        _Empty()
+                      else ...[
+                        if (data.dataQuality.legacyBaselineCount > 0)
+                          Card(
+                            child: ListTile(
+                              leading: const Icon(Icons.info_outline),
+                              title: Text(context.l10n.incompleteHistory),
+                              subtitle: Text(
+                                context.l10n.incompleteHistoryBody(
+                                  data.dataQuality.legacyBaselineCount,
+                                ),
+                              ),
+                            ),
+                          ),
+                        _activity(data),
+                        _stages(data),
+                        _durations(data),
+                        _ratings(data),
+                        _materials(data),
+                        _inventory(data),
+                        _combinations(data),
+                        _firings(data),
+                      ],
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -273,7 +284,7 @@ class _PracticeAnalyticsPageState extends State<PracticeAnalyticsPage> {
               label: context.l10n.starRating(rating.rating),
               value: rating.count,
               maximum: maximum,
-              color: Colors.amber.shade700,
+              color: Theme.of(context).colorScheme.tertiary,
             ),
           _Bar(
             label: context.l10n.unrated,
@@ -475,7 +486,7 @@ class _AnalyticsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleLarge),
+            StudioSectionHeading(title: title),
             if (summary != null) ...[const SizedBox(height: 4), Text(summary!)],
             const SizedBox(height: 14),
             child,
@@ -554,20 +565,10 @@ class _NoData extends StatelessWidget {
 
 class _Empty extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 80, horizontal: 24),
-    child: Column(
-      children: [
-        const Icon(Icons.insights_outlined, size: 52),
-        const SizedBox(height: 12),
-        Text(
-          context.l10n.noPracticeData,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 8),
-        Text(context.l10n.noPracticeDataBody, textAlign: TextAlign.center),
-      ],
-    ),
+  Widget build(BuildContext context) => StudioEmptyState(
+    icon: Icons.insights_outlined,
+    title: context.l10n.noPracticeData,
+    message: context.l10n.noPracticeDataBody,
   );
 }
 
@@ -575,14 +576,9 @@ class _Retry extends StatelessWidget {
   const _Retry({required this.onRetry});
   final VoidCallback onRetry;
   @override
-  Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(context.l10n.analyticsLoadFailed),
-        const SizedBox(height: 12),
-        FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
-      ],
-    ),
+  Widget build(BuildContext context) => StudioEmptyState(
+    icon: Icons.cloud_off_outlined,
+    title: context.l10n.analyticsLoadFailed,
+    action: FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
   );
 }

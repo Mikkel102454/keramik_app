@@ -13,6 +13,154 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_app.dart';
 
 void main() {
+  testWidgets(
+    'failed Discover refresh retains cards and retries without a cursor',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final requestIds = <String?>[];
+      final cursors = <String?>[];
+      final forYou = DiscoverController(
+        'FOR_YOU',
+        pageLoader: (_, {cursor, requestId}) async {
+          requestIds.add(requestId);
+          cursors.add(cursor);
+          if (requestIds.length == 2) {
+            throw Exception('private refresh detail');
+          }
+          return DiscoverPageDto([_card()], null);
+        },
+      );
+      final latest = DiscoverController(
+        'LATEST',
+        pageLoader: (_, {cursor, requestId}) async =>
+            const DiscoverPageDto([], null),
+      );
+      addTearDown(forYou.dispose);
+      addTearDown(latest.dispose);
+      await tester.pumpWidget(
+        localizedTestApp(
+          home: DiscoverPage(
+            forYouController: forYou,
+            latestController: latest,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(forYou.nextCursor, isNull);
+      await tester.drag(
+        find.byKey(const ValueKey('discover-feed-FOR_YOU')),
+        const Offset(0, 400),
+      );
+      await tester.pumpAndSettle();
+      expect(requestIds, hasLength(2));
+      expect(forYou.items.single.title, 'Published bowl');
+      expect(find.text('potter'), findsOneWidget);
+      expect(find.text('Ceramics could not be loaded.'), findsOneWidget);
+      expect(find.text('private refresh detail'), findsNothing);
+      expect(find.text('Retry'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(requestIds, hasLength(2));
+      await tester.tap(find.text('Retry'));
+      await tester.pumpAndSettle();
+      expect(requestIds, hasLength(3));
+      expect(requestIds[2], requestIds[1]);
+      expect(cursors, everyElement(isNull));
+      expect(forYou.items.single.title, 'Published bowl');
+      expect(find.text('Retry'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'failed Discover pagination keeps cards and waits for explicit retry',
+    (tester) async {
+      final requestIds = <String?>[];
+      final forYou = DiscoverController(
+        'FOR_YOU',
+        pageLoader: (_, {cursor, requestId}) async {
+          requestIds.add(requestId);
+          if (requestIds.length == 1) return DiscoverPageDto([_card()], 'next');
+          if (requestIds.length == 2) {
+            throw Exception('private pagination detail');
+          }
+          return const DiscoverPageDto([], null);
+        },
+      );
+      final latest = DiscoverController(
+        'LATEST',
+        pageLoader: (_, {cursor, requestId}) async =>
+            const DiscoverPageDto([], null),
+      );
+      addTearDown(forYou.dispose);
+      addTearDown(latest.dispose);
+      await tester.pumpWidget(
+        localizedTestApp(
+          home: DiscoverPage(
+            forYouController: forYou,
+            latestController: latest,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.drag(
+        find.byKey(const ValueKey('discover-feed-FOR_YOU')),
+        const Offset(0, -500),
+      );
+      await tester.pumpAndSettle();
+      expect(requestIds, hasLength(2));
+      expect(forYou.items.single.title, 'Published bowl');
+      expect(find.text('private pagination detail'), findsNothing);
+      expect(find.text('Retry'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 2));
+      expect(requestIds, hasLength(2));
+      await tester.tap(find.text('Retry'));
+      await tester.pumpAndSettle();
+      expect(requestIds, hasLength(3));
+      expect(requestIds[2], requestIds[1]);
+      expect(forYou.items.single.title, 'Published bowl');
+      expect(find.text('Retry'), findsNothing);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets('failed hide restores its card and displays safe feedback', (
+    tester,
+  ) async {
+    final forYou = DiscoverController(
+      'FOR_YOU',
+      pageLoader: (_, {cursor, requestId}) async =>
+          DiscoverPageDto([_card()], null),
+      notInterestedUpdater: (_, _) async =>
+          throw Exception('private action detail'),
+    );
+    final latest = DiscoverController(
+      'LATEST',
+      pageLoader: (_, {cursor, requestId}) async =>
+          const DiscoverPageDto([], null),
+    );
+    addTearDown(forYou.dispose);
+    addTearDown(latest.dispose);
+    await tester.pumpWidget(
+      localizedTestApp(
+        home: DiscoverPage(forYouController: forYou, latestController: latest),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(PopupMenuButton<String>));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Not interested').last);
+    await tester.pumpAndSettle();
+    expect(forYou.items.single.title, 'Published bowl');
+    expect(
+      find.text('That action could not be completed. Please try again.'),
+      findsOneWidget,
+    );
+    expect(find.text('private action detail'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Shop route page opens Discover', (tester) async {
     final forYou = DiscoverController(
       'FOR_YOU',
@@ -29,16 +177,16 @@ void main() {
 
     await tester.pumpWidget(
       localizedTestApp(
-        home: ShopPage(
-          forYouController: forYou,
-          latestController: latest,
-        ),
+        home: ShopPage(forYouController: forYou, latestController: latest),
       ),
     );
     await tester.pumpAndSettle();
 
     expect(find.byType(DiscoverPage), findsOneWidget);
-    expect(find.text('Discover'), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(AppBar), matching: find.text('For You')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Discover replaces Shop with For You and Latest feed states', (
@@ -46,11 +194,13 @@ void main() {
   ) async {
     final forYou = DiscoverController(
       'FOR_YOU',
-      pageLoader: (_, {cursor, requestId}) async => const DiscoverPageDto([], null),
+      pageLoader: (_, {cursor, requestId}) async =>
+          const DiscoverPageDto([], null),
     );
     final latest = DiscoverController(
       'LATEST',
-      pageLoader: (_, {cursor, requestId}) async => DiscoverPageDto([_card()], null),
+      pageLoader: (_, {cursor, requestId}) async =>
+          DiscoverPageDto([_card()], null),
     );
     addTearDown(forYou.dispose);
     addTearDown(latest.dispose);
@@ -62,7 +212,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Discover'), findsOneWidget);
+    expect(
+      find.descendant(of: find.byType(AppBar), matching: find.text('For You')),
+      findsOneWidget,
+    );
     expect(find.text('Shop'), findsNothing);
     expect(find.text('For You'), findsOneWidget);
     expect(find.text('Latest'), findsOneWidget);
@@ -77,20 +230,19 @@ void main() {
     expect(tester.widget<TabBar>(find.byType(TabBar)).controller?.index, 1);
     expect(find.text('potter'), findsOneWidget);
     expect(find.byIcon(Icons.image_not_supported_outlined), findsOneWidget);
-    final creatorSemantics = tester.widget<Semantics>(
+    final creatorButton = tester.widget<IconButton>(
       find.byWidgetPredicate(
-        (widget) =>
-            widget is Semantics && widget.properties.label == 'potter',
+        (widget) => widget is IconButton && widget.tooltip == 'potter',
       ),
     );
     final publicationSemantics = tester.widget<Semantics>(
       find.byWidgetPredicate(
         (widget) =>
-            widget is Semantics &&
-            widget.properties.label == 'Published bowl',
+            widget is Semantics && widget.properties.label == 'Published bowl',
       ),
     );
-    expect(creatorSemantics.properties.button, isTrue);
+    expect(creatorButton.tooltip, 'potter');
+    expect(creatorButton.onPressed, isNotNull);
     expect(publicationSemantics.properties.button, isTrue);
     expect(find.byTooltip('Like'), findsOneWidget);
     expect(find.byTooltip('Share'), findsOneWidget);
@@ -167,9 +319,13 @@ void main() {
     await tester.pump();
     await tester.pump();
     expect(forYou.items.single.publicationId, 'publication-id');
+    expect(forYou.loading, isFalse);
+    await tester.drag(
+      find.byKey(const ValueKey('discover-feed-FOR_YOU')),
+      const Offset(0, -500),
+    );
+    await tester.pump(const Duration(seconds: 1));
     expect(forYou.loading, isTrue);
-    await tester.drag(find.byType(ListView).first, const Offset(0, -500));
-    await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
     secondPage.complete(const DiscoverPageDto([], null));
@@ -183,10 +339,9 @@ void main() {
     (tester) async {
       final forYou = DiscoverController(
         'FOR_YOU',
-        pageLoader: (_, {cursor, requestId}) async => DiscoverPageDto(
-          [_card(imageUri: 'https://example.invalid/publication.jpg')],
-          null,
-        ),
+        pageLoader: (_, {cursor, requestId}) async => DiscoverPageDto([
+          _card(imageUri: 'https://example.invalid/publication.jpg'),
+        ], null),
       );
       final latest = DiscoverController(
         'LATEST',

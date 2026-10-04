@@ -16,8 +16,9 @@ void main() {
       await tester.tap(find.text('Open'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Publish this finished piece?'), findsOneWidget);
-      expect(find.textContaining('Published, but hidden'), findsOneWidget);
+      expect(find.text('Add a photo to publish'), findsOneWidget);
+      expect(find.textContaining('Your piece is saved.'), findsOneWidget);
+      expect(find.textContaining('Published, but hidden'), findsNothing);
       expect(find.text('Publish'), findsNothing);
       expect(find.text('Not now'), findsOneWidget);
 

@@ -581,7 +581,11 @@
   "notInterestedAction": "Not interested",
   "likeAction": "Like",
   "publishFinishedTitle": "Publish this finished piece?",
-  "publishFinishedBody": "Published pieces can appear in Discover and on your profile. Up to 20 images and the listed public details will be visible.",
+  "publicationFinishedRequirement": "Set the stage to Finished",
+  "publicationPhotoRequirement": "Add at least one photo",
+  "publicationPhotoRequiredTitle": "Add a photo to publish",
+  "publicationPhotoRequiredBody": "Your piece is saved. Add at least one photo, then publish it from the piece's detail page.",
+  "publishFinishedBody": "Published pieces can appear in Discover and on your profile.",
   "publicationAudienceEveryone": "Everyone: Visible to all active members, except people you have blocked or who have blocked you.",
   "publicationAudienceFriends": "Friends only: Your current privacy setting limits this piece to accepted friends. Blocking and account rules still apply.",
   "publishAction": "Publish",
@@ -1013,5 +1017,7 @@
   "chatRequestWaiting": "Waiting for the recipient to accept this request.",
   "chatRequestDeclined": "This message request was declined.",
   "chatMessagingUnavailable": "Messaging is unavailable.",
-  "chatProfileUnavailable": "This profile is unavailable."
+  "chatProfileUnavailable": "This profile is unavailable.",
+  "operationFailed": "That action could not be completed. Please try again.",
+  "pieceSavedPublicationUnconfirmed": "Your piece was saved. Publishing could not be confirmed. Open the piece to check or try again."
 }

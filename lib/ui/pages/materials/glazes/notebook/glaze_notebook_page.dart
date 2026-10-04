@@ -20,6 +20,7 @@ class GlazeNotebookPage extends StatefulWidget {
 
 class _GlazeNotebookPageState extends State<GlazeNotebookPage> {
   late final GlazeNotebookController controller;
+  bool _filtersExpanded = false;
   @override
   void initState() {
     super.initState();
@@ -107,120 +108,211 @@ class _GlazeNotebookPageState extends State<GlazeNotebookPage> {
             : context.l10n.glazeCombinations,
       ),
     ),
-    body: AnimatedBuilder(
-      animation: controller,
-      builder: (_, _) => Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                TextFieldWidget(
-                  label: context.l10n.notebookSearch,
-                  suffixIcon: const Icon(Icons.search),
-                  onSubmitted: (v) async {
-                    controller.search = v;
-                    await controller.load();
-                    return true;
-                  },
-                ),
-                if (widget.tiles) ...[
-                  const SizedBox(height: 12),
-                  SelectFieldWidget<int>(
-                    value: controller.recipeId,
-                    label: context.l10n.filterRecipe,
-                    items: [
-                      DropdownMenuItem<int>(
-                        value: null,
-                        child: Text(context.l10n.allRecipes),
-                      ),
-                      ...controller.recipeNames.entries.map(
-                        (r) => DropdownMenuItem(
-                          value: r.key,
-                          child: Text(r.value),
+    body: SafeArea(
+      child: StudioContent(
+        maxWidth: 900,
+        child: AnimatedBuilder(
+          animation: controller,
+          builder: (_, _) => RefreshIndicator(
+            onRefresh: () => controller.load(),
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                  sliver: SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        StudioSurface(
+                          padding: EdgeInsets.zero,
+                          child: Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFieldWidget(
+                                      semanticsLabel:
+                                          context.l10n.notebookSearch,
+                                      placeholder: context.l10n.notebookSearch,
+                                      suffixIcon: const Icon(Icons.search),
+                                      onSubmitted: (v) async {
+                                        controller.search = v;
+                                        await controller.load();
+                                        return true;
+                                      },
+                                    ),
+                                  ),
+                                  if (widget.tiles) ...[
+                                    const SizedBox(width: 8),
+                                    Badge(
+                                      isLabelVisible:
+                                          controller.recipeId != null ||
+                                          controller.clayId != null,
+                                      label: Text(
+                                        '${(controller.recipeId == null ? 0 : 1) + (controller.clayId == null ? 0 : 1)}',
+                                      ),
+                                      child: IconButton(
+                                        tooltip: context.l10n.filters,
+                                        isSelected: _filtersExpanded,
+                                        onPressed: () => setState(
+                                          () => _filtersExpanded =
+                                              !_filtersExpanded,
+                                        ),
+                                        icon: const Icon(Icons.tune),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                              if (widget.tiles && _filtersExpanded) ...[
+                                const SizedBox(height: 8),
+                                SelectFieldWidget<int>(
+                                  value: controller.recipeId,
+                                  label: context.l10n.filterRecipe,
+                                  items: [
+                                    DropdownMenuItem<int>(
+                                      value: null,
+                                      child: Text(context.l10n.allRecipes),
+                                    ),
+                                    ...controller.recipeNames.entries.map(
+                                      (r) => DropdownMenuItem(
+                                        value: r.key,
+                                        child: Text(r.value),
+                                      ),
+                                    ),
+                                  ],
+                                  onChanged: (v) {
+                                    controller.recipeId = v;
+                                    controller.load();
+                                  },
+                                ),
+                                const SizedBox(height: 8),
+                                SelectFieldWidget<int>(
+                                  value: controller.clayId,
+                                  label: context.l10n.clay,
+                                  items: [
+                                    DropdownMenuItem<int>(
+                                      value: null,
+                                      child: Text(context.l10n.allClays),
+                                    ),
+                                    ...controller.clays.map(
+                                      (c) => DropdownMenuItem(
+                                        value: c.id,
+                                        child: Text(c.title),
+                                      ),
+                                    ),
+                                  ],
+                                  onChanged: (v) {
+                                    controller.clayId = v;
+                                    controller.load();
+                                  },
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                    onChanged: (v) {
-                      controller.recipeId = v;
-                      controller.load();
+                        if (controller.loading) const LinearProgressIndicator(),
+                        if (controller.failed) ...[
+                          const SizedBox(height: 16),
+                          Text(
+                            context.l10n.notebookFailed,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: () => controller.load(),
+                            icon: const Icon(Icons.refresh),
+                            label: Text(context.l10n.retry),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                if (!controller.loading &&
+                    !controller.failed &&
+                    controller.items.isEmpty)
+                  SliverToBoxAdapter(
+                    child: StudioEmptyState(
+                      icon: widget.tiles
+                          ? Icons.science_outlined
+                          : Icons.layers_outlined,
+                      title: context.l10n.notebookEmpty,
+                      action: widget.selectRecipe
+                          ? null
+                          : FilledButton.icon(
+                              onPressed: _create,
+                              icon: const Icon(Icons.add),
+                              label: Text(
+                                widget.tiles
+                                    ? context.l10n.createTestTile
+                                    : context.l10n.createCombination,
+                              ),
+                            ),
+                    ),
+                  ),
+                SliverPadding(
+                  padding: EdgeInsets.zero,
+                  sliver: SliverList.builder(
+                    itemCount: controller.items.length,
+                    itemBuilder: (context, index) {
+                      final item = controller.items[index];
+                      return Card(
+                        key: ValueKey(item.id),
+                        margin: EdgeInsets.zero,
+                        elevation: 0,
+                        shape: Border(
+                          bottom: BorderSide(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                          ),
+                        ),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 4,
+                          ),
+                          leading: Icon(
+                            widget.tiles
+                                ? Icons.science_outlined
+                                : Icons.layers_outlined,
+                          ),
+                          title: Text(
+                            item.name,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                          subtitle: Text(
+                            [
+                              if (item.sourceName != null)
+                                '${item.sourceName} \u00b7 v${item.sourceVersion}',
+                              if (item.clayTitle != null) item.clayTitle!,
+                            ].join(' \u00b7 '),
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () => _open(item),
+                        ),
+                      );
                     },
                   ),
-                  const SizedBox(height: 12),
-                  SelectFieldWidget<int>(
-                    value: controller.clayId,
-                    label: context.l10n.clay,
-                    items: [
-                      DropdownMenuItem<int>(
-                        value: null,
-                        child: Text(context.l10n.allClays),
+                ),
+                if (controller.cursor != null)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: OutlinedButton(
+                        onPressed: controller.loading
+                            ? null
+                            : () => controller.load(more: true),
+                        child: Text(context.l10n.loadMore),
                       ),
-                      ...controller.clays.map(
-                        (c) =>
-                            DropdownMenuItem(value: c.id, child: Text(c.title)),
-                      ),
-                    ],
-                    onChanged: (v) {
-                      controller.clayId = v;
-                      controller.load();
-                    },
+                    ),
                   ),
-                ],
+                const SliverToBoxAdapter(child: SizedBox(height: 100)),
               ],
             ),
           ),
-          if (controller.loading) const LinearProgressIndicator(),
-          if (controller.failed)
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                children: [
-                  Text(context.l10n.notebookFailed),
-                  TextButton(
-                    onPressed: () => controller.load(),
-                    child: Text(context.l10n.retry),
-                  ),
-                ],
-              ),
-            ),
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () => controller.load(),
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  if (!controller.loading &&
-                      !controller.failed &&
-                      controller.items.isEmpty)
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Text(context.l10n.notebookEmpty),
-                    ),
-                  for (final item in controller.items)
-                    ListTile(
-                      title: Text(item.name),
-                      subtitle: Text(
-                        [
-                          if (item.sourceName != null)
-                            '${item.sourceName} · v${item.sourceVersion}',
-                          if (item.clayTitle != null) item.clayTitle!,
-                        ].join(' · '),
-                      ),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _open(item),
-                    ),
-                  if (controller.cursor != null)
-                    TextButton(
-                      onPressed: controller.loading
-                          ? null
-                          : () => controller.load(more: true),
-                      child: Text(context.l10n.loadMore),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     ),
     floatingActionButton: widget.selectRecipe

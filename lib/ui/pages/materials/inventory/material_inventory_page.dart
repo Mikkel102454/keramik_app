@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/app/app_settings_controller.dart';
@@ -34,96 +35,137 @@ class _MaterialInventoryPageState extends State<MaterialInventoryPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.l10n.materialInventory),
-        actions: [
-          IconButton(
-            tooltip: context.l10n.addInventoryMaterial,
-            onPressed: _showCreate,
-            icon: const Icon(Icons.add),
-          ),
-        ],
-      ),
-      body: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) {
-          if (_controller.loading && _controller.accounts.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (_controller.error != null && _controller.accounts.isEmpty) {
-            return _Retry(onRetry: _controller.load);
-          }
-          return RefreshIndicator(
-            onRefresh: _controller.load,
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
-              children: [
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(context.l10n.showLowStockOnly),
-                  value: _controller.lowStockOnly,
-                  onChanged: (value) =>
-                      _controller.load(showLowStockOnly: value),
-                ),
-                if (_controller.loading) const LinearProgressIndicator(),
-                if (_controller.error != null)
-                  Text(
-                    context.l10n.inventoryRefreshFailed,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  ),
-                if (_controller.accounts.isEmpty)
-                  _Empty(onCreate: _showCreate)
-                else
-                  for (final account in _controller.accounts)
-                    Card(
-                      child: ListTile(
-                        leading: Icon(
-                          account.materialType == 'CLAY'
-                              ? Icons.landscape_outlined
-                              : Icons.opacity_outlined,
-                        ),
-                        title: Text(account.materialTitle),
-                        subtitle: Text(
-                          [
-                            _stock(account),
-                            if (!account.materialAvailable)
-                              context.l10n.catalogueMaterialRemoved,
-                          ].join(' · '),
-                        ),
-                        trailing: account.lowStock
-                            ? Tooltip(
-                                message: context.l10n.lowStock,
-                                child: Icon(
-                                  Icons.warning_amber_rounded,
-                                  color: Theme.of(context).colorScheme.error,
-                                ),
-                              )
-                            : const Icon(Icons.chevron_right),
-                        onTap: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => MaterialInventoryAccountPage(
-                                account: account,
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text(context.l10n.materialInventory)),
+    floatingActionButton: FloatingActionButton(
+      tooltip: context.l10n.addInventoryMaterial,
+      onPressed: _showCreate,
+      child: const Icon(Icons.add),
+    ),
+    body: SafeArea(
+      child: StudioContent(
+        maxWidth: 900,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            if (_controller.loading && _controller.accounts.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (_controller.error != null && _controller.accounts.isEmpty) {
+              return _Retry(onRetry: _controller.load);
+            }
+            return RefreshIndicator(
+              onRefresh: _controller.load,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          StudioSurface(
+                            padding: EdgeInsets.zero,
+                            child: SwitchListTile(
+                              contentPadding: EdgeInsets.zero,
+                              title: Text(context.l10n.showLowStockOnly),
+                              value: _controller.lowStockOnly,
+                              onChanged: (value) =>
+                                  _controller.load(showLowStockOnly: value),
+                            ),
+                          ),
+                          if (_controller.loading)
+                            const LinearProgressIndicator(),
+                          if (_controller.error != null) ...[
+                            const SizedBox(height: 8),
+                            Text(
+                              context.l10n.inventoryRefreshFailed,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
                               ),
                             ),
-                          );
-                          if (mounted) await _controller.load();
-                        },
+                          ],
+                        ],
                       ),
                     ),
-              ],
-            ),
-          );
-        },
+                  ),
+                  if (_controller.accounts.isEmpty)
+                    SliverToBoxAdapter(child: _Empty(onCreate: _showCreate)),
+                  SliverPadding(
+                    padding: EdgeInsets.zero,
+                    sliver: SliverList.builder(
+                      itemCount: _controller.accounts.length,
+                      itemBuilder: (context, index) {
+                        final account = _controller.accounts[index];
+                        return Card(
+                          key: ValueKey(account.id),
+                          margin: EdgeInsets.zero,
+                          elevation: 0,
+                          shape: Border(
+                            bottom: BorderSide(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.outlineVariant,
+                            ),
+                          ),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            leading: Icon(
+                              account.materialType == 'CLAY'
+                                  ? Icons.landscape_outlined
+                                  : Icons.opacity_outlined,
+                            ),
+                            title: Text(
+                              account.materialTitle,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                            subtitle: Text(
+                              [
+                                _stock(account),
+                                if (!account.materialAvailable)
+                                  context.l10n.catalogueMaterialRemoved,
+                              ].join(' \u00b7 '),
+                            ),
+                            trailing: account.lowStock
+                                ? Tooltip(
+                                    message: context.l10n.lowStock,
+                                    child: Icon(
+                                      Icons.warning_amber_rounded,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
+                                  )
+                                : const Icon(Icons.chevron_right),
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => MaterialInventoryAccountPage(
+                                    account: account,
+                                  ),
+                                ),
+                              );
+                              if (mounted) await _controller.load();
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 100)),
+                ],
+              ),
+            );
+          },
+        ),
       ),
-    );
-  }
+    ),
+  );
 
   String _stock(MaterialInventoryAccountDto account) {
     final quantity = double.tryParse(account.currentStock) ?? 0;
@@ -155,7 +197,7 @@ class _MaterialInventoryPageState extends State<MaterialInventoryPage> {
     if (created == false && mounted && _controller.error != null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('${_controller.error}')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
     }
   }
 }
@@ -215,6 +257,7 @@ class _CreateInventoryDialogState extends State<_CreateInventoryDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButtonFormField<String>(
+              isExpanded: true,
               initialValue: _type,
               decoration: InputDecoration(
                 labelText: context.l10n.materialType,
@@ -238,8 +281,9 @@ class _CreateInventoryDialogState extends State<_CreateInventoryDialog> {
                           : nextChoices.first.$1;
                     }),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             DropdownButtonFormField<int>(
+              isExpanded: true,
               key: ValueKey(_type),
               initialValue: _materialId,
               decoration: InputDecoration(
@@ -259,8 +303,9 @@ class _CreateInventoryDialogState extends State<_CreateInventoryDialog> {
                   : (value) => setState(() => _materialId = value),
             ),
             if (_type == 'GLAZE') ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               DropdownButtonFormField<String>(
+                isExpanded: true,
                 initialValue: _unit,
                 decoration: InputDecoration(
                   labelText: context.l10n.inventoryMeasurement,
@@ -286,7 +331,7 @@ class _CreateInventoryDialogState extends State<_CreateInventoryDialog> {
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             TextField(
               controller: _threshold,
               enabled: !_saving,
@@ -336,25 +381,14 @@ class _Empty extends StatelessWidget {
   const _Empty({required this.onCreate});
   final VoidCallback onCreate;
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 70, horizontal: 24),
-    child: Column(
-      children: [
-        const Icon(Icons.inventory_2_outlined, size: 52),
-        const SizedBox(height: 12),
-        Text(
-          context.l10n.noInventoryYet,
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 8),
-        Text(context.l10n.noInventoryYetBody, textAlign: TextAlign.center),
-        const SizedBox(height: 16),
-        FilledButton.icon(
-          onPressed: onCreate,
-          icon: const Icon(Icons.add),
-          label: Text(context.l10n.addInventoryMaterial),
-        ),
-      ],
+  Widget build(BuildContext context) => StudioEmptyState(
+    icon: Icons.inventory_2_outlined,
+    title: context.l10n.noInventoryYet,
+    message: context.l10n.noInventoryYetBody,
+    action: FilledButton.icon(
+      onPressed: onCreate,
+      icon: const Icon(Icons.add),
+      label: Text(context.l10n.addInventoryMaterial),
     ),
   );
 }
@@ -363,14 +397,13 @@ class _Retry extends StatelessWidget {
   const _Retry({required this.onRetry});
   final VoidCallback onRetry;
   @override
-  Widget build(BuildContext context) => Center(
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(context.l10n.inventoryLoadFailed),
-        const SizedBox(height: 12),
-        FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
-      ],
+  Widget build(BuildContext context) => StudioEmptyState(
+    icon: Icons.cloud_off_outlined,
+    title: context.l10n.inventoryLoadFailed,
+    action: FilledButton.icon(
+      onPressed: onRetry,
+      icon: const Icon(Icons.refresh),
+      label: Text(context.l10n.retry),
     ),
   );
 }

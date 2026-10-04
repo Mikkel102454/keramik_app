@@ -1,3 +1,5 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
+import 'package:ceramic_app/ui/widgets/v2/entry_page_widgets.dart';
 import 'package:ceramic_app/ui/widgets/feature_gate.dart';
 import 'package:ceramic_app/objects/entitlement_dto.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
@@ -43,47 +45,71 @@ class _ProjectTemplatesPageState extends State<ProjectTemplatesPage> {
           ),
         ],
       ),
-      body: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) {
-          if (_controller.loading && _controller.templates.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (_controller.error != null && _controller.templates.isEmpty) {
-            return _Retry(onRetry: _controller.load);
-          }
-          if (_controller.templates.isEmpty) {
-            return _Empty(onCreate: _create);
-          }
-          return RefreshIndicator(
-            onRefresh: _controller.load,
-            child: ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
-              itemCount:
-                  _controller.templates.length +
-                  (_controller.nextCursor == null ? 0 : 1),
-              itemBuilder: (context, index) {
-                if (index == _controller.templates.length) {
-                  return Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: OutlinedButton(
-                      onPressed: _controller.loadingMore
-                          ? null
-                          : _controller.loadMore,
-                      child: _controller.loadingMore
-                          ? const SizedBox.square(
-                              dimension: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            )
-                          : Text(context.l10n.loadMore),
-                    ),
-                  );
-                }
-                return _templateCard(_controller.templates[index]);
-              },
-            ),
-          );
-        },
+      body: SafeArea(
+        child: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: AnimatedBuilder(
+            animation: _controller,
+            builder: (context, _) {
+              if (_controller.loading && _controller.templates.isEmpty) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (_controller.error != null && _controller.templates.isEmpty) {
+                return _Retry(onRetry: _controller.load);
+              }
+              if (_controller.templates.isEmpty) {
+                return _Empty(onCreate: _create);
+              }
+              return RefreshIndicator(
+                onRefresh: _controller.load,
+                child: ListView.builder(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 40),
+                  itemCount:
+                      _controller.templates.length +
+                      1 +
+                      (_controller.nextCursor == null ? 0 : 1),
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (_controller.loading)
+                            const LinearProgressIndicator(),
+                          if (_controller.error != null)
+                            Text(
+                              context.l10n.templatesLoadFailed,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                              ),
+                            ),
+                        ],
+                      );
+                    }
+                    if (index - 1 == _controller.templates.length) {
+                      return Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: OutlinedButton(
+                          onPressed: _controller.loadingMore
+                              ? null
+                              : _controller.loadMore,
+                          child: _controller.loadingMore
+                              ? const SizedBox.square(
+                                  dimension: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text(context.l10n.loadMore),
+                        ),
+                      );
+                    }
+                    return _templateCard(_controller.templates[index - 1]);
+                  },
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -93,9 +119,9 @@ class _ProjectTemplatesPageState extends State<ProjectTemplatesPage> {
         !template.clayAvailable ||
         template.glazes.any((value) => !value.available);
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 8),
       child: InkWell(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(StudioSpacing.radius),
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
@@ -313,7 +339,7 @@ class _ProjectTemplatesPageState extends State<ProjectTemplatesPage> {
     }
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text(value.toString())));
+    ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
   }
 }
 
@@ -322,34 +348,16 @@ class _Empty extends StatelessWidget {
   final VoidCallback onCreate;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.content_copy_outlined, size: 48),
-            const SizedBox(height: 12),
-            Text(
-              context.l10n.noProjectTemplates,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              context.l10n.noProjectTemplatesBody,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            FilledButton(
-              onPressed: onCreate,
-              child: Text(context.l10n.createTemplate),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => StudioEmptyState(
+    icon: Icons.content_copy_outlined,
+    title: context.l10n.noProjectTemplates,
+    message: context.l10n.noProjectTemplatesBody,
+    action: FilledButton.icon(
+      onPressed: onCreate,
+      icon: const Icon(Icons.add),
+      label: Text(context.l10n.createTemplate),
+    ),
+  );
 }
 
 class _Retry extends StatelessWidget {
@@ -357,18 +365,15 @@ class _Retry extends StatelessWidget {
   final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(context.l10n.templatesLoadFailed),
-          const SizedBox(height: 12),
-          FilledButton(onPressed: onRetry, child: Text(context.l10n.retry)),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => StudioEmptyState(
+    icon: Icons.cloud_off_outlined,
+    title: context.l10n.templatesLoadFailed,
+    action: FilledButton.icon(
+      onPressed: onRetry,
+      icon: const Icon(Icons.refresh),
+      label: Text(context.l10n.retry),
+    ),
+  );
 }
 
 /// Saved planning records stay fully readable regardless of current membership.
@@ -378,9 +383,10 @@ class ProjectTemplateReadPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget field(String label, Object? value) => ListTile(
-      title: Text(label),
-      subtitle: SelectableText(value?.toString() ?? ''),
+    Widget field(String label, Object? value) => EntryValue(
+      label: label,
+      value: value?.toString() ?? '',
+      selectable: true,
     );
     String firingLabel(String type) => switch (type) {
       'BISQUE' => context.l10n.bisqueFiring,
@@ -391,59 +397,64 @@ class ProjectTemplateReadPage extends StatelessWidget {
     };
     return Scaffold(
       appBar: AppBar(title: Text(template.name)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          field(context.l10n.templateTitlePattern, template.titlePattern),
-          field(context.l10n.clay, template.clayTitle),
-          field(context.l10n.notes, template.note),
-          field(context.l10n.tags, template.tags.join(', ')),
-          if (template.heightCm != null)
-            field(context.l10n.height, '${template.heightCm} cm'),
-          if (template.widthCm != null)
-            field(context.l10n.width, '${template.widthCm} cm'),
-          if (template.depthCm != null)
-            field(context.l10n.depth, '${template.depthCm} cm'),
-          if (template.diameterCm != null)
-            field(context.l10n.diameter, '${template.diameterCm} cm'),
-          Text(
-            context.l10n.glazeApplications,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          for (final glaze in template.glazes)
-            Card(
-              child: ListTile(
-                title: Text('${glaze.layerOrder}. ${glaze.glazeTitle}'),
-                subtitle: SelectableText(
-                  '${context.l10n.coatCount(glaze.coatCount)}\n${glaze.note}',
-                ),
+      body: SafeArea(
+        child: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              field(context.l10n.templateTitlePattern, template.titlePattern),
+              field(context.l10n.clay, template.clayTitle),
+              field(context.l10n.notes, template.note),
+              field(context.l10n.tags, template.tags.join(', ')),
+              if (template.heightCm != null)
+                field(context.l10n.height, '${template.heightCm} cm'),
+              if (template.widthCm != null)
+                field(context.l10n.width, '${template.widthCm} cm'),
+              if (template.depthCm != null)
+                field(context.l10n.depth, '${template.depthCm} cm'),
+              if (template.diameterCm != null)
+                field(context.l10n.diameter, '${template.diameterCm} cm'),
+              Text(
+                context.l10n.glazeApplications,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-            ),
-          Text(
-            context.l10n.firings,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          for (final firing in template.firings)
-            Card(
-              child: Column(
-                children: [
-                  field(
-                    firingLabel(firing.type),
-                    firing.firingDate?.toIso8601String().split('T').first,
-                  ),
-                  field(context.l10n.targetCone, firing.targetCone),
-                  if (firing.targetTemperatureC != null)
-                    field(
-                      context.l10n.targetTemperature,
-                      '${firing.targetTemperatureC} °C',
+              for (final glaze in template.glazes)
+                Card(
+                  child: ListTile(
+                    title: Text('${glaze.layerOrder}. ${glaze.glazeTitle}'),
+                    subtitle: SelectableText(
+                      '${context.l10n.coatCount(glaze.coatCount)}\n${glaze.note}',
                     ),
-                  field(context.l10n.kiln, firing.kiln),
-                  field(context.l10n.program, firing.program),
-                  field(context.l10n.notes, firing.note),
-                ],
+                  ),
+                ),
+              Text(
+                context.l10n.firings,
+                style: Theme.of(context).textTheme.titleMedium,
               ),
-            ),
-        ],
+              for (final firing in template.firings)
+                Card(
+                  child: Column(
+                    children: [
+                      field(
+                        firingLabel(firing.type),
+                        firing.firingDate?.toIso8601String().split('T').first,
+                      ),
+                      field(context.l10n.targetCone, firing.targetCone),
+                      if (firing.targetTemperatureC != null)
+                        field(
+                          context.l10n.targetTemperature,
+                          '${firing.targetTemperatureC} °C',
+                        ),
+                      field(context.l10n.kiln, firing.kiln),
+                      field(context.l10n.program, firing.program),
+                      field(context.l10n.notes, firing.note),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -6,3 +6,4 @@ export 'form_field_style.dart';
 export 'message_composer.dart';
 export 'select_field_widget.dart';
 export 'text_field_widget.dart';
+export 'studio_widgets.dart';

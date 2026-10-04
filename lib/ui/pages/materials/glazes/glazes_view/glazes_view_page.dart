@@ -111,7 +111,7 @@ class _GlazesViewPageState extends State<GlazesViewPage> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text(context.l10n.glazeCannotDelete),
-        content: Text(error),
+        content: Text(context.l10n.operationFailed),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

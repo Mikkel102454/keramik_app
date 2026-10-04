@@ -1,5 +1,7 @@
 import 'package:ceramic_app/objects/ceramic_dto.dart';
+import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
+import 'ceramic_preview_tile.dart';
 
 class CeramicJournalCard extends StatelessWidget {
   const CeramicJournalCard({
@@ -40,73 +42,19 @@ class CeramicJournalCard extends StatelessWidget {
         : currentCeramic.images.first.uri;
     final title = currentCeramic?.title ?? publicTitle ?? '';
     final rating = currentCeramic?.rating ?? publicRating ?? 0;
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      margin: EdgeInsets.zero,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Ink(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                  image: image == null
-                      ? null
-                      : DecorationImage(
-                          image: NetworkImage(image),
-                          fit: BoxFit.contain,
-                        ),
-                ),
-                child: image == null
-                    ? Icon(
-                        Icons.handyman_outlined,
-                        size: 38,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      )
-                    : null,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(10, 9, 10, 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  const SizedBox(height: 5),
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          clayTitle?.isNotEmpty == true ? clayTitle! : stageTitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodySmall,
-                        ),
-                      ),
-                      const Spacer(),
-                      const Icon(Icons.star_rounded, size: 15, color: Color(0xffd89b25)),
-                      Text('$rating', style: Theme.of(context).textTheme.bodySmall),
-                    ],
-                  ),
-                  const SizedBox(height: 7),
-                  Text(
-                    stageTitle,
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+    return CeramicPreviewTile(
+      title: title,
+      imageUrl: image,
+      subtitle: clayTitle,
+      stageTitle: stageTitle,
+      rating: rating,
+      onTap: onTap,
+      semanticLabel: [
+        title,
+        if (clayTitle?.isNotEmpty == true) clayTitle!,
+        stageTitle,
+        '${context.l10n.rating}: $rating',
+      ].join(', '),
     );
   }
 }

@@ -7,19 +7,10 @@ class TagEntry {
   final int id;
   final String value;
 
-  const TagEntry({
-    required this.id,
-    required this.value,
-  });
+  const TagEntry({required this.id, required this.value});
 
-  TagEntry copyWith({
-    int? id,
-    String? value,
-  }) {
-    return TagEntry(
-      id: id ?? this.id,
-      value: value ?? this.value,
-    );
+  TagEntry copyWith({int? id, String? value}) {
+    return TagEntry(id: id ?? this.id, value: value ?? this.value);
   }
 }
 
@@ -32,8 +23,7 @@ class TagInputWidget extends StatefulWidget {
 
   /// return true = success
   /// return false = revert
-  final Future<bool> Function(
-      int id)? onRemove;
+  final Future<bool> Function(int id)? onRemove;
 
   final String? placeholder;
 
@@ -79,15 +69,13 @@ class TagInputWidget extends StatefulWidget {
     this.borderWidth = 1,
 
     this.borderColor,
-    this.backgroundColor =
-        Colors.transparent,
+    this.backgroundColor = Colors.transparent,
 
     this.fontSize = 16,
     this.fontWeight = FontWeight.w500,
     this.fontFamily,
     this.textColor,
-    this.decoration =
-        TextDecoration.none,
+    this.decoration = TextDecoration.none,
 
     this.removeIconSize = 18,
     this.removeIconColor,
@@ -95,32 +83,26 @@ class TagInputWidget extends StatefulWidget {
   });
 
   @override
-  State<TagInputWidget> createState() =>
-      _TagInputWidgetState();
+  State<TagInputWidget> createState() => _TagInputWidgetState();
 }
 
-class _TagInputWidgetState
-    extends State<TagInputWidget> {
+class _TagInputWidgetState extends State<TagInputWidget> {
   late List<TagEntry> tags;
 
   late List<TagEntry> lastValidTags;
 
-  final GlobalKey<TextFieldWidgetState>
-  _textFieldKey =
-  GlobalKey<TextFieldWidgetState>();
+  final GlobalKey<TextFieldWidgetState> _textFieldKey =
+      GlobalKey<TextFieldWidgetState>();
 
   @override
   void initState() {
     super.initState();
 
     tags = [...widget.initialValues];
-    lastValidTags = [
-      ...widget.initialValues,
-    ];
+    lastValidTags = [...widget.initialValues];
   }
 
-  Future<void> _addTag(
-      String value) async {
+  Future<void> _addTag(String value) async {
     final trimmed = value.trim();
 
     if (trimmed.isEmpty) {
@@ -128,39 +110,26 @@ class _TagInputWidgetState
     }
 
     final alreadyExists = tags.any(
-          (tag) =>
-      tag.value.toLowerCase() ==
-          trimmed.toLowerCase(),
+      (tag) => tag.value.toLowerCase() == trimmed.toLowerCase(),
     );
 
     if (alreadyExists) {
-      _textFieldKey.currentState
-          ?.clear();
+      _textFieldKey.currentState?.clear();
 
       return;
     }
 
-    final optimisticTag = TagEntry(
-      id: -999999,
-      value: trimmed,
-    );
+    final optimisticTag = TagEntry(id: -999999, value: trimmed);
 
-    final previousTags = [
-      ...lastValidTags,
-    ];
+    final previousTags = [...lastValidTags];
 
     setState(() {
-      tags = [
-        ...tags,
-        optimisticTag,
-      ];
+      tags = [...tags, optimisticTag];
     });
 
     if (widget.onCreate == null) {
-      final updatedTag =
-      optimisticTag.copyWith(
-        id: DateTime.now()
-            .millisecondsSinceEpoch,
+      final updatedTag = optimisticTag.copyWith(
+        id: DateTime.now().millisecondsSinceEpoch,
       );
 
       setState(() {
@@ -170,16 +139,12 @@ class _TagInputWidgetState
 
       lastValidTags = [...tags];
 
-      _textFieldKey.currentState
-          ?.clear();
+      _textFieldKey.currentState?.clear();
 
       return;
     }
 
-    final createdId =
-    await widget.onCreate!(
-      trimmed,
-    );
+    final createdId = await widget.onCreate!(trimmed);
 
     if (!mounted) {
       return;
@@ -196,29 +161,19 @@ class _TagInputWidgetState
     setState(() {
       tags.removeLast();
 
-      tags.add(
-        optimisticTag.copyWith(
-          id: createdId,
-        ),
-      );
+      tags.add(optimisticTag.copyWith(id: createdId));
     });
 
     lastValidTags = [...tags];
 
-    _textFieldKey.currentState
-        ?.clear();
+    _textFieldKey.currentState?.clear();
   }
 
-  Future<void> _removeTag(
-      TagEntry tag) async {
-    final previousTags = [
-      ...lastValidTags,
-    ];
+  Future<void> _removeTag(TagEntry tag) async {
+    final previousTags = [...lastValidTags];
 
     setState(() {
-      tags.removeWhere(
-            (e) => e.id == tag.id,
-      );
+      tags.removeWhere((e) => e.id == tag.id);
     });
 
     if (widget.onRemove == null) {
@@ -226,10 +181,7 @@ class _TagInputWidgetState
       return;
     }
 
-    final success =
-    await widget.onRemove!(
-      tag.id,
-    );
+    final success = await widget.onRemove!(tag.id);
 
     if (!mounted) {
       return;
@@ -249,93 +201,54 @@ class _TagInputWidgetState
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment:
-      CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
 
       children: [
         Wrap(
           spacing: widget.spacing,
-          runSpacing:
-          widget.runSpacing,
+          runSpacing: widget.runSpacing,
 
-          children: tags.map((tag) {
-            return Container(
-              padding:
-              EdgeInsets.symmetric(
-                horizontal: widget
-                    .horizontalPadding,
-
-                vertical: widget
-                    .verticalPadding,
-              ),
-
-              decoration: BoxDecoration(
-                color: widget
-                    .backgroundColor,
-
-                borderRadius:
-                BorderRadius.circular(
-                  widget.borderRadius,
-                ),
-
-                border: Border.all(
-                  color:
-                  widget.borderColor ?? Theme.of(context).colorScheme.outline,
-
-                  width:
-                  widget.borderWidth,
-                ),
-              ),
-
-              child: Row(
-                mainAxisSize:
-                MainAxisSize.min,
-
-                children: [
-                  Text(
+          children: tags
+              .map(
+                (tag) => InputChip(
+                  label: Text(
                     tag.value,
-
                     style: TextStyle(
-                      fontSize:
-                      widget.fontSize,
-
-                      fontWeight: widget
-                          .fontWeight,
-
-                      fontFamily: widget
-                          .fontFamily,
-
+                      fontSize: widget.fontSize,
+                      fontWeight: widget.fontWeight,
+                      fontFamily: widget.fontFamily,
                       color:
-                      widget.textColor ?? Theme.of(context).colorScheme.onSurface,
-
-                      decoration: widget
-                          .decoration,
+                          widget.textColor ??
+                          Theme.of(context).colorScheme.onSurface,
+                      decoration: widget.decoration,
                     ),
                   ),
-
-                  SizedBox(
-                    width: widget
-                        .removeIconSpacing,
+                  backgroundColor: widget.backgroundColor,
+                  side: BorderSide(
+                    color:
+                        widget.borderColor ??
+                        Theme.of(context).colorScheme.outline,
+                    width: widget.borderWidth,
                   ),
-
-                  GestureDetector(
-                    onTap: () =>
-                        _removeTag(tag),
-
-                    child: Icon(
-                      Icons.close,
-
-                      size: widget
-                          .removeIconSize,
-
-                      color: widget.removeIconColor ??
-                          Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(widget.borderRadius),
                   ),
-                ],
-              ),
-            );
-          }).toList(),
+                  labelPadding: EdgeInsets.symmetric(
+                    horizontal: widget.horizontalPadding,
+                    vertical: widget.verticalPadding,
+                  ),
+                  deleteIcon: Icon(
+                    Icons.close,
+                    size: widget.removeIconSize,
+                    color:
+                        widget.removeIconColor ??
+                        Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  deleteButtonTooltipMessage: context.l10n.delete,
+                  onDeleted: () => _removeTag(tag),
+                ),
+              )
+              .toList(),
         ),
 
         const SizedBox(height: 16),
@@ -343,14 +256,11 @@ class _TagInputWidgetState
         TextFieldWidget(
           key: _textFieldKey,
 
-          placeholder:
-          widget.placeholder ?? context.l10n.tag,
+          placeholder: widget.placeholder ?? context.l10n.tag,
 
-          textInputAction:
-          TextInputAction.done,
+          textInputAction: TextInputAction.done,
 
-          onSubmitted:
-              (value) async {
+          onSubmitted: (value) async {
             await _addTag(value);
 
             return true;

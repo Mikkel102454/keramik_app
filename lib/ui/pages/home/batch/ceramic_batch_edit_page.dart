@@ -1,3 +1,4 @@
+import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
 import 'package:ceramic_app/objects/ceramic_batch_edit_dto.dart';
 import 'package:ceramic_app/objects/clay_dto.dart';
@@ -68,227 +69,238 @@ class _CeramicBatchEditPageState extends State<CeramicBatchEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.l10n.batchEdit)),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
-              children: [
-                _BatchEditSection(
-                  icon: Icons.info_outline,
-                  title: context.l10n.selectedCeramics(
-                    widget.ceramicIds.length,
-                  ),
-                  description: context.l10n.batchEditSafetyNote,
-                ),
-                if (_error != null) ...[
-                  const SizedBox(height: 16),
-                  Card(
-                    color: Theme.of(context).colorScheme.errorContainer,
-                    child: ListTile(
-                      leading: const Icon(Icons.error_outline),
-                      title: Text(_error!),
-                      trailing: IconButton(
-                        tooltip: context.l10n.ok,
-                        onPressed: () => setState(() => _error = null),
-                        icon: const Icon(Icons.close),
-                      ),
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 16),
-                _BatchEditSection(
-                  icon: Icons.tune,
-                  title: context.l10n.batchBasics,
+      body: SafeArea(
+        child: StudioContent(
+          maxWidth: StudioSpacing.formWidth,
+          child: _loading
+              ? const Center(child: CircularProgressIndicator())
+              : ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 40),
                   children: [
-                    DropdownButtonFormField<int?>(
-                      isExpanded: true,
-                      initialValue: _stageId,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.changeStage,
+                    _BatchEditSection(
+                      icon: Icons.info_outline,
+                      title: context.l10n.selectedCeramics(
+                        widget.ceramicIds.length,
                       ),
-                      items: [
-                        DropdownMenuItem<int?>(
-                          value: null,
-                          child: Text(context.l10n.keepCurrent),
-                        ),
-                        ...widget.stages.map(
-                          (stage) => DropdownMenuItem<int?>(
-                            value: stage.id,
-                            child: Text(
-                              localizedStageName(context.l10n, stage.title),
-                            ),
+                      description: context.l10n.batchEditSafetyNote,
+                    ),
+                    if (_error != null) ...[
+                      const SizedBox(height: 16),
+                      Card(
+                        color: Theme.of(context).colorScheme.errorContainer,
+                        child: ListTile(
+                          leading: const Icon(Icons.error_outline),
+                          title: Text(_error!),
+                          trailing: IconButton(
+                            tooltip: context.l10n.ok,
+                            onPressed: () => setState(() => _error = null),
+                            icon: const Icon(Icons.close),
                           ),
                         ),
-                      ],
-                      onChanged: (value) => setState(() => _stageId = value),
-                    ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      isExpanded: true,
-                      initialValue: _clayMode,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.changeClay,
-                      ),
-                      items: [
-                        DropdownMenuItem(
-                          value: 'KEEP',
-                          child: Text(context.l10n.keepCurrent),
-                        ),
-                        DropdownMenuItem(
-                          value: 'CLEAR',
-                          child: Text(context.l10n.clearClay),
-                        ),
-                        DropdownMenuItem(
-                          value: 'SET',
-                          child: Text(context.l10n.setClay),
-                        ),
-                      ],
-                      onChanged: (value) =>
-                          setState(() => _clayMode = value ?? 'KEEP'),
-                    ),
-                    if (_clayMode == 'SET') ...[
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<int>(
-                        isExpanded: true,
-                        initialValue: _clayId,
-                        decoration: InputDecoration(
-                          labelText: context.l10n.clay,
-                        ),
-                        items: widget.clays
-                            .map(
-                              (clay) => DropdownMenuItem(
-                                value: clay.id,
-                                child: Text(clay.title),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) => setState(() => _clayId = value),
                       ),
                     ],
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _BatchEditSection(
-                  icon: Icons.sell_outlined,
-                  title: context.l10n.batchTagChanges,
-                  description: context.l10n.commaSeparatedTags,
-                  children: [
-                    TextField(
-                      controller: _addTags,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.addTags,
-                      ),
-                    ),
                     const SizedBox(height: 16),
-                    TextField(
-                      controller: _removeTags,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.removeTags,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _BatchEditSection(
-                  icon: Icons.straighten,
-                  title: context.l10n.applyDimensions,
-                  description: context.l10n.batchDimensionsHelp,
-                  children: [
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final twoColumns = constraints.maxWidth >= 480;
-                        final width = twoColumns
-                            ? (constraints.maxWidth - 12) / 2
-                            : constraints.maxWidth;
-                        return Wrap(
-                          spacing: 12,
-                          runSpacing: 16,
-                          children: [
-                            _dimension(_height, context.l10n.height, width),
-                            _dimension(_width, context.l10n.width, width),
-                            _dimension(_depth, context.l10n.depth, width),
-                            _dimension(
-                              _diameter,
-                              context.l10n.diameter,
-                              width,
+                    _BatchEditSection(
+                      icon: Icons.tune,
+                      title: context.l10n.batchBasics,
+                      children: [
+                        DropdownButtonFormField<int?>(
+                          isExpanded: true,
+                          initialValue: _stageId,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.changeStage,
+                          ),
+                          items: [
+                            DropdownMenuItem<int?>(
+                              value: null,
+                              child: Text(context.l10n.keepCurrent),
+                            ),
+                            ...widget.stages.map(
+                              (stage) => DropdownMenuItem<int?>(
+                                value: stage.id,
+                                child: Text(
+                                  localizedStageName(context.l10n, stage.title),
+                                ),
+                              ),
                             ),
                           ],
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _BatchEditSection(
-                  icon: Icons.event_note_outlined,
-                  title: context.l10n.applyPlanningTemplate,
-                  description: context.l10n.batchPlanningHelp,
-                  children: [
-                    DropdownButtonFormField<int?>(
-                      isExpanded: true,
-                      initialValue: _templateId,
-                      decoration: InputDecoration(
-                        labelText: context.l10n.projectTemplate,
-                      ),
-                      items: [
-                        DropdownMenuItem<int?>(
-                          value: null,
-                          child: Text(context.l10n.none),
+                          onChanged: (value) =>
+                              setState(() => _stageId = value),
                         ),
-                        ..._templates.map(
-                          (template) => DropdownMenuItem<int?>(
-                            value: template.id,
-                            child: Text(template.name),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          initialValue: _clayMode,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.changeClay,
+                          ),
+                          items: [
+                            DropdownMenuItem(
+                              value: 'KEEP',
+                              child: Text(context.l10n.keepCurrent),
+                            ),
+                            DropdownMenuItem(
+                              value: 'CLEAR',
+                              child: Text(context.l10n.clearClay),
+                            ),
+                            DropdownMenuItem(
+                              value: 'SET',
+                              child: Text(context.l10n.setClay),
+                            ),
+                          ],
+                          onChanged: (value) =>
+                              setState(() => _clayMode = value ?? 'KEEP'),
+                        ),
+                        if (_clayMode == 'SET') ...[
+                          const SizedBox(height: 16),
+                          DropdownButtonFormField<int>(
+                            isExpanded: true,
+                            initialValue: _clayId,
+                            decoration: InputDecoration(
+                              labelText: context.l10n.clay,
+                            ),
+                            items: widget.clays
+                                .map(
+                                  (clay) => DropdownMenuItem(
+                                    value: clay.id,
+                                    child: Text(clay.title),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) =>
+                                setState(() => _clayId = value),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    _BatchEditSection(
+                      icon: Icons.sell_outlined,
+                      title: context.l10n.batchTagChanges,
+                      description: context.l10n.commaSeparatedTags,
+                      children: [
+                        TextField(
+                          controller: _addTags,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.addTags,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextField(
+                          controller: _removeTags,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.removeTags,
                           ),
                         ),
                       ],
-                      onChanged: (value) => setState(() {
-                        _templateId = value;
-                        if (value == null) {
-                          _applyGlazes = false;
-                          _applyFirings = false;
-                        }
-                      }),
                     ),
-                    const SizedBox(height: 8),
-                    CheckboxListTile(
-                      value: _applyGlazes,
-                      onChanged: _templateId == null
-                          ? null
-                          : (value) =>
-                                setState(() => _applyGlazes = value ?? false),
-                      title: Text(context.l10n.applyGlazesOnlyWhenEmpty),
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
+                    const SizedBox(height: 16),
+                    _BatchEditSection(
+                      icon: Icons.straighten,
+                      title: context.l10n.applyDimensions,
+                      description: context.l10n.batchDimensionsHelp,
+                      children: [
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final twoColumns = constraints.maxWidth >= 480;
+                            final width = twoColumns
+                                ? (constraints.maxWidth - 12) / 2
+                                : constraints.maxWidth;
+                            return Wrap(
+                              spacing: 12,
+                              runSpacing: 16,
+                              children: [
+                                _dimension(_height, context.l10n.height, width),
+                                _dimension(_width, context.l10n.width, width),
+                                _dimension(_depth, context.l10n.depth, width),
+                                _dimension(
+                                  _diameter,
+                                  context.l10n.diameter,
+                                  width,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                    CheckboxListTile(
-                      value: _applyFirings,
-                      onChanged: _templateId == null
-                          ? null
-                          : (value) =>
-                                setState(() => _applyFirings = value ?? false),
-                      title: Text(context.l10n.applySafeFiringPlans),
-                      contentPadding: EdgeInsets.zero,
-                      controlAffinity: ListTileControlAffinity.leading,
+                    const SizedBox(height: 16),
+                    _BatchEditSection(
+                      icon: Icons.event_note_outlined,
+                      title: context.l10n.applyPlanningTemplate,
+                      description: context.l10n.batchPlanningHelp,
+                      children: [
+                        DropdownButtonFormField<int?>(
+                          isExpanded: true,
+                          initialValue: _templateId,
+                          decoration: InputDecoration(
+                            labelText: context.l10n.projectTemplate,
+                          ),
+                          items: [
+                            DropdownMenuItem<int?>(
+                              value: null,
+                              child: Text(context.l10n.none),
+                            ),
+                            ..._templates.map(
+                              (template) => DropdownMenuItem<int?>(
+                                value: template.id,
+                                child: Text(template.name),
+                              ),
+                            ),
+                          ],
+                          onChanged: (value) => setState(() {
+                            _templateId = value;
+                            if (value == null) {
+                              _applyGlazes = false;
+                              _applyFirings = false;
+                            }
+                          }),
+                        ),
+                        const SizedBox(height: 8),
+                        CheckboxListTile(
+                          value: _applyGlazes,
+                          onChanged: _templateId == null
+                              ? null
+                              : (value) => setState(
+                                  () => _applyGlazes = value ?? false,
+                                ),
+                          title: Text(context.l10n.applyGlazesOnlyWhenEmpty),
+                          contentPadding: EdgeInsets.zero,
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ),
+                        CheckboxListTile(
+                          value: _applyFirings,
+                          onChanged: _templateId == null
+                              ? null
+                              : (value) => setState(
+                                  () => _applyFirings = value ?? false,
+                                ),
+                          title: Text(context.l10n.applySafeFiringPlans),
+                          contentPadding: EdgeInsets.zero,
+                          controlAffinity: ListTileControlAffinity.leading,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    SizedBox(
+                      height: 52,
+                      child: FilledButton.icon(
+                        onPressed: _submitting ? null : _preview,
+                        icon: _submitting
+                            ? const SizedBox.square(
+                                dimension: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.fact_check_outlined),
+                        label: Text(context.l10n.reviewBatchEdit),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 52,
-                  child: FilledButton.icon(
-                    onPressed: _submitting ? null : _preview,
-                    icon: _submitting
-                        ? const SizedBox.square(
-                            dimension: 18,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.fact_check_outlined),
-                    label: Text(context.l10n.reviewBatchEdit),
-                  ),
-                ),
-              ],
-            ),
+        ),
+      ),
     );
   }
 
@@ -309,11 +321,12 @@ class _CeramicBatchEditPageState extends State<CeramicBatchEditPage> {
 
   Future<void> _loadTemplates() async {
     try {
-      final page = await (widget.templateLoader?.call() ??
-          ProjectTemplateRepository.list());
+      final page =
+          await (widget.templateLoader?.call() ??
+              ProjectTemplateRepository.list());
       if (mounted) setState(() => _templates = page.items);
     } catch (value) {
-      if (mounted) setState(() => _error = value.toString());
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -446,7 +459,7 @@ class _CeramicBatchEditPageState extends State<CeramicBatchEditPage> {
       );
       if (mounted) Navigator.pop(context, result.updatedCount > 0);
     } catch (value) {
-      if (mounted) setState(() => _error = value.toString());
+      if (mounted) setState(() => _error = context.l10n.operationFailed);
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -506,10 +519,7 @@ class _BatchEditSection extends StatelessWidget {
               ),
             ),
           ],
-          if (children.isNotEmpty) ...[
-            const SizedBox(height: 18),
-            ...children,
-          ],
+          if (children.isNotEmpty) ...[const SizedBox(height: 18), ...children],
         ],
       ),
     ),
