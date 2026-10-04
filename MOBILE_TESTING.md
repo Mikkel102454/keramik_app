@@ -1,5 +1,57 @@
 # Testing the Android app
 
+## Bounded export downloads (2026-10-04)
+
+`test/export_download_test.dart` exercises the real AccountRepository and shared
+Dio cookies/session interceptors with isolated synthetic streams and ephemeral
+loopback services only. It checks exact valid ZIP bytes, distinct private cache
+paths, publication only after EOF/length verification, malformed/short/oversized
+lengths, interrupted streams, source cancellation, written-partial removal,
+completed-file preservation after a failed retry, subsequent successful retry,
+ordinary chunked responses, premature HTTP EOF, before-header/mid-body receive
+timeouts, downloads progressing beyond the inactivity duration, cancellation
+before headers with a late response, and 404/500 versus 401 session behavior.
+Page disposal cancels the scoped token; localized feedback is unchanged.
+
+A valid 128 MiB single-entry STORED ZIP is generated from a reusable 64 KiB zero
+block and fixed-size ZIP metadata with the known CRC32. The test checks that the
+source never gets more than one 64 KiB chunk ahead of disk, verifies the resulting
+header/directory and the entire stored payload in bounded reads. Neither fixture
+creation nor verification collects the large ZIP. This guards against Dio 5.9's
+eager internal response queue; the scoped adapter gates raw chunks on disk-write
+acknowledgement. Backend checks separately transfer a generated 128 MiB ZIP with
+a 64 MiB heap and verify a real TCP disconnect closes storage without an active
+database transaction. Interrupted storage transfers abort promptly without JSON
+conversion, private error details or stack traces.
+
+```powershell
+flutter test --no-pub test/export_download_test.dart test/network_timeout_test.dart
+flutter analyze --no-pub
+flutter test --no-pub
+```
+
+Validation passed: `flutter analyze --no-pub` found no issues (8.9 seconds), all
+370 Flutter tests passed (63 seconds), and targeted export/timeout coverage
+passed all 38 tests. These checks do not connect to the normal backend, MinIO,
+MariaDB or external accounts. No dependency/localization generation, migrations,
+normal-service restart or deployment is needed.
+
+On this Windows session the initial `dart.bat format` stalled without output and
+was stopped at its two-minute limit. The direct installed Dart executable with
+`--suppress-analytics` successfully formatted only changed files. Flutter analysis
+and tests ran through the installed `flutter_tools.snapshot` with the same CLI
+arguments and ordinary SDK cache access; no SDK sources or project dependencies
+were changed.
+
+Remaining acceptance: real private-MinIO/proxy and installed physical Android
+file opening/cache-eviction behavior. Files are temporary cache entries, and
+generation still uses large in-memory structures. Process death can leave a
+task-owned partial for Android cache eviction; no crash scavenger is introduced.
+Disk exhaustion/permission errors take the failure-cleanup path, but storage
+hardware failures can also prevent deletion. No full ZIP checksum/structure
+validation, concurrency budget, automatic retry or resume is added; a clean
+lengthless chunked truncation cannot be detected from HTTP byte count alone.
+
 ## Android backup allowlist (2026-10-04)
 
 The three policies allow exactly `domain="file" path="language-tag.txt"`:

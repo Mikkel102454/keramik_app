@@ -1,12 +1,12 @@
 import 'dart:io';
 
 import 'package:ceramic_app/api/api_client.dart';
+import 'package:ceramic_app/api/export_download.dart';
 import 'package:ceramic_app/objects/account_lifecycle_dto.dart';
 import 'package:ceramic_app/objects/account_settings_dto.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
 import 'package:ceramic_app/utils/web.dart';
 import 'package:dio/dio.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AccountRepository {
   static Future<bool> usernameAvailable(String username) async {
@@ -100,19 +100,8 @@ class AccountRepository {
     );
   }
 
-  static Future<File> downloadExport(String id) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/keramik-data-$id.zip');
-    final response = await ApiClient.dio.get<List<int>>(
-      '/api/account/exports/$id/download',
-      options: Options(responseType: ResponseType.bytes),
-    );
-    if (response.statusCode != 200 || response.data == null) {
-      throw const ApiException('The export could not be downloaded');
-    }
-    await file.writeAsBytes(response.data!, flush: true);
-    return file;
-  }
+  static Future<File> downloadExport(String id, {CancelToken? cancelToken}) =>
+      downloadExportFile(ApiClient.dio, id, cancelToken: cancelToken);
 
   static Future<AccountDeletionDto> scheduleDeletion({
     required String currentPassword,

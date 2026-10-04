@@ -16,6 +16,7 @@ import 'package:ceramic_app/ui/pages/settings/settings_controller.dart';
 import 'package:ceramic_app/utils/web.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:dio/dio.dart';
 
 class AccountInformationPage extends StatelessWidget {
   const AccountInformationPage({super.key});
@@ -238,10 +239,12 @@ class _DataExportPageState extends State<DataExportPage> {
   bool _busy = false;
   String? _error;
   Timer? _poll;
+  CancelToken? _downloadToken;
 
   @override
   void dispose() {
     _poll?.cancel();
+    _downloadToken?.cancel('Export page closed');
     super.dispose();
   }
 
@@ -304,8 +307,13 @@ class _DataExportPageState extends State<DataExportPage> {
       _busy = true;
       _error = null;
     });
+    final token = _downloadToken = CancelToken();
     try {
-      final file = await AccountRepository.downloadExport(current.exportId);
+      final file = await AccountRepository.downloadExport(
+        current.exportId,
+        cancelToken: token,
+      );
+      if (!mounted) return;
       await openWebPage(file.uri.toString());
     } catch (error) {
       if (mounted) {
@@ -317,6 +325,7 @@ class _DataExportPageState extends State<DataExportPage> {
         );
       }
     } finally {
+      _downloadToken = null;
       if (mounted) setState(() => _busy = false);
     }
   }

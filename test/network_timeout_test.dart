@@ -161,7 +161,7 @@ void main() {
         AccountRepository.downloadExport('isolated'),
         throwsA(isA<DioException>()),
       );
-      expect(adapter.requests.last.responseType, ResponseType.bytes);
+      expect(adapter.requests.last.responseType, ResponseType.stream);
       expect(adapter.requests.last.receiveTimeout, const Duration(seconds: 30));
       expect(
         await File('${directory.path}/keramik-data-isolated.zip').exists(),

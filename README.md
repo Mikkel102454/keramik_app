@@ -62,6 +62,30 @@ server state before retrying non-idempotent creation, deletion or account change
 Chat retries reuse the existing UUID to recover a lost receipt without duplicating
 the logical message. See [timeout validation](MOBILE_TESTING.md#bounded-network-timeouts-2026-10-04).
 
+## Bounded export downloads
+
+Existing exports download through the authenticated backend endpoint directly to
+a unique app-private temporary/cache directory. A `.part` is written with disk
+backpressure before Dio's stream queue, using the same transport, cookie/session
+interceptors and finite timeout options. The receive limit also covers waiting
+for the first body chunk. The repository flushes/closes the file and checks EOF
+and Content-Length (when supplied) before renaming and returning
+`keramik-data-{id}.zip`. Normally completed chunked responses are supported.
+
+Cancellation, inactivity timeout, incomplete transfer and other failures cancel
+the response and remove only the current attempt directory. Leaving the export
+page cancels its pending download. A failed retry never overwrites/deletes an
+earlier completed download, and successful attempts use distinct paths. Existing
+English/Danish feedback and unauthorized/session handling remain; no automatic
+retry or resume is added. Completed files are cache files subject to Android
+eviction; existing documents downloads are neither moved nor removed.
+
+The endpoint, filename/disposition, ZIP contents, ownership and expiry checks stay
+compatible. Backend transfers use a 64 KiB buffer and do not hold a database
+transaction. Export generation still uses large in-memory structures. Synthetic
+128 MiB ZIP tests verify bounded buffering; see
+[tests and limitations](MOBILE_TESTING.md#bounded-export-downloads-2026-10-04).
+
 ## Studio redesign
 
 The app now uses a TikTok-inspired monochrome Material 3 theme with cobalt-blue
