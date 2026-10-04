@@ -1,5 +1,67 @@
 # Keramik Android client
 
+## Android backup policy
+
+Android backup and Android-to-Android device transfer allow only the non-sensitive
+`language-tag.txt` preference. The installed `path_provider_android` 2.3.1 uses
+`Context.getFilesDir()` for application support: the rule is therefore
+`domain="file" path="language-tag.txt"`, relative to `files/`. Application
+documents use `Context.getDir("flutter", MODE_PRIVATE)`, producing `app_flutter/`;
+the existing cookie jar is under `app_flutter/cookies/` and is excluded.
+
+The manifest explicitly enables this preference backup and references
+`res/xml/backup_rules.xml` for supported Android 7-11 (API 24-30) and
+`res/xml/data_extraction_rules.xml` for Android 12+ (API 31+). Legacy backup,
+cloud backup and device transfer each have the same single-file allowlist. All
+unlisted state is excluded, including `files/push-device.json` (installation UUID
+and notification opt-in), Firebase installation/token files and preferences,
+private media, downloads, exports, drafts, databases and future files. No
+cross-platform transfer or additional platform support is enabled.
+
+An ordinary update preserves existing on-device files, sessions and push settings;
+storage is neither moved nor cleared. A restored installation must sign in
+normally. Configured push initializes a fresh installation UUID with opt-in off;
+the member must explicitly enable notifications on that installation. Server
+account settings still override the restored local language after sign-in.
+Backend contracts and authentication behavior are unchanged.
+
+Validation (2026-10-04): debug APK build, all 357 Flutter tests, analysis,
+debug/profile/release merged manifests and packaged XML checks passed. A new
+disposable emulator passed old-to-new update preservation and local cloud-mode
+restore: Danish language restored, all 12 unlisted synthetic files excluded, and
+normal Danish sign-in displayed. D2D backup succeeded, but restoration failed on
+the available transport; legacy Android and real cloud/OEM acceptance remain
+open. See [backup evidence and reproduction](MOBILE_TESTING.md#android-backup-allowlist-2026-10-04)
+and [privacy inventory](../PRIVACY.md#android-device-backups).
+
+## Bounded network requests
+
+The shared Dio client uses a 10-second connection timeout and 30-second send and
+receive timeouts. Receive limits cover waiting for response headers and inactivity
+between response chunks; a progressing download can take longer than 30 seconds.
+In the installed native Dio adapter, the send limit covers the upload phase rather
+than resetting after each chunk. These are transport limits, not a total request
+deadline or a guarantee that the server stops processing.
+
+Existing finite overrides remain: entitlement checks use 15-second send/receive
+limits (and the controller's 20-second deadline); chat downloads use 30-second
+receive inactivity plus a cancelling 45-second deadline and partial-file cleanup.
+Media uploads and ZIP exports had no separate timeout override and inherit the
+shared defaults. Authentication, cookies, multipart fields and API payloads stay
+unchanged. Transport failures do not expire a session or clear cookies, including
+failed auth checks and logout requests; actual unauthorized responses retain their
+existing handling.
+
+English/Danish timeout feedback describes an unconfirmed outcome in login,
+profile saves, ceramic creation, batch deletion, account forms/exports and chat
+sends. Timed-out chat rows show **Unconfirmed** instead of **Not sent**. Entered
+text, local media and existing retry UUIDs remain available for explicit retry,
+within their existing draft/session lifetime. No automatic mutation retry is
+introduced. A timed-out mutation may already have committed: inspect the latest
+server state before retrying non-idempotent creation, deletion or account changes.
+Chat retries reuse the existing UUID to recover a lost receipt without duplicating
+the logical message. See [timeout validation](MOBILE_TESTING.md#bounded-network-timeouts-2026-10-04).
+
 ## Studio redesign
 
 The app now uses a TikTok-inspired monochrome Material 3 theme with cobalt-blue
@@ -95,7 +157,8 @@ Older-page failures keep the cursor/history for retry, and refresh preserves
 already loaded history and the visible message. Text,
 image, voice and ceramic sends appear immediately as local outgoing messages,
 with a small Sending label while the server responds. Failures retain the row
-with a right-aligned theme-error-colored Not sent label, neutral explanation and
+with a right-aligned theme-error-colored Not sent label (Unconfirmed for transport
+timeouts), neutral explanation and
 Retry, following `reference/Chat/fail.jpg`. The text/voice draft remains available.
 Retries reuse the logical UUID and replace the local preview with the server
 receipt. New sends and failure details scroll into view after layout; ordinary
@@ -104,7 +167,8 @@ incoming/refresh events preserve the current reading position.
 Local delivery state lasts for the open chat session; it is not a durable offline
 queue or proof of delivery. Only server messages enter read markers, pagination,
 reporting or shared-card navigation. A lost response can leave an uncertain send
-marked Not sent until retried; the existing idempotent endpoint resolves it.
+marked Unconfirmed after a transport timeout until retried; the existing
+idempotent endpoint resolves it.
 The reference's moderation notice is not fabricated. No API/dependency change
 or backend runtime change is required.
 
@@ -235,6 +299,30 @@ Profile uploads can use the device camera or gallery through the existing image 
 The client expects the backend's `{success, data, error}` envelope for every endpoint. The login field accepts an email address or username and sends it in the established `username` request field for backward compatibility. Authentication failures follow the same envelope and route through the normal unauthenticated state. `PASSWORD_CHANGE_REQUIRED` directs the member to replace an administrator-issued temporary password on the Keramik website instead of presenting a generic network error. Create and edit forms use the backend's 255-character text limits, required ceramic fields, 0–5 rating, and nonnegative weight rules. Draft images are temporary JPEG files: they are retained after a failed create for retry and removed when deleted, after success, or when the create page is abandoned.
 
 ## Signup and password recovery
+
+Login throttling (2026-10-04): backend API/website login share 30 submissions per
+client address and 10 per stripped, lowercase identifier/address pair per five
+minutes. Website signup allows five submissions/address/hour. HTTP 429 uses the
+existing `RATE_LIMITED` envelope with integer `Retry-After` seconds; the login
+page shows localized English/Danish retry feedback, with generic wait guidance
+if the header is absent or invalid. It never clears cookies or triggers session
+expiry for 429. Existing successful login/session rotation and ordinary failures
+remain compatible. Server settings are under `security.auth-rate-limits`, exposed
+through `AUTH_LOGIN_*`, `AUTH_SIGNUP_*`, `AUTH_FALLBACK_MAX_KEYS` and
+`AUTH_RATE_LIMITS_DISTRIBUTED`; see the [backend operations table](../keramik_app_backend/OPERATIONS.md#login-and-signup-submission-limits).
+Redis uses atomic hashed rolling counters and trusted-container addresses.
+Outages use bounded expiring per-instance counters (10,000 keys by default),
+rejecting new keys at capacity without evicting active limits. Local budgets can
+reset/split across outage transitions/processes; Redis resumes authority on
+recovery. No API field, dependency, schema or persisted account-lockout change.
+
+Validation: regenerated English/Danish localizations, changed-file formatting,
+`flutter analyze --no-pub` and all 332 tests passed. Targeted login/cookie/locale
+tests verify that shared-client 429 does not call the unauthorized handler or
+clear cookies, and that both locales announce retry feedback with safe generic
+guidance when `Retry-After` is absent/invalid. Backend tests/build, packaged-media,
+disposable Redis and isolated Playwright website checks also passed; see backend
+OPERATIONS for the complete scope and optional-test exclusions.
 
 The login screen's accessible **Sign up** and **Forgot password** buttons open the
 external browser at `/signup` and `/forgot-password`. Set `WEBSITE_BASE_URL` to the

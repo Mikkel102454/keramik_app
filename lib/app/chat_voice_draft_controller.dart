@@ -1,3 +1,4 @@
+import 'package:ceramic_app/utils/network_timeout.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -98,6 +99,7 @@ class ChatVoiceDraftController extends ChangeNotifier {
   final DateTime Function() _now;
   VoiceDraftPhase phase = VoiceDraftPhase.idle;
   VoiceDraftError? error;
+  bool sendTimedOut = false;
   File? file;
   Duration duration = Duration.zero;
   bool cancelArmed = false;
@@ -292,6 +294,7 @@ class ChatVoiceDraftController extends ChangeNotifier {
     }
     phase = VoiceDraftPhase.sending;
     error = null;
+    sendTimedOut = false;
     _notify();
     return _sending = _upload(draft, clientId);
   }
@@ -301,7 +304,8 @@ class ChatVoiceDraftController extends ChangeNotifier {
       final sent = await upload(draft, clientId);
       await _discard();
       if (!_disposed) onSent(sent);
-    } catch (_) {
+    } catch (exception) {
+      sendTimedOut = isNetworkTimeout(exception);
       phase = VoiceDraftPhase.preview;
       error = VoiceDraftError.sending;
       _notify();

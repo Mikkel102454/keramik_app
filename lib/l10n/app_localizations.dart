@@ -488,6 +488,18 @@ abstract class AppLocalizations {
   /// **'Login'**
   String get loginSection;
 
+  /// No description provided for @loginThrottled.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many login attempts. Please wait and try again.'**
+  String get loginThrottled;
+
+  /// No description provided for @loginThrottledRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many login attempts. Try again in {seconds, plural, =1{1 second} other{{seconds} seconds}}.'**
+  String loginThrottledRetry(int seconds);
+
   /// No description provided for @logOut.
   ///
   /// In en, this message translates to:
@@ -4518,6 +4530,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your piece was saved. Publishing could not be confirmed. Open the piece to check or try again.'**
   String get pieceSavedPublicationUnconfirmed;
+
+  /// No description provided for @requestTimedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'The request timed out. If you were saving or sending, it may still have completed. Check the latest state before trying again.'**
+  String get requestTimedOut;
+
+  /// No description provided for @networkUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not connect. Check your connection and try again.'**
+  String get networkUnavailable;
+
+  /// No description provided for @requestOutcomeUnconfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Unconfirmed'**
+  String get requestOutcomeUnconfirmed;
 }
 
 class _AppLocalizationsDelegate

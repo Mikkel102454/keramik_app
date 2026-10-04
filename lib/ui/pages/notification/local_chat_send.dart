@@ -19,6 +19,7 @@ class LocalChatSend {
   final File? file;
   final bool ownsFile;
   bool failed = false;
+  bool unconfirmed = false;
   bool inFlight = true;
   // First-send endpoints return a conversation; keep its preview if history
   // refresh fails after that successful response, until REST supplies the row.

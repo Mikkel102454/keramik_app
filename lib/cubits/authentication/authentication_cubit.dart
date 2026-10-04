@@ -7,6 +7,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 
 import 'package:ceramic_app/api/api_client.dart';
 import 'package:ceramic_app/utils/web.dart';
+import 'package:ceramic_app/utils/network_timeout.dart';
 import 'package:ceramic_app/repositories/account_repository.dart';
 import 'package:ceramic_app/app/combination_application_controller.dart';
 
@@ -25,6 +26,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   String _identifier = '';
   String _password = '';
   bool deletionPending = false;
+  static const loginThrottledMessage = 'RATE_LIMITED';
+  static const requestTimedOutMessage = 'REQUEST_TIMED_OUT';
+  int? loginRetryAfterSeconds;
 
   void identifierChanged(String value) => _identifier = value;
   void passwordChanged(String value) => _password = value;
@@ -62,12 +66,27 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       } else {
         emit(const AuthenticationState.unauthenticated());
       }
+    } on DioException catch (e) {
+      // No response is not proof of session expiry. Retain an authenticated
+      // session; at startup expose recoverable feedback without clearing cookies.
+      if (isNetworkTimeout(e) || e.response == null) {
+        if (state != const AuthenticationState.authenticated()) {
+          emit(
+            AuthenticationState.error(
+              isNetworkTimeout(e) ? requestTimedOutMessage : 'Network error',
+            ),
+          );
+        }
+      } else {
+        emit(const AuthenticationState.unauthenticated());
+      }
     } catch (e) {
       emit(const AuthenticationState.unauthenticated());
     }
   }
 
   Future<void> login() async {
+    loginRetryAfterSeconds = null;
     if (_identifier.isEmpty || _password.isEmpty) {
       emit(const AuthenticationState.error("Please fill all fields"));
       return;
@@ -86,6 +105,10 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         },
       );
 
+      if (response.statusCode == 429) {
+        _loginThrottled(response);
+        return;
+      }
       checkSuccess(response);
       if (response.statusCode == 200) {
         deletionPending =
@@ -106,11 +129,25 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       } else {
         emit(const AuthenticationState.error("Server error"));
       }
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 429) {
+        _loginThrottled(e.response!);
+      } else if (isNetworkTimeout(e)) {
+        emit(const AuthenticationState.error(requestTimedOutMessage));
+      } else {
+        emit(const AuthenticationState.error("Network error"));
+      }
     } on ApiException catch (e) {
       emit(AuthenticationState.error(authenticationErrorMessage(e)));
     } catch (e) {
       emit(const AuthenticationState.error("Network error"));
     }
+  }
+
+  void _loginThrottled(Response<dynamic> response) {
+    final seconds = int.tryParse(response.headers.value('retry-after') ?? '');
+    loginRetryAfterSeconds = seconds != null && seconds > 0 ? seconds : null;
+    emit(const AuthenticationState.error(loginThrottledMessage));
   }
 
   Future<void> logout() async {

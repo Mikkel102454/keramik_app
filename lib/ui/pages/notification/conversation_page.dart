@@ -925,7 +925,9 @@ class _ConversationPageState extends State<ConversationPage>
                 liveRegion: true,
                 child: Text(
                   send.failed
-                      ? context.l10n.chatMessageNotSent
+                      ? send.unconfirmed
+                            ? context.l10n.requestOutcomeUnconfirmed
+                            : context.l10n.chatMessageNotSent
                       : context.l10n.chatMessageSending,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: send.failed ? colors.error : colors.onSurfaceVariant,
@@ -935,7 +937,9 @@ class _ConversationPageState extends State<ConversationPage>
               if (send.failed) ...[
                 const SizedBox(height: 6),
                 Text(
-                  context.l10n.chatMessageSendFailed,
+                  send.unconfirmed
+                      ? context.l10n.requestTimedOut
+                      : context.l10n.chatMessageSendFailed,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: colors.onSurfaceVariant,

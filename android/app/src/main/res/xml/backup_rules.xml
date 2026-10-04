@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- path_provider_android uses Context.getFilesDir() for application support.
+         An include switches backup to an allowlist across all storage domains.
+         Never include a directory: cookies, device identity, Firebase state,
+         private media, drafts and all future unlisted state must stay local. -->
+    <include domain="file" path="language-tag.txt" />
+</full-backup-content>

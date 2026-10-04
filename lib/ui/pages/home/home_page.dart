@@ -533,7 +533,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         context: context,
         builder: (dialogContext) => AlertDialog(
           title: Text(context.l10n.batchDeleteFailed),
-          content: Text(context.l10n.batchDeleteFailedBody),
+          content: Text(
+            context.l10n.requestFailure(
+              value,
+              context.l10n.batchDeleteFailedBody,
+            ),
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),

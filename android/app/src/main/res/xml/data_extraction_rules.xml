@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <!-- Keep both Android transfer policies identical to the legacy allowlist.
+         No cross-platform transfer is enabled. -->
+    <cloud-backup>
+        <include domain="file" path="language-tag.txt" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="file" path="language-tag.txt" />
+    </device-transfer>
+</data-extraction-rules>

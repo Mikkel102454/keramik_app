@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ceramic_app/app/chat_image_preparation.dart';
 import 'package:ceramic_app/utils/client_uuid.dart';
+import 'package:ceramic_app/utils/network_timeout.dart';
 import 'package:ceramic_app/objects/chat_dto.dart';
 import 'package:ceramic_app/repositories/chat_repository.dart';
 import 'package:ceramic_app/l10n/l10n_extensions.dart';
@@ -45,6 +46,7 @@ class _ChatMediaDraftState extends State<ChatMediaDraft> {
   bool _sending = false;
   bool _working = true;
   bool _error = false;
+  bool _sendTimedOut = false;
   bool _done = false;
 
   @override
@@ -74,6 +76,7 @@ class _ChatMediaDraftState extends State<ChatMediaDraft> {
     setState(() {
       _working = true;
       _error = false;
+      _sendTimedOut = false;
     });
     try {
       final file = await (widget.pickImage ?? ChatImagePreparation.pick)(
@@ -110,6 +113,7 @@ class _ChatMediaDraftState extends State<ChatMediaDraft> {
     setState(() {
       _sending = true;
       _error = false;
+      _sendTimedOut = false;
     });
     try {
       if (widget.onQueue != null) {
@@ -149,11 +153,12 @@ class _ChatMediaDraftState extends State<ChatMediaDraft> {
       _done = true;
       await _delete(file);
       if (mounted) Navigator.pop(context, sent);
-    } catch (_) {
+    } catch (exception) {
       if (mounted) {
         setState(() {
           _sending = false;
           _error = true;
+          _sendTimedOut = isNetworkTimeout(exception);
         });
       } else {
         await _delete(file);
@@ -202,7 +207,11 @@ class _ChatMediaDraftState extends State<ChatMediaDraft> {
               if (_error)
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Text(context.l10n.chatMediaFailed),
+                  child: Text(
+                    _sendTimedOut
+                        ? context.l10n.requestTimedOut
+                        : context.l10n.chatMediaFailed,
+                  ),
                 ),
               if (_file != null)
                 Padding(

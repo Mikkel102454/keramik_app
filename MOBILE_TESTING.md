@@ -1,5 +1,172 @@
 # Testing the Android app
 
+## Android backup allowlist (2026-10-04)
+
+The three policies allow exactly `domain="file" path="language-tag.txt"`:
+`backup_rules.xml` for API 24-30, plus both `cloud-backup` and `device-transfer`
+in `data_extraction_rules.xml` for API 31+. Adding an include makes all unlisted
+paths/domains ineligible; no directory or wildcard is included. There is no
+cross-platform transfer section, custom BackupAgent, storage relocation or data
+clearing code.
+
+Paths were verified against the resolved installed package, not inferred from
+Dart directory names. `.dart_tool/package_config.json` resolves
+`path_provider_android` 2.3.1. Its `lib/src/path_provider_android_real.dart`
+implements support with JNI `Context.filesDir` and documents with
+`Context.getDir("flutter", MODE_PRIVATE)`. The disposable emulator's app root was
+`/data/user/0/nu.miguel.kemik_app`; the relevant mappings are:
+
+| State | Path relative to app root | Backup mapping / policy |
+| --- | --- | --- |
+| Language preference | `files/language-tag.txt` | `file`, `language-tag.txt`; sole include |
+| Push installation UUID and opt-in | `files/push-device.json` | `file`, `push-device.json`; unlisted |
+| Cookie jar | `app_flutter/cookies/ie0_ps1/` | `root`, `app_flutter/cookies/`; unlisted |
+| Firebase files/preferences, private media, drafts, databases, other state | Any other path/domain | Unlisted; excluded |
+
+`cookie_jar` 4.0.9 appends `ie0_ps1/` to the application's existing documents
+cookie directory (`ignoreExpires: false`, default session persistence). Native
+startup after restore independently produced that directory. No Dart, API,
+authentication, push lifecycle, dependency or signing code was changed.
+
+Automated validation passed:
+
+- `flutter analyze --no-pub`: no issues (8.5 seconds).
+- `flutter test --no-pub`: all 357 tests passed (69 seconds), including existing
+  network-timeout/session-preservation tests.
+- `flutter build apk --debug --no-pub --dart-define=API_BASE_URL=http://10.0.2.2:18994`:
+  succeeded (109 seconds). This endpoint was a temporary loopback unauthenticated
+  fixture, not the normal backend. No Firebase defines or credentials were used.
+- `android\gradlew.bat -p android :app:processProfileMainManifest :app:processReleaseMainManifest --console=plain`:
+  succeeded (47 seconds), without release signing/build/publication.
+- `py scripts/verify_android_backup.py`: passed for debug/profile/release merged
+  manifests, the compiled APK manifest's resource IDs and both packaged binary XML
+  resources. The verifier rejects broad includes, missing D2D rules, cross-platform
+  rules and custom backup agents. APK min/target SDK values were 24/36.
+
+The first sandbox Flutter launcher was stopped with no output; its single bounded
+retry with installed SDK access succeeded. No unrelated process was terminated.
+The first manifest invocation used a forward-slash Windows launcher path and
+failed before Gradle ran; the absolute-path invocation succeeded. The verifier's
+initial Windows text decoding was corrected to UTF-8. Gradle reported existing
+plugin namespace/deprecation warnings; there were no unresolved build failures.
+
+Native validation used a newly created `BackupPolicyDisposable` AVD with its own
+fresh disk under ignored `build/android-backup-acceptance/avds/`, dedicated
+`emulator-5580`, no snapshots and no signed-in Google account. The installed image
+was `android-37.1/google_apis_playstore_ps16k/x86_64`; the guest reported Android 17,
+API 37. The existing `emulator-5554`, other AVD disks and physical devices were
+never cleared, reinstalled or restored. Only the disposable app was cleared or
+uninstalled during these probes.
+
+Thirteen synthetic files covered language (`da`), push UUID/opt-in (`enabled:true`),
+a cookie subtree, a Firebase installation marker, Firebase token/messaging shared
+preferences, private media, a cached voice draft, a documents draft, a database,
+root/file-domain unlisted files and a nested language-name decoy. Replace-install
+preserved all file hashes, including a previous debug APK without explicit backup
+rules replaced by this APK. These are synthetic preservation checks, not a live
+server-session or configured-FCM delivery test.
+
+Cloud-mode LocalTransport was selected and initialized with `bmgr`; the encrypted
+test-transport flag was enabled. A never-launched/stopped app first reported
+`Backup is not allowed`. After launch/background and package-manager backup
+initialization, package-specific backup succeeded. The test required
+`Package nu.miguel.kemik_app with result: Success`, rather than relying on the
+overall backup message. Clearing only this disposable app and executing
+`bmgr restore 1 nu.miguel.kemik_app` returned `restoreFinished: 0`. Before startup,
+the sole restored file was `./files/language-tag.txt` containing `da`; all twelve
+unlisted seeded files were absent. Startup against the loopback 401 fixture showed
+**Log ind** and recreated an empty cookie directory. `push-device.json` remained
+absent. Existing push code starts opted out and generates a new UUID when configured
+without that file; real Firebase initialization was intentionally not exercised.
+
+The available Google D2D transport was initialized with
+`backup_enable_d2d_test_mode=1` and successfully backed up the same synthetic state.
+Direct restore from its D2D Restore Set returned `restoreFinished: -1000`. The
+documented uninstall/switch-to-GMS/reinstall flow also did not restore the language
+within its 45-second deadline. Test mode was disabled afterward. **D2D restoration
+remains an outstanding acceptance check**, not a passing transfer test. Also open:
+API 24-30 runtime restore (no legacy image installed), actual account-backed cloud
+restore and real/OEM device transfer. LocalTransport validates Android's cloud-rule
+branch without a real cloud account; it does not establish those provider results.
+
+Evidence is retained locally in ignored `build/android-backup-acceptance/`:
+build/analyze/test/manifest logs, `packaged-manifest.txt`, compiled rule dumps,
+`cloud-backup.log`, `cloud-restore.log`, `cloud-restored-files.txt`,
+`restored-login.xml`, D2D backup/restore logs, `runtime-paths.txt` and old/new APK
+fingerprints in `update-preservation.txt`. The disposable emulator was stopped
+after validation. No normal backend/service, migration, external account, signing,
+deployment, commit or push was involved.
+
+Reproduction: build and process the manifests with the commands above (use a
+ten-minute APK-build limit and five-minute analysis/test/manifest limits), then run
+the verifier. For restore acceptance, create a **new** AVD/data disk, verify its
+identity and use explicit `adb -s <disposable-serial>` for every command. Seed only
+synthetic data at the mapped paths, compare hashes across replace-install, choose
+and initialize a supported local/test transport, launch/background the app and
+initialize backup metadata before package backup. Check package-specific success
+before clearing that disposable app and restoring its listed set. Check file
+exclusion before startup, then language/sign-in; repeat for D2D and legacy Android.
+Follow [Android's backup testing guide](https://developer.android.com/identity/data/testingbackup)
+for transport-specific steps. Never adapt the clear/uninstall/restore steps to an
+existing user emulator or phone. A missing/failing transport remains a release
+acceptance item.
+
+## Bounded network timeouts (2026-10-04)
+
+`test/network_timeout_test.dart` exercises the actual shared client with synthetic
+cookies and temporary directories. Real IO tests use random loopback ports for
+delayed headers, a flushed chunk followed by a stalled body, a progressing response
+longer than its inactivity limit, a stalled upload stream and a refused connection.
+A stalled connection factory verifies connection timeout without relying on an
+external unroutable address. Tests shorten transport limits to milliseconds;
+separate assertions verify the production 10/30/30-second defaults. The refused
+connection allows three seconds because Windows can delay TCP refusal reporting.
+
+Test doubles cover entitlement/chat-download overrides, ZIP export inheritance,
+interrupted image/voice multipart uploads, retained local files and retry IDs,
+voice-preview recovery, retained profile/login drafts, history/loading recovery,
+and session/cookie preservation during startup checks, authenticated checks and
+failed logout. A simulated server commits a chat message before losing its response;
+explicit retry uses the same UUID and returns one logical message. English/Danish
+widget checks verify timeout feedback and the Unconfirmed label. Existing login
+throttling tests remain part of full validation. No existing backend data is used.
+
+Run with the workspace limits (two minutes for generation/formatting; five minutes
+for analysis/tests):
+
+```powershell
+flutter gen-l10n
+flutter analyze --no-pub
+flutter test --no-pub test/network_timeout_test.dart
+flutter test --no-pub
+```
+
+Only changed Dart files are formatted. The installed native Dio adapter applies
+sendTimeout to the upload phase; receiveTimeout resets between response chunks.
+Transport expiry does not establish rollback. For operations without an existing
+idempotency key, inspect/reload authoritative state before submitting again.
+Timeouts do not extend draft lifetimes or create an offline queue. Existing finite
+per-request limits and download cleanup remain in place; no mutation retries are
+added automatically.
+
+Final validation: localization generation and changed-file formatting succeeded;
+`flutter analyze --no-pub` reported no issues; `flutter test --no-pub` passed all
+357 tests, including 25 new timeout tests and existing login-throttling coverage.
+`git diff --check` passed. The initial sandbox SDK launcher stalled with no output:
+generation reached its two-minute deadline and formatting was stopped. Only those
+task-owned process trees were terminated; the bounded SDK retry succeeded with
+local SDK permissions. Two initial loopback fixtures were corrected to flush the
+body explicitly and allow Windows TCP refusal timing. The existing committed-but-
+lost-response styling fixture now asserts Unconfirmed while retaining scroll and
+same-UUID retry checks. No unresolved automated failures remain.
+
+Physical Android/Wi-Fi-loss acceptance remains a device check: against disposable
+data, interrupt a save/upload, verify loading ends and drafts remain, refresh to
+check whether the mutation committed, and retry chat with its retained UUID.
+Verify the session remains usable and repeat English/Danish feedback checks.
+No normal-service restart, backend migration, deployment or persistent-data action
+is needed for this client-only change.
+
 Android is the supported mobile target. A passing widget suite or APK build does
 not establish that an installed app can use the backend or that its screens look
 right. For mobile UI and workflow changes, validate the installed app and inspect

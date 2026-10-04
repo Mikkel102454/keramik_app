@@ -76,6 +76,9 @@
   "privacyInformation": "Privacy information",
   "aboutKeramik": "About Keramik",
   "loginSection": "Login",
+  "loginThrottled": "Too many login attempts. Please wait and try again.",
+  "loginThrottledRetry": "Too many login attempts. Try again in {seconds, plural, =1{1 second} other{{seconds} seconds}}.",
+  "@loginThrottledRetry": {"placeholders": {"seconds": {"type": "int"}}},
   "logOut": "Log out",
   "loggingOut": "Logging out…",
   "logOutQuestion": "Log out?",
@@ -1019,5 +1022,8 @@
   "chatMessagingUnavailable": "Messaging is unavailable.",
   "chatProfileUnavailable": "This profile is unavailable.",
   "operationFailed": "That action could not be completed. Please try again.",
-  "pieceSavedPublicationUnconfirmed": "Your piece was saved. Publishing could not be confirmed. Open the piece to check or try again."
+  "pieceSavedPublicationUnconfirmed": "Your piece was saved. Publishing could not be confirmed. Open the piece to check or try again.",
+  "requestTimedOut": "The request timed out. If you were saving or sending, it may still have completed. Check the latest state before trying again.",
+  "networkUnavailable": "Could not connect. Check your connection and try again.",
+  "requestOutcomeUnconfirmed": "Unconfirmed"
 }

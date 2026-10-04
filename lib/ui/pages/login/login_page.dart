@@ -46,8 +46,18 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             state.whenOrNull(
               error: (message) {
+                final authentication = context.read<AuthenticationCubit>();
+                final retry = authentication.loginRetryAfterSeconds;
                 final feedback =
-                    context.read<AuthenticationCubit>().deletionPending
+                    message == AuthenticationCubit.loginThrottledMessage
+                    ? retry == null
+                          ? context.l10n.loginThrottled
+                          : context.l10n.loginThrottledRetry(retry)
+                    : message == AuthenticationCubit.requestTimedOutMessage
+                    ? context.l10n.requestTimedOut
+                    : message == 'Network error'
+                    ? context.l10n.networkUnavailable
+                    : authentication.deletionPending
                     ? context.l10n.operationFailed
                     : message;
                 ScaffoldMessenger.of(

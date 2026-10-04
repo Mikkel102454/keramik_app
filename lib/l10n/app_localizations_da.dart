@@ -209,6 +209,21 @@ class AppLocalizationsDa extends AppLocalizations {
   String get loginSection => 'Login';
 
   @override
+  String get loginThrottled =>
+      'For mange loginforsøg. Vent lidt, og prøv igen.';
+
+  @override
+  String loginThrottledRetry(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds sekunder',
+      one: '1 sekund',
+    );
+    return 'For mange loginforsøg. Prøv igen om $_temp0.';
+  }
+
+  @override
   String get logOut => 'Log ud';
 
   @override
@@ -2635,4 +2650,15 @@ class AppLocalizationsDa extends AppLocalizations {
   @override
   String get pieceSavedPublicationUnconfirmed =>
       'Dit værk blev gemt. Udgivelsen kunne ikke bekræftes. Åbn værket for at tjekke eller prøve igen.';
+
+  @override
+  String get requestTimedOut =>
+      'Anmodningen fik timeout. Hvis du var ved at gemme eller sende, kan handlingen stadig være gennemført. Kontrollér den seneste status, før du prøver igen.';
+
+  @override
+  String get networkUnavailable =>
+      'Kunne ikke oprette forbindelse. Kontrollér din forbindelse, og prøv igen.';
+
+  @override
+  String get requestOutcomeUnconfirmed => 'Ubekræftet';
 }

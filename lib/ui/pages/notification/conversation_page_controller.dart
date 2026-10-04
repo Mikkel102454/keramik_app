@@ -1,3 +1,4 @@
+import 'package:ceramic_app/utils/network_timeout.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -216,7 +217,7 @@ class ConversationPageController extends ChangeNotifier {
       }
       return true;
     } catch (exception) {
-      _failSend(pending);
+      _failSend(pending, exception);
       if (!localSends.contains(pending)) error = exception.toString();
       return false;
     } finally {
@@ -253,8 +254,8 @@ class ConversationPageController extends ChangeNotifier {
       localSends.remove(pending);
       recordSentMessage(sent);
       return true;
-    } catch (_) {
-      _failSend(pending);
+    } catch (exception) {
+      _failSend(pending, exception);
       return false;
     } finally {
       isSending = false;
@@ -308,8 +309,8 @@ class ConversationPageController extends ChangeNotifier {
       recordSentMessage(sent);
       if (ownsFile) await _deleteFile(file);
       return sent;
-    } catch (_) {
-      _failSend(pending);
+    } catch (exception) {
+      _failSend(pending, exception);
       rethrow;
     } finally {
       pending.inFlight = false;
@@ -320,8 +321,9 @@ class ConversationPageController extends ChangeNotifier {
     }
   }
 
-  void _failSend(LocalChatSend pending) {
+  void _failSend(LocalChatSend pending, Object error) {
     pending.failed = true;
+    pending.unconfirmed = isNetworkTimeout(error);
     // Failure details add height; keep the Retry action above the keyboard.
     if (localSends.contains(pending)) sentRevision++;
   }
@@ -358,6 +360,7 @@ class ConversationPageController extends ChangeNotifier {
           );
     if (existing.isEmpty) localSends.add(pending);
     pending.failed = false;
+    pending.unconfirmed = false;
     pending.inFlight = true;
     sentRevision++;
     _notifySafely();

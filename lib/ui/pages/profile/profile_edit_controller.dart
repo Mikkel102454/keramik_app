@@ -1,3 +1,4 @@
+import 'package:ceramic_app/utils/network_timeout.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:ceramic_app/objects/user_profile_dto.dart';
@@ -31,6 +32,7 @@ class ProfileEditController extends ChangeNotifier {
   String forename, surname, username;
   UsernameCheck usernameCheck = UsernameCheck.unchanged;
   bool saving = false, saveFailed = false, _disposed = false;
+  bool saveTimedOut = false;
   Timer? _debounce;
   int _generation = 0;
 
@@ -110,6 +112,7 @@ class ProfileEditController extends ChangeNotifier {
     ++_generation;
     saving = true;
     saveFailed = false;
+    saveTimedOut = false;
     notifyListeners();
     try {
       return await _save(forename.trim(), surname.trim(), username.trim());
@@ -120,6 +123,7 @@ class ProfileEditController extends ChangeNotifier {
           usernameCheck = UsernameCheck.unavailable;
         } else {
           saveFailed = true;
+          saveTimedOut = isNetworkTimeout(exception);
         }
       }
       return null;

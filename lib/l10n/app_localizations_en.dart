@@ -209,6 +209,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSection => 'Login';
 
   @override
+  String get loginThrottled =>
+      'Too many login attempts. Please wait and try again.';
+
+  @override
+  String loginThrottledRetry(int seconds) {
+    String _temp0 = intl.Intl.pluralLogic(
+      seconds,
+      locale: localeName,
+      other: '$seconds seconds',
+      one: '1 second',
+    );
+    return 'Too many login attempts. Try again in $_temp0.';
+  }
+
+  @override
   String get logOut => 'Log out';
 
   @override
@@ -2629,4 +2644,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pieceSavedPublicationUnconfirmed =>
       'Your piece was saved. Publishing could not be confirmed. Open the piece to check or try again.';
+
+  @override
+  String get requestTimedOut =>
+      'The request timed out. If you were saving or sending, it may still have completed. Check the latest state before trying again.';
+
+  @override
+  String get networkUnavailable =>
+      'Could not connect. Check your connection and try again.';
+
+  @override
+  String get requestOutcomeUnconfirmed => 'Unconfirmed';
 }

@@ -33,6 +33,8 @@ class ChatVoiceComposer extends StatelessWidget {
             child: Text(
               controller.error == VoiceDraftError.recording
                   ? context.l10n.voiceRecordingFailed
+                  : controller.sendTimedOut
+                  ? context.l10n.requestTimedOut
                   : context.l10n.chatMediaFailed,
             ),
           ),

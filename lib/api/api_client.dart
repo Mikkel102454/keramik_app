@@ -22,6 +22,9 @@ class ApiClient {
       BaseOptions(
         baseUrl: AppConstants.api.apiDomain,
         headers: {'Content-Type': 'application/json'},
+        connectTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
 
         // Allow 401 without throwing
         validateStatus: (status) {

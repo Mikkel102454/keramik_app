@@ -137,9 +137,14 @@ class _PasswordSecurityPageState extends State<PasswordSecurityPage> {
           _message = context.l10n.passwordChanged;
         });
       }
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
-        setState(() => _message = context.l10n.passwordChangeFailed);
+        setState(
+          () => _message = context.l10n.requestFailure(
+            error,
+            context.l10n.passwordChangeFailed,
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -249,8 +254,10 @@ class _DataExportPageState extends State<DataExportPage> {
     try {
       _export = await AccountRepository.createExport();
       _startPolling();
-    } catch (_) {
-      _error = exportRequestFailed;
+    } catch (error) {
+      if (mounted) {
+        _error = context.l10n.requestFailure(error, exportRequestFailed);
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -278,9 +285,14 @@ class _DataExportPageState extends State<DataExportPage> {
           updated.status == 'EXPIRED') {
         _poll?.cancel();
       }
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
-        setState(() => _error = context.l10n.exportRefreshFailed);
+        setState(
+          () => _error = context.l10n.requestFailure(
+            error,
+            context.l10n.exportRefreshFailed,
+          ),
+        );
       }
     }
   }
@@ -295,9 +307,14 @@ class _DataExportPageState extends State<DataExportPage> {
     try {
       final file = await AccountRepository.downloadExport(current.exportId);
       await openWebPage(file.uri.toString());
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
-        setState(() => _error = context.l10n.exportDownloadFailed);
+        setState(
+          () => _error = context.l10n.requestFailure(
+            error,
+            context.l10n.exportDownloadFailed,
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -436,9 +453,14 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       if (!mounted) return;
       context.read<AuthenticationCubit>().sessionExpired();
       Navigator.of(context).popUntil((route) => route.isFirst);
-    } catch (_) {
+    } catch (error) {
       if (mounted) {
-        setState(() => _error = context.l10n.deletionScheduleFailed);
+        setState(
+          () => _error = context.l10n.requestFailure(
+            error,
+            context.l10n.deletionScheduleFailed,
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);

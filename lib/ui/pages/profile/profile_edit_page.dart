@@ -223,7 +223,9 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: Text(
-                                context.l10n.profileSaveFailed,
+                                draft.saveTimedOut
+                                    ? context.l10n.requestTimedOut
+                                    : context.l10n.profileSaveFailed,
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.error,
                                 ),

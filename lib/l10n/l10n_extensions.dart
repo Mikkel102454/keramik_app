@@ -2,6 +2,7 @@ import 'package:ceramic_app/l10n/app_localizations.dart';
 import 'package:ceramic_app/objects/account_settings_dto.dart';
 import 'package:ceramic_app/objects/chat_report_dto.dart';
 import 'package:flutter/widgets.dart';
+import 'package:ceramic_app/utils/network_timeout.dart';
 
 extension AppLocalizationsContext on BuildContext {
   AppLocalizations get l10n => AppLocalizations.of(this);
@@ -189,10 +190,8 @@ extension PremiumFeatureAppLocalizations on AppLocalizations {
   String get batchEditSafetyNote => _premiumDa
       ? 'Afsluttet historik erstattes aldrig. Eksisterende glasurarbejde og modstridende brændingsplaner springes over.'
       : 'Completed history is never replaced. Existing glaze work and conflicting firing plans will be skipped.';
-  String get batchBasics =>
-      _premiumDa ? 'Grundlæggende oplysninger' : 'Basics';
-  String get batchTagChanges =>
-      _premiumDa ? 'Tagændringer' : 'Tag changes';
+  String get batchBasics => _premiumDa ? 'Grundlæggende oplysninger' : 'Basics';
+  String get batchTagChanges => _premiumDa ? 'Tagændringer' : 'Tag changes';
   String get batchDimensionsHelp => _premiumDa
       ? 'Udfyld kun de mål, der skal anvendes på alle valgte emner.'
       : 'Enter only the dimensions to apply to every selected piece.';
@@ -666,4 +665,10 @@ String localizedConfirmInventoryTransactionBody(
   return l10n.localeName.toLowerCase().startsWith('da')
       ? '$type af $quantity $unit $material. Dette opdaterer lageret og føjer transaktionen til historikken.'
       : '$type $quantity $unit of $material. This updates your stock and adds the transaction to its history.';
+}
+
+/// Preserve feature feedback for other errors; timeouts have an unknown outcome.
+extension NetworkFailureLocalizations on AppLocalizations {
+  String requestFailure(Object error, String fallback) =>
+      isNetworkTimeout(error) ? requestTimedOut : fallback;
 }

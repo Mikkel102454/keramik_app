@@ -585,13 +585,17 @@ class _CeramicCreatePageState extends State<CeramicCreatePage> {
         return;
       }
       Navigator.pop(context, true);
-    } catch (_) {
+    } catch (error) {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(context.l10n.operationFailed)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            context.l10n.requestFailure(error, context.l10n.operationFailed),
+          ),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {

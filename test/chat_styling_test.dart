@@ -187,7 +187,7 @@ void main() {
   }
 
   messaging.messagingWidgetTest(
-    'failed optimistic text stays at bottom with Not sent; retry replaces it',
+    'timed-out optimistic text stays at bottom with Unconfirmed; retry replaces it',
     (tester) async {
       adapter.stored = messaging.conversationJson(status: 'ACTIVE');
       for (var sequence = 1; sequence <= 40; sequence++) {
@@ -208,13 +208,16 @@ void main() {
       await tester.tap(find.byIcon(Icons.send));
       await tester.pumpAndSettle();
       expect(scroll.position.extentBefore, lessThanOrEqualTo(1));
-      expect(find.text('Not sent'), findsOneWidget);
+      // The fixture commits before losing the response: delivery is unknown.
+      expect(find.text('Unconfirmed'), findsOneWidget);
+      expect(find.text('Not sent'), findsNothing);
       await tester.pump(const Duration(seconds: 5));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Retry'));
       await tester.pumpAndSettle();
       expect(scroll.position.extentBefore, lessThanOrEqualTo(1));
       expect(find.text('Newest sent text'), findsOneWidget);
+      expect(find.text('Unconfirmed'), findsNothing);
       expect(find.text('Not sent'), findsNothing);
       expect(adapter.sendIds.toSet(), hasLength(1));
     },

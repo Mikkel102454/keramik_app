@@ -76,6 +76,9 @@
   "privacyInformation": "Oplysninger om privatliv",
   "aboutKeramik": "Om Keramik",
   "loginSection": "Login",
+  "loginThrottled": "For mange loginforsøg. Vent lidt, og prøv igen.",
+  "loginThrottledRetry": "For mange loginforsøg. Prøv igen om {seconds, plural, =1{1 sekund} other{{seconds} sekunder}}.",
+  "@loginThrottledRetry": {"placeholders": {"seconds": {"type": "int"}}},
   "logOut": "Log ud",
   "loggingOut": "Logger ud…",
   "logOutQuestion": "Log ud?",
@@ -1019,5 +1022,8 @@
   "chatMessagingUnavailable": "Beskeder er ikke tilgængelige.",
   "chatProfileUnavailable": "Denne profil er ikke tilgængelig.",
   "operationFailed": "Handlingen kunne ikke gennemføres. Prøv igen.",
-  "pieceSavedPublicationUnconfirmed": "Dit værk blev gemt. Udgivelsen kunne ikke bekræftes. Åbn værket for at tjekke eller prøve igen."
+  "pieceSavedPublicationUnconfirmed": "Dit værk blev gemt. Udgivelsen kunne ikke bekræftes. Åbn værket for at tjekke eller prøve igen.",
+  "requestTimedOut": "Anmodningen fik timeout. Hvis du var ved at gemme eller sende, kan handlingen stadig være gennemført. Kontrollér den seneste status, før du prøver igen.",
+  "networkUnavailable": "Kunne ikke oprette forbindelse. Kontrollér din forbindelse, og prøv igen.",
+  "requestOutcomeUnconfirmed": "Ubekræftet"
 }
