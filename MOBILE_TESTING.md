@@ -1,5 +1,27 @@
 # Testing the Android app
 
+## Local testing refresh after export generation (2026-10-04)
+
+The latest source debug APK was rebuilt successfully with:
+
+```powershell
+flutter build apk --debug --no-pub --dart-define=API_BASE_URL=http://10.0.2.2:8080
+adb -s emulator-5554 install -r build/app/outputs/flutter-apk/app-debug.apk
+```
+
+Installation returned `Success`; `-r` preserves existing app data. No Flutter
+source, API contract, dependency or generated-code change was needed. Native
+HTTP probes from the emulator verify backend readiness `UP` and MinIO HTTP 200.
+After explicit approval, the existing local database was upgraded through
+V25/V26 following encrypted backup and network-isolated restore rehearsal; all
+58 existing application table row counts were preserved before worker activation.
+The tested generation JAR is running with media enabled, Hibernate validation
+and Flyway disabled. Host/emulator readiness is UP; anonymous exports return
+401 and private MinIO access returns 403. Existing-account export generation and
+download/open acceptance remain manual: use Settings and privacy to create an
+export, wait for READY and download it. Isolated content/failure/large-archive
+acceptance is recorded in backend OPERATIONS. See [backend activation evidence](../keramik_app_backend/OPERATIONS.md#local-testing-readiness-after-bounded-export-generation).
+
 ## Bounded export downloads (2026-10-04)
 
 `test/export_download_test.dart` exercises the real AccountRepository and shared

@@ -1,5 +1,13 @@
 # Keramik Android client
 
+Local testing refresh (2026-10-04): the latest debug APK was rebuilt for
+`http://10.0.2.2:8080` and installed on `emulator-5554` with app data preserved.
+Docker services and host/emulator connectivity are healthy. After approved
+V25/V26 migration and verified backup/restore rehearsal, the tested new backend
+export generator is active locally. Automatic migrations remain disabled;
+existing-account export acceptance is a manual check.
+See [testing status](MOBILE_TESTING.md#local-testing-refresh-after-export-generation-2026-10-04).
+
 ## Android backup policy
 
 Android backup and Android-to-Android device transfer allow only the non-sensitive
