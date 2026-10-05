@@ -7,9 +7,9 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:ceramic_app/repositories/push_repository.dart';
-import 'package:ceramic_app/api/chat_event_service.dart';
-import 'package:ceramic_app/utils/client_uuid.dart';
+import 'package:clay_dock/repositories/push_repository.dart';
+import 'package:clay_dock/api/chat_event_service.dart';
+import 'package:clay_dock/utils/client_uuid.dart';
 
 class PushController extends ChangeNotifier with WidgetsBindingObserver {
   PushController._();
@@ -168,7 +168,7 @@ class PushController extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   Future<void> openSettings() => const MethodChannel(
-    'keramik/notifications',
+    'claydock/notifications',
   ).invokeMethod<void>('settings');
   Future<void> _persist() async {
     await _stateFile?.writeAsString(

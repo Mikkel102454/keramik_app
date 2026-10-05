@@ -1,17 +1,17 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:ceramic_app/ui/pages/login/login_page.dart';
-import 'package:ceramic_app/ui/widgets/v2/accordion_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/glaze_input_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/navigation_row_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/star_stepper_select_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/stepper_select_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/tag_input_widget.dart';
+import 'package:clay_dock/ui/pages/login/login_page.dart';
+import 'package:clay_dock/ui/widgets/v2/accordion_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/glaze_input_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/navigation_row_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/navigation_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/star_stepper_select_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/stepper_select_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/tag_input_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/app/app_settings_controller.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
 
-import 'package:ceramic_app/ui/widgets/v2/text_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/text_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/square_widget.dart';
 import 'package:flutter/services.dart';
 
 import '../widgets/v2/dropdown_widget.dart';
@@ -40,7 +40,7 @@ class _TestPageState extends State<TestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Keramik App"),
+        title: Text("ClayDock"),
 
         actions: [
           IconButton(

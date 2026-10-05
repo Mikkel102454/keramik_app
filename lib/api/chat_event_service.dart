@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/api/chat_socket_connector.dart';
-import 'package:ceramic_app/config/constants/app_constants.dart';
-import 'package:ceramic_app/objects/chat_event_dto.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/api/chat_socket_connector.dart';
+import 'package:clay_dock/config/constants/app_constants.dart';
+import 'package:clay_dock/objects/chat_event_dto.dart';
 import 'package:flutter/widgets.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

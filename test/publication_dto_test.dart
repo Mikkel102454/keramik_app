@@ -1,4 +1,4 @@
-import 'package:ceramic_app/objects/publication_dto.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

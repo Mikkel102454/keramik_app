@@ -1,6 +1,6 @@
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/project_template_dto.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/project_template_dto.dart';
+import 'package:clay_dock/utils/web.dart';
 
 class ProjectTemplateRepository {
   static Future<ProjectTemplatePageDto> list({String? cursor}) async {

@@ -1,8 +1,8 @@
-import 'package:ceramic_app/app/entitlement_controller.dart';
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/publication_dto.dart';
-import 'package:ceramic_app/utils/client_uuid.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/app/entitlement_controller.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
+import 'package:clay_dock/utils/client_uuid.dart';
+import 'package:clay_dock/utils/web.dart';
 
 class PublicationRepository {
   static Future<PublicationStatusDto> status(int ceramicId) async {

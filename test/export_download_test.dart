@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/repositories/account_repository.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/repositories/account_repository.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/services.dart';

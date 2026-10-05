@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ceramic_app/ui/widgets/v2/form_field_style.dart';
+import 'package:clay_dock/ui/widgets/v2/form_field_style.dart';
 
 /// Monochrome surfaces and a restrained social accent, shared by every route.
 abstract final class StudioTheme {

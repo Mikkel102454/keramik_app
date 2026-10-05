@@ -60,18 +60,51 @@ class MaterialsRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [NotificationPage]
-class NotificationRoute extends PageRouteInfo<void> {
-  const NotificationRoute({List<PageRouteInfo>? children})
-    : super(NotificationRoute.name, initialChildren: children);
+class NotificationRoute extends PageRouteInfo<NotificationRouteArgs> {
+  NotificationRoute({
+    Key? key,
+    NotificationControllerPage? controller,
+    List<PageRouteInfo>? children,
+  }) : super(
+         NotificationRoute.name,
+         args: NotificationRouteArgs(key: key, controller: controller),
+         initialChildren: children,
+       );
 
   static const String name = 'NotificationRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const NotificationPage();
+      final args = data.argsAs<NotificationRouteArgs>(
+        orElse: () => const NotificationRouteArgs(),
+      );
+      return NotificationPage(key: args.key, controller: args.controller);
     },
   );
+}
+
+class NotificationRouteArgs {
+  const NotificationRouteArgs({this.key, this.controller});
+
+  final Key? key;
+
+  final NotificationControllerPage? controller;
+
+  @override
+  String toString() {
+    return 'NotificationRouteArgs{key: $key, controller: $controller}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! NotificationRouteArgs) return false;
+    return key == other.key && controller == other.controller;
+  }
+
+  @override
+  int get hashCode => key.hashCode ^ controller.hashCode;
 }
 
 /// generated route for
@@ -108,18 +141,65 @@ class ProfileRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [ShopPage]
-class ShopRoute extends PageRouteInfo<void> {
-  const ShopRoute({List<PageRouteInfo>? children})
-    : super(ShopRoute.name, initialChildren: children);
+class ShopRoute extends PageRouteInfo<ShopRouteArgs> {
+  ShopRoute({
+    DiscoverController? forYouController,
+    DiscoverController? latestController,
+    Key? key,
+    List<PageRouteInfo>? children,
+  }) : super(
+         ShopRoute.name,
+         args: ShopRouteArgs(
+           forYouController: forYouController,
+           latestController: latestController,
+           key: key,
+         ),
+         initialChildren: children,
+       );
 
   static const String name = 'ShopRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const ShopPage();
+      final args = data.argsAs<ShopRouteArgs>(
+        orElse: () => const ShopRouteArgs(),
+      );
+      return ShopPage(
+        forYouController: args.forYouController,
+        latestController: args.latestController,
+        key: args.key,
+      );
     },
   );
+}
+
+class ShopRouteArgs {
+  const ShopRouteArgs({this.forYouController, this.latestController, this.key});
+
+  final DiscoverController? forYouController;
+
+  final DiscoverController? latestController;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'ShopRouteArgs{forYouController: $forYouController, latestController: $latestController, key: $key}';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other is! ShopRouteArgs) return false;
+    return forYouController == other.forYouController &&
+        latestController == other.latestController &&
+        key == other.key;
+  }
+
+  @override
+  int get hashCode =>
+      forYouController.hashCode ^ latestController.hashCode ^ key.hashCode;
 }
 
 /// generated route for

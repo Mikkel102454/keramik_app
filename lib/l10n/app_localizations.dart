@@ -113,7 +113,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Keramik'**
+  /// **'ClayDock'**
   String get appTitle;
 
   /// No description provided for @cancel.
@@ -476,11 +476,11 @@ abstract class AppLocalizations {
   /// **'Privacy information'**
   String get privacyInformation;
 
-  /// No description provided for @aboutKeramik.
+  /// No description provided for @aboutClayDock.
   ///
   /// In en, this message translates to:
-  /// **'About Keramik'**
-  String get aboutKeramik;
+  /// **'About ClayDock'**
+  String get aboutClayDock;
 
   /// No description provided for @loginSection.
   ///
@@ -797,7 +797,7 @@ abstract class AppLocalizations {
   /// No description provided for @pushNotificationsComingLater.
   ///
   /// In en, this message translates to:
-  /// **'Coming later. Keramik does not deliver notifications while the app is suspended.'**
+  /// **'Coming later. ClayDock does not deliver notifications while the app is suspended.'**
   String get pushNotificationsComingLater;
 
   /// No description provided for @blockedAccountsLoadFailed.
@@ -3635,7 +3635,7 @@ abstract class AppLocalizations {
   /// No description provided for @usageIsNeverInferred.
   ///
   /// In en, this message translates to:
-  /// **'Usage is recorded only after your confirmation. Keramik never infers consumption from dimensions or weight.'**
+  /// **'Usage is recorded only after your confirmation. ClayDock never infers consumption from dimensions or weight.'**
   String get usageIsNeverInferred;
 
   /// No description provided for @review.
@@ -3724,7 +3724,7 @@ abstract class AppLocalizations {
   /// No description provided for @costEstimateExplanation.
   ///
   /// In en, this message translates to:
-  /// **'Original totals remain grouped by their recorded ISO currency. When available, Keramik also shows a converted estimate using the latest cached ECB reference rates.'**
+  /// **'Original totals remain grouped by their recorded ISO currency. When available, ClayDock also shows a converted estimate using the latest cached ECB reference rates.'**
   String get costEstimateExplanation;
 
   /// No description provided for @recordMaterialUsage.
@@ -4548,6 +4548,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Unconfirmed'**
   String get requestOutcomeUnconfirmed;
+
+  /// No description provided for @purchaseUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchasing could not be verified. Existing access is unchanged. Restore purchases or retry.'**
+  String get purchaseUnavailable;
+
+  /// No description provided for @purchaseManageStripe.
+  ///
+  /// In en, this message translates to:
+  /// **'Your membership is managed by Stripe. Sign in to the ClayDock website independently to manage it.'**
+  String get purchaseManageStripe;
+
+  /// No description provided for @purchaseWebsite.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue to the website through Google Play'**
+  String get purchaseWebsite;
+
+  /// No description provided for @purchaseBillingChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Google Play or website billing'**
+  String get purchaseBillingChoice;
+
+  /// No description provided for @purchaseRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Google Play purchases'**
+  String get purchaseRestore;
+
+  /// No description provided for @purchaseVerifiedAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Access is granted only after the purchase provider verifies your subscription.'**
+  String get purchaseVerifiedAccess;
+
+  /// No description provided for @purchaseBillingDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day} other{{count} days}}'**
+  String purchaseBillingDays(int count);
+
+  /// No description provided for @purchaseBillingWeeks.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 week} other{{count} weeks}}'**
+  String purchaseBillingWeeks(int count);
+
+  /// No description provided for @purchaseBillingMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 month} other{{count} months}}'**
+  String purchaseBillingMonths(int count);
+
+  /// No description provided for @purchaseBillingYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 year} other{{count} years}}'**
+  String purchaseBillingYears(int count);
+
+  /// No description provided for @purchasePayments.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{for 1 payment} other{for {count} payments}}'**
+  String purchasePayments(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,6 @@
 {
-    "name": "kemik_app",
-    "short_name": "kemik_app",
+    "name": "clay_dock",
+    "short_name": "clay_dock",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

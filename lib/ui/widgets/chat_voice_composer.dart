@@ -1,7 +1,7 @@
-import 'package:ceramic_app/app/chat_media_controller.dart';
-import 'package:ceramic_app/app/chat_voice_draft_controller.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/ui/widgets/chat_attachment.dart';
+import 'package:clay_dock/app/chat_media_controller.dart';
+import 'package:clay_dock/app/chat_voice_draft_controller.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/ui/widgets/chat_attachment.dart';
 import 'package:flutter/material.dart';
 
 class ChatVoiceComposer extends StatelessWidget {

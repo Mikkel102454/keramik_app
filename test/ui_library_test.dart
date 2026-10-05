@@ -3,15 +3,15 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/glazes_create/glazes_create_page.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/glazes_view/glazes_view_page.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/notebook/glaze_notebook_controller.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/notebook/glaze_notebook_detail_page.dart';
-import 'package:ceramic_app/ui/widgets/v2/ui_library.dart';
-import 'package:ceramic_app/ui/widgets/v2/dropdown_widget.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/objects/glaze_notebook_dto.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/glazes_create/glazes_create_page.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/glazes_view/glazes_view_page.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/notebook/glaze_notebook_controller.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/notebook/glaze_notebook_detail_page.dart';
+import 'package:clay_dock/ui/widgets/v2/ui_library.dart';
+import 'package:clay_dock/ui/widgets/v2/dropdown_widget.dart';
 import 'test_app.dart';
 
 void main() {

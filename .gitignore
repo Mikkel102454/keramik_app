@@ -33,6 +33,13 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Operator-supplied release/provider material and local acceptance keys.
+*.jks
+*.keystore
+/android/key.properties
+/android/app/google-services.json
+/release-inputs/
+
 # Symbolication related
 app.*.symbols
 

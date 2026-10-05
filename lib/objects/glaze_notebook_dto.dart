@@ -1,7 +1,7 @@
 import 'dart:convert';
-import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
-import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/image_dto.dart';
+import 'package:clay_dock/objects/ceramic_firing_dto.dart';
+import 'package:clay_dock/objects/ceramic_glaze_entry_dto.dart';
+import 'package:clay_dock/objects/image_dto.dart';
 
 class NotebookLayerDto {
   NotebookLayerDto({

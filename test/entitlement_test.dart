@@ -1,17 +1,17 @@
 import 'dart:async';
-import 'package:ceramic_app/app/entitlement_controller.dart';
-import 'package:ceramic_app/config/constants/app_constants.dart';
-import 'package:ceramic_app/l10n/app_localizations.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/objects/project_template_dto.dart';
-import 'package:ceramic_app/ui/pages/home/templates/project_templates_page.dart';
-import 'package:ceramic_app/ui/widgets/v2/entry_page_widgets.dart';
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
-import 'package:ceramic_app/ui/pages/settings/membership_page.dart';
-import 'package:ceramic_app/ui/pages/notification/ceramic_sharing_pages.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/app/entitlement_controller.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/objects/project_template_dto.dart';
+import 'package:clay_dock/ui/pages/home/templates/project_templates_page.dart';
+import 'package:clay_dock/ui/widgets/v2/entry_page_widgets.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/ui/pages/settings/membership_page.dart';
+import 'package:clay_dock/ui/pages/notification/ceramic_sharing_pages.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:url_launcher_platform_interface/url_launcher_platform_interface.dart';
 import 'package:url_launcher_platform_interface/link.dart';
@@ -215,8 +215,18 @@ void main() {
   );
 
   testWidgets(
-    'upgrade uses configured website membership URL in external browser',
+    'upgrade with unavailable native eligibility withholds website purchasing',
     (tester) async {
+      const billingChannel = MethodChannel('claydock/billing');
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            billingChannel,
+            (_) async => throw PlatformException(code: 'BILLING_UNAVAILABLE'),
+          );
+      addTearDown(
+        () => TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(billingChannel, null),
+      );
       final launcher = RecordingLauncher();
       final previous = UrlLauncherPlatform.instance;
       UrlLauncherPlatform.instance = launcher;
@@ -235,11 +245,12 @@ void main() {
       );
       await tester.tap(find.text('View Maker membership'));
       await tester.pumpAndSettle();
-      expect(launcher.url, AppConstants.api.membershipUrl);
-      expect(Uri.parse(launcher.url!).path, '/membership');
-      expect(launcher.url!.endsWith('/membership'), isTrue);
-      expect(Uri.parse(launcher.url!).userInfo, isEmpty);
-      expect(launcher.options!.mode, PreferredLaunchMode.externalApplication);
+      expect(launcher.url, isNull);
+      expect(launcher.options, isNull);
+      expect(
+        find.textContaining('Purchasing could not be verified'),
+        findsOneWidget,
+      );
       controller.dispose();
     },
   );

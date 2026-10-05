@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
-import 'package:ceramic_app/l10n/app_localizations.dart';
-import 'package:ceramic_app/ui/pages/login/login_page.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/cubits/authentication/authentication_cubit.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
+import 'package:clay_dock/ui/pages/login/login_page.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';

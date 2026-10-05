@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:ceramic_app/extensions/extensions.dart';
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/objects/image_dto.dart';
-import 'package:ceramic_app/repositories/clay_repository.dart';
+import 'package:clay_dock/extensions/extensions.dart';
+import 'package:clay_dock/objects/clay_dto.dart';
+import 'package:clay_dock/objects/image_dto.dart';
+import 'package:clay_dock/repositories/clay_repository.dart';
 import 'package:flutter/material.dart';
 
 class ClaysViewPageController extends ChangeNotifier{

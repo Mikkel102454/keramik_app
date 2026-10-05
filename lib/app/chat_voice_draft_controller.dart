@@ -1,10 +1,10 @@
-import 'package:ceramic_app/utils/network_timeout.dart';
+import 'package:clay_dock/utils/network_timeout.dart';
 import 'dart:async';
 import 'dart:io';
 
-import 'package:ceramic_app/app/chat_media_controller.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/utils/client_uuid.dart';
+import 'package:clay_dock/app/chat_media_controller.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/utils/client_uuid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:record/record.dart';
 

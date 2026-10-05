@@ -1,9 +1,9 @@
-import 'package:ceramic_app/utils/network_timeout.dart';
+import 'package:clay_dock/utils/network_timeout.dart';
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/repositories/account_repository.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/repositories/account_repository.dart';
+import 'package:clay_dock/utils/web.dart';
 
 enum UsernameCheck {
   unchanged,

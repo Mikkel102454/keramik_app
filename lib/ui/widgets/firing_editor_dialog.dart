@@ -1,10 +1,10 @@
-import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
+import 'package:clay_dock/objects/ceramic_firing_dto.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/widgets/v2/ui_library.dart';
+import 'package:clay_dock/ui/widgets/v2/ui_library.dart';
 import 'package:intl/intl.dart';
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/utils/measurement.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/utils/measurement.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class FiringEditorDialog extends StatefulWidget {
   const FiringEditorDialog({

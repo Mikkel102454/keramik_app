@@ -1,8 +1,8 @@
-import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
-import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/ui/widgets/firing_editor_dialog.dart';
-import 'package:ceramic_app/ui/widgets/glaze_application_editor.dart';
+import 'package:clay_dock/objects/ceramic_firing_dto.dart';
+import 'package:clay_dock/objects/ceramic_glaze_entry_dto.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/ui/widgets/firing_editor_dialog.dart';
+import 'package:clay_dock/ui/widgets/glaze_application_editor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'test_app.dart';

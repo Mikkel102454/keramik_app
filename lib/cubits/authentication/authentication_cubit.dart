@@ -1,15 +1,15 @@
-import 'package:ceramic_app/app/chat_media_controller.dart';
-import 'package:ceramic_app/app/push_controller.dart';
+import 'package:clay_dock/app/chat_media_controller.dart';
+import 'package:clay_dock/app/push_controller.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:dio/dio.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/utils/web.dart';
-import 'package:ceramic_app/utils/network_timeout.dart';
-import 'package:ceramic_app/repositories/account_repository.dart';
-import 'package:ceramic_app/app/combination_application_controller.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/utils/web.dart';
+import 'package:clay_dock/utils/network_timeout.dart';
+import 'package:clay_dock/repositories/account_repository.dart';
+import 'package:clay_dock/app/combination_application_controller.dart';
 
 part 'authentication_state.dart';
 part 'authentication_cubit.freezed.dart';
@@ -26,6 +26,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   String _identifier = '';
   String _password = '';
   bool deletionPending = false;
+  bool mfaRequired = false;
+  bool mfaEnrollmentRequired = false;
   static const loginThrottledMessage = 'RATE_LIMITED';
   static const requestTimedOutMessage = 'REQUEST_TIMED_OUT';
   int? loginRetryAfterSeconds;
@@ -36,6 +38,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   void sessionExpired() {
     CombinationApplicationController.clearSession();
     deletionPending = false;
+    mfaRequired = false;
+    mfaEnrollmentRequired = false;
+    _password = '';
     if (!isClosed) emit(const AuthenticationState.unauthenticated());
   }
 
@@ -87,6 +92,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   Future<void> login() async {
     loginRetryAfterSeconds = null;
+    mfaRequired = false;
+    mfaEnrollmentRequired = false;
     if (_identifier.isEmpty || _password.isEmpty) {
       emit(const AuthenticationState.error("Please fill all fields"));
       return;
@@ -111,6 +118,15 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       }
       checkSuccess(response);
       if (response.statusCode == 200) {
+        final payload = response.data is Map ? response.data['data'] : null;
+        if (payload is Map && payload['mfaRequired'] == true) {
+          mfaRequired = true;
+          mfaEnrollmentRequired = payload['enrollmentRequired'] == true;
+          _password = '';
+          emit(const AuthenticationState.unauthenticated());
+          return;
+        }
+        _password = '';
         deletionPending =
             response.data is Map &&
             response.data['data'] is Map &&
@@ -144,6 +160,49 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
     }
   }
 
+  Future<void> verifyMfa(String code) async {
+    emit(const AuthenticationState.loading());
+    try {
+      final response = await _dio.post(
+        '/api/auth/mfa/verify',
+        data: {'code': code.trim()},
+      );
+      checkSuccess(response);
+      mfaRequired = false;
+      mfaEnrollmentRequired = false;
+      deletionPending =
+          response.data is Map &&
+          response.data['data'] is Map &&
+          response.data['data']['deletionPending'] == true;
+      if (deletionPending) {
+        emit(
+          const AuthenticationState.error(
+            'Account deletion is pending. Cancel deletion or sign out.',
+          ),
+        );
+      } else {
+        emit(const AuthenticationState.authenticated());
+      }
+    } on ApiException catch (error) {
+      emit(AuthenticationState.error(error.message));
+    } catch (_) {
+      emit(const AuthenticationState.error('Network error'));
+    }
+  }
+
+  Future<void> completeMfaEnrollment() async {
+    mfaRequired = false;
+    mfaEnrollmentRequired = false;
+    await checkAuthStatus();
+  }
+
+  void cancelMfa() {
+    mfaRequired = false;
+    mfaEnrollmentRequired = false;
+    _password = '';
+    emit(const AuthenticationState.initial());
+  }
+
   void _loginThrottled(Response<dynamic> response) {
     final seconds = int.tryParse(response.headers.value('retry-after') ?? '');
     loginRetryAfterSeconds = seconds != null && seconds > 0 ? seconds : null;
@@ -159,6 +218,9 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       await ChatMediaDownload.clear();
       CombinationApplicationController.clearSession();
       deletionPending = false;
+      mfaRequired = false;
+      mfaEnrollmentRequired = false;
+      _password = '';
       emit(const AuthenticationState.unauthenticated());
     } catch (e) {
       rethrow;
@@ -187,7 +249,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
 String authenticationErrorMessage(ApiException exception) {
   if (exception.code == 'PASSWORD_CHANGE_REQUIRED') {
-    return 'Change your temporary password on the Keramik website before signing in.';
+    return 'Change your temporary password on the ClayDock website before signing in.';
   }
   if (exception.statusCode == 401) return 'Invalid credentials';
   return 'Server error';

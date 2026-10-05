@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:ceramic_app/objects/chat_dto.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
 
 /// Session-only delivery state. Local previews never enter server history,
 /// pagination, read markers, reporting or shared-card navigation.

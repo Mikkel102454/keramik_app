@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/repositories/chat_repository.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ceramic_app/utils/emoji_insertion.dart';
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/ui/pages/home/ceramic_journal_query.dart';
-import 'package:ceramic_app/ui/pages/settings/push_device_controls.dart';
+import 'package:clay_dock/utils/emoji_insertion.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/ui/pages/home/ceramic_journal_query.dart';
+import 'package:clay_dock/ui/pages/settings/push_device_controls.dart';
 import 'test_app.dart';
 
 CeramicDto piece(int id, {DateTime? viewed}) => CeramicDto(

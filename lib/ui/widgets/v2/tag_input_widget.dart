@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 import 'text_field_widget.dart';
 

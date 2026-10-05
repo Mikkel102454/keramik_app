@@ -1,7 +1,7 @@
-import 'package:ceramic_app/l10n/app_localizations.dart';
-import 'package:ceramic_app/ui/theme/studio_theme.dart';
-import 'package:ceramic_app/ui/widgets/v2/tag_input_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/star_stepper_select_widget.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
+import 'package:clay_dock/ui/theme/studio_theme.dart';
+import 'package:clay_dock/ui/widgets/v2/tag_input_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/star_stepper_select_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

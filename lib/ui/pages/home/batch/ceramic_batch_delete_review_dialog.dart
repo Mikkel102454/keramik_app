@@ -1,5 +1,5 @@
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/ceramic_batch_delete_dto.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/ceramic_batch_delete_dto.dart';
 import 'package:flutter/material.dart';
 
 class CeramicBatchDeleteReviewDialog extends StatefulWidget {

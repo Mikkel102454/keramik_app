@@ -1,10 +1,10 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/material_inventory_dto.dart';
-import 'package:ceramic_app/repositories/material_inventory_repository.dart';
-import 'package:ceramic_app/ui/pages/materials/inventory/material_inventory_account_page.dart';
-import 'package:ceramic_app/utils/measurement.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/material_inventory_dto.dart';
+import 'package:clay_dock/repositories/material_inventory_repository.dart';
+import 'package:clay_dock/ui/pages/materials/inventory/material_inventory_account_page.dart';
+import 'package:clay_dock/utils/measurement.dart';
 import 'package:flutter/material.dart';
 
 typedef CeramicCostLoader =

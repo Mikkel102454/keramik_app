@@ -1,6 +1,6 @@
-import 'package:ceramic_app/objects/public_ceramic_card_dto.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/ui/pages/profile/basic_profile_page.dart';
+import 'package:clay_dock/objects/public_ceramic_card_dto.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/ui/pages/profile/basic_profile_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_app.dart';

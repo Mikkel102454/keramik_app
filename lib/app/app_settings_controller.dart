@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:ui' show PlatformDispatcher;
 
-import 'package:ceramic_app/l10n/app_localizations.dart';
-import 'package:ceramic_app/objects/account_settings_dto.dart';
-import 'package:ceramic_app/repositories/account_repository.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
+import 'package:clay_dock/objects/account_settings_dto.dart';
+import 'package:clay_dock/repositories/account_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 

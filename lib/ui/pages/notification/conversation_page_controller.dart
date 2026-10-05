@@ -1,13 +1,13 @@
-import 'package:ceramic_app/utils/network_timeout.dart';
+import 'package:clay_dock/utils/network_timeout.dart';
 import 'dart:async';
 import 'dart:io';
 
-import 'package:ceramic_app/api/chat_event_service.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/objects/chat_event_dto.dart';
-import 'package:ceramic_app/repositories/chat_repository.dart';
-import 'package:ceramic_app/utils/client_uuid.dart';
-import 'package:ceramic_app/ui/pages/notification/local_chat_send.dart';
+import 'package:clay_dock/api/chat_event_service.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/objects/chat_event_dto.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
+import 'package:clay_dock/utils/client_uuid.dart';
+import 'package:clay_dock/ui/pages/notification/local_chat_send.dart';
 import 'package:flutter/foundation.dart';
 
 class ConversationPageController extends ChangeNotifier {

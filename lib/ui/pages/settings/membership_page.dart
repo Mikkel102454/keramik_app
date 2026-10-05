@@ -1,9 +1,10 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ceramic_app/app/entitlement_controller.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/app/entitlement_controller.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/app/purchase_coordinator.dart';
 
 class MembershipPage extends StatelessWidget {
   const MembershipPage({super.key, this.controller});
@@ -97,7 +98,12 @@ class MembershipPage extends StatelessWidget {
                     child: Text(context.l10n.viewMakerMembership),
                   ),
                   const SizedBox(height: 12),
-                  Text(context.l10n.membershipBrowserSignIn),
+                  OutlinedButton(
+                    onPressed: () =>
+                        PurchaseCoordinator.instance.restore(context),
+                    child: Text(context.l10n.purchaseRestore),
+                  ),
+                  Text(context.l10n.purchaseVerifiedAccess),
                 ],
               );
             },

@@ -1,14 +1,14 @@
-import 'package:ceramic_app/ui/widgets/ceramic_preview_tile.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/objects/public_ceramic_card_dto.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/repositories/chat_repository.dart';
-import 'package:ceramic_app/repositories/social_repository.dart';
-import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
-import 'package:ceramic_app/ui/pages/profile/profile_widgets.dart';
-import 'package:ceramic_app/ui/pages/discover/publication_detail_page.dart';
+import 'package:clay_dock/ui/widgets/ceramic_preview_tile.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/objects/public_ceramic_card_dto.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
+import 'package:clay_dock/repositories/social_repository.dart';
+import 'package:clay_dock/ui/pages/notification/conversation_page.dart';
+import 'package:clay_dock/ui/pages/profile/profile_widgets.dart';
+import 'package:clay_dock/ui/pages/discover/publication_detail_page.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class BlockedAccountResult {
   const BlockedAccountResult(this.userId, this.username);

@@ -1,5 +1,5 @@
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
 import 'package:flutter/material.dart';
 
 class ChatPublicationCard extends StatelessWidget {

@@ -1,0 +1,10 @@
+{
+  "flutter": "3.44.6",
+  "flutterRevision": "ee80f08bbf97172ec030b8751ceab557177a34a6",
+  "dart": "3.12.2",
+  "java": "21",
+  "androidGradlePlugin": "8.11.1",
+  "kotlin": "2.2.20",
+  "applicationId": "nu.miguel.claydock",
+  "distribution": "Google Play"
+}

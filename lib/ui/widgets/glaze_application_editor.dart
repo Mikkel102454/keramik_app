@@ -1,11 +1,11 @@
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/objects/ceramic_glaze_entry_dto.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
 import 'package:collection/collection.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/text_field_widget.dart';
 
 class GlazeApplicationEditor extends StatelessWidget {
   const GlazeApplicationEditor({

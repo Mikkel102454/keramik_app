@@ -1,12 +1,12 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
-import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/ui/pages/profile/profile_page_controller.dart';
+import 'package:clay_dock/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'profile_edit_controller.dart';
-import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/entry_page_widgets.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/ui/widgets/v2/text_field_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/entry_page_widgets.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class ProfileEditPage extends StatefulWidget {
   const ProfileEditPage({required this.controller, super.key});

@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:ceramic_app/app/chat_voice_draft_controller.dart';
-import 'package:ceramic_app/l10n/app_localizations.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/ui/pages/notification/chat_media_draft.dart';
-import 'package:ceramic_app/ui/widgets/chat_voice_composer.dart';
-import 'package:ceramic_app/ui/widgets/v2/ui_library.dart';
+import 'package:clay_dock/app/chat_voice_draft_controller.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/ui/pages/notification/chat_media_draft.dart';
+import 'package:clay_dock/ui/widgets/chat_voice_composer.dart';
+import 'package:clay_dock/ui/widgets/v2/ui_library.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';

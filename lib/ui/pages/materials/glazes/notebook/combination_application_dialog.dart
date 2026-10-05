@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
-import 'package:ceramic_app/app/combination_application_controller.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/ceramic_glaze_entry_dto.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/objects/glaze_notebook_dto.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/app/combination_application_controller.dart';
 import 'glaze_notebook_page.dart';
 
 Future<GlazeNotebookDto?> selectCombination(BuildContext context) =>

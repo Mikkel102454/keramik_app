@@ -16,7 +16,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get languageName => 'English';
 
   @override
-  String get appTitle => 'Keramik';
+  String get appTitle => 'ClayDock';
 
   @override
   String get cancel => 'Cancel';
@@ -203,7 +203,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacyInformation => 'Privacy information';
 
   @override
-  String get aboutKeramik => 'About Keramik';
+  String get aboutClayDock => 'About ClayDock';
 
   @override
   String get loginSection => 'Login';
@@ -389,7 +389,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pushNotificationsComingLater =>
-      'Coming later. Keramik does not deliver notifications while the app is suspended.';
+      'Coming later. ClayDock does not deliver notifications while the app is suspended.';
 
   @override
   String get blockedAccountsLoadFailed =>
@@ -2118,7 +2118,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usageIsNeverInferred =>
-      'Usage is recorded only after your confirmation. Keramik never infers consumption from dimensions or weight.';
+      'Usage is recorded only after your confirmation. ClayDock never infers consumption from dimensions or weight.';
 
   @override
   String get review => 'Review';
@@ -2171,7 +2171,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get costEstimateExplanation =>
-      'Original totals remain grouped by their recorded ISO currency. When available, Keramik also shows a converted estimate using the latest cached ECB reference rates.';
+      'Original totals remain grouped by their recorded ISO currency. When available, ClayDock also shows a converted estimate using the latest cached ECB reference rates.';
 
   @override
   String get recordMaterialUsage => 'Record material usage';
@@ -2655,4 +2655,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requestOutcomeUnconfirmed => 'Unconfirmed';
+
+  @override
+  String get purchaseUnavailable =>
+      'Purchasing could not be verified. Existing access is unchanged. Restore purchases or retry.';
+
+  @override
+  String get purchaseManageStripe =>
+      'Your membership is managed by Stripe. Sign in to the ClayDock website independently to manage it.';
+
+  @override
+  String get purchaseWebsite => 'Continue to the website through Google Play';
+
+  @override
+  String get purchaseBillingChoice => 'Choose Google Play or website billing';
+
+  @override
+  String get purchaseRestore => 'Restore Google Play purchases';
+
+  @override
+  String get purchaseVerifiedAccess =>
+      'Access is granted only after the purchase provider verifies your subscription.';
+
+  @override
+  String purchaseBillingDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String purchaseBillingWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weeks',
+      one: '1 week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String purchaseBillingMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String purchaseBillingYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String purchasePayments(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'for $count payments',
+      one: 'for 1 payment',
+    );
+    return '$_temp0';
+  }
 }

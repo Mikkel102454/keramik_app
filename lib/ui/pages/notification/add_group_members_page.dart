@@ -1,11 +1,11 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/repositories/chat_repository.dart';
-import 'package:ceramic_app/repositories/social_repository.dart';
-import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
+import 'package:clay_dock/repositories/social_repository.dart';
+import 'package:clay_dock/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class AddGroupMembersPage extends StatefulWidget {
   const AddGroupMembersPage({required this.group, super.key});

@@ -1,9 +1,9 @@
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/objects/project_template_dto.dart';
-import 'package:ceramic_app/repositories/clay_repository.dart';
-import 'package:ceramic_app/repositories/glaze_repository.dart';
-import 'package:ceramic_app/repositories/project_template_repository.dart';
+import 'package:clay_dock/objects/clay_dto.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/objects/project_template_dto.dart';
+import 'package:clay_dock/repositories/clay_repository.dart';
+import 'package:clay_dock/repositories/glaze_repository.dart';
+import 'package:clay_dock/repositories/project_template_repository.dart';
 import 'package:flutter/foundation.dart';
 
 typedef TemplatePageLoader =

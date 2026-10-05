@@ -1,5 +1,5 @@
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/utils/web.dart';
 
 class PushRepository {
   static Future<bool> available() async {

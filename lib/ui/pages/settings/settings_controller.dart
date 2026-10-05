@@ -1,6 +1,6 @@
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/objects/account_settings_dto.dart';
-import 'package:ceramic_app/repositories/account_repository.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/objects/account_settings_dto.dart';
+import 'package:clay_dock/repositories/account_repository.dart';
 import 'package:flutter/foundation.dart';
 
 enum SettingsError { loadFailed, saveFailed }

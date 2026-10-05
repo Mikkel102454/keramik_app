@@ -1,13 +1,13 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
 import 'dart:io';
 
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/ui/pages/image_view/image_view_page.dart';
-import 'package:ceramic_app/ui/pages/materials/clays/clays_view/clays_view_page_controller.dart';
-import 'package:ceramic_app/ui/widgets/v2/square_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
+import 'package:clay_dock/objects/clay_dto.dart';
+import 'package:clay_dock/ui/pages/image_view/image_view_page.dart';
+import 'package:clay_dock/ui/pages/materials/clays/clays_view/clays_view_page_controller.dart';
+import 'package:clay_dock/ui/widgets/v2/square_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/text_field_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ClaysViewPage extends StatefulWidget {

@@ -1,11 +1,11 @@
-import 'package:ceramic_app/objects/ceramic_batch_delete_dto.dart';
-import 'package:ceramic_app/objects/ceramic_batch_edit_dto.dart';
-import 'package:ceramic_app/objects/project_template_dto.dart';
-import 'package:ceramic_app/objects/stage_dto.dart';
-import 'package:ceramic_app/ui/pages/home/batch/ceramic_batch_delete_review_dialog.dart';
-import 'package:ceramic_app/ui/pages/home/batch/ceramic_batch_edit_page.dart';
-import 'package:ceramic_app/ui/pages/home/templates/project_template_editor_page.dart';
-import 'package:ceramic_app/ui/pages/home/templates/project_templates_controller.dart';
+import 'package:clay_dock/objects/ceramic_batch_delete_dto.dart';
+import 'package:clay_dock/objects/ceramic_batch_edit_dto.dart';
+import 'package:clay_dock/objects/project_template_dto.dart';
+import 'package:clay_dock/objects/stage_dto.dart';
+import 'package:clay_dock/ui/pages/home/batch/ceramic_batch_delete_review_dialog.dart';
+import 'package:clay_dock/ui/pages/home/batch/ceramic_batch_edit_page.dart';
+import 'package:clay_dock/ui/pages/home/templates/project_template_editor_page.dart';
+import 'package:clay_dock/ui/pages/home/templates/project_templates_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

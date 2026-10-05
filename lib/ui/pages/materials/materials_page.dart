@@ -1,11 +1,11 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:ceramic_app/ui/pages/materials/clays/clays_page.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/glazes_page.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/notebook/glaze_notebook_page.dart';
-import 'package:ceramic_app/ui/pages/materials/inventory/material_inventory_page.dart';
-import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/ui/pages/materials/clays/clays_page.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/glazes_page.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/notebook/glaze_notebook_page.dart';
+import 'package:clay_dock/ui/pages/materials/inventory/material_inventory_page.dart';
+import 'package:clay_dock/ui/widgets/v2/navigation_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()

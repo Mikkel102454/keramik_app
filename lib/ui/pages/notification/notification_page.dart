@@ -1,17 +1,17 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/ui/pages/notification/archived_conversations_page.dart';
-import 'package:ceramic_app/ui/pages/notification/chat_requests_page.dart';
-import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
-import 'package:ceramic_app/ui/pages/notification/new_group_page.dart';
-import 'package:ceramic_app/ui/pages/notification/notification_controller_page.dart';
-import 'package:ceramic_app/ui/pages/profile/user_search_page.dart';
-import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
-import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/ui/pages/notification/archived_conversations_page.dart';
+import 'package:clay_dock/ui/pages/notification/chat_requests_page.dart';
+import 'package:clay_dock/ui/pages/notification/conversation_page.dart';
+import 'package:clay_dock/ui/pages/notification/new_group_page.dart';
+import 'package:clay_dock/ui/pages/notification/notification_controller_page.dart';
+import 'package:clay_dock/ui/pages/profile/user_search_page.dart';
+import 'package:clay_dock/ui/widgets/profile_avatar.dart';
+import 'package:clay_dock/ui/widgets/v2/navigation_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 import 'package:intl/intl.dart';
 
 enum _InboxFilter { all, unread, groups }

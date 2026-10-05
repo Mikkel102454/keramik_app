@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:ceramic_app/extensions/extensions.dart';
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/repositories/clay_repository.dart';
-import 'package:ceramic_app/utils/file.dart';
+import 'package:clay_dock/extensions/extensions.dart';
+import 'package:clay_dock/objects/clay_dto.dart';
+import 'package:clay_dock/repositories/clay_repository.dart';
+import 'package:clay_dock/utils/file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 

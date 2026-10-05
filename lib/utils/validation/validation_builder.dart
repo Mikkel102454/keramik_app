@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/utils/validation/validators_util.dart';
+import 'package:clay_dock/utils/validation/validators_util.dart';
 
 typedef ValidationRuleCallback = String? Function(String? value, BuildContext context);
 

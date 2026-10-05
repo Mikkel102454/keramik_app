@@ -1,9 +1,9 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/objects/chat_report_dto.dart';
-import 'package:ceramic_app/repositories/chat_repository.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/ui/widgets/chat_ceramic_card.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/objects/chat_report_dto.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/ui/widgets/chat_ceramic_card.dart';
 import 'package:flutter/material.dart';
 
 typedef SubmitChatReport =

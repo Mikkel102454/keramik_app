@@ -1,5 +1,8 @@
 # Testing the Android app
 
+Production-readiness implementation (2026-10-05): canonical identity is `nu.miguel.claydock`. See [software evidence](../SOFTWARE_COMPLETION.md), [operator setup and acceptance](../OPERATOR_HANDOFF.md), [update policy](../UPDATE_POLICY.md), [MFA/retention](../clay_dock_backend/MFA_RETENTION.md), [billing](../clay_dock_backend/BILLING_POLICY.md) and [availability](../clay_dock_backend/AVAILABILITY.md). Existing local services and data have not been upgraded by this work.
+
+
 ## Local testing refresh after export generation (2026-10-04)
 
 The latest source debug APK was rebuilt successfully with:
@@ -20,7 +23,7 @@ and Flyway disabled. Host/emulator readiness is UP; anonymous exports return
 401 and private MinIO access returns 403. Existing-account export generation and
 download/open acceptance remain manual: use Settings and privacy to create an
 export, wait for READY and download it. Isolated content/failure/large-archive
-acceptance is recorded in backend OPERATIONS. See [backend activation evidence](../keramik_app_backend/OPERATIONS.md#local-testing-readiness-after-bounded-export-generation).
+acceptance is recorded in backend OPERATIONS. See [backend activation evidence](../clay_dock_backend/OPERATIONS.md#local-testing-readiness-after-bounded-export-generation).
 
 ## Bounded export downloads (2026-10-04)
 
@@ -88,7 +91,7 @@ Dart directory names. `.dart_tool/package_config.json` resolves
 `path_provider_android` 2.3.1. Its `lib/src/path_provider_android_real.dart`
 implements support with JNI `Context.filesDir` and documents with
 `Context.getDir("flutter", MODE_PRIVATE)`. The disposable emulator's app root was
-`/data/user/0/nu.miguel.kemik_app`; the relevant mappings are:
+`/data/user/0/nu.miguel.claydock`; the relevant mappings are:
 
 | State | Path relative to app root | Backup mapping / policy |
 | --- | --- | --- |
@@ -144,9 +147,9 @@ Cloud-mode LocalTransport was selected and initialized with `bmgr`; the encrypte
 test-transport flag was enabled. A never-launched/stopped app first reported
 `Backup is not allowed`. After launch/background and package-manager backup
 initialization, package-specific backup succeeded. The test required
-`Package nu.miguel.kemik_app with result: Success`, rather than relying on the
+`Package nu.miguel.claydock with result: Success`, rather than relying on the
 overall backup message. Clearing only this disposable app and executing
-`bmgr restore 1 nu.miguel.kemik_app` returned `restoreFinished: 0`. Before startup,
+`bmgr restore 1 nu.miguel.claydock` returned `restoreFinished: 0`. Before startup,
 the sole restored file was `./files/language-tag.txt` containing `da`; all twelve
 unlisted seeded files were absent. Startup against the loopback 401 fixture showed
 **Log ind** and recreated an empty cookie directory. `push-device.json` remained
@@ -403,7 +406,7 @@ process's logcat had no Flutter overflow or unhandled-exception markers.
 
 The full Flutter suite passed 149 tests; analysis and debug packaging passed.
 The focused notebook suite has 13 tests. Backend implementation/migration tests
-remain documented in [GLAZE_NOTEBOOK.md](../keramik_app_backend/GLAZE_NOTEBOOK.md).
+remain documented in [GLAZE_NOTEBOOK.md](../clay_dock_backend/GLAZE_NOTEBOOK.md).
 This device run complements those tests; it does not replace MariaDB concurrency,
 lost-response, entitlement, export or erasure acceptance.
 
@@ -541,7 +544,7 @@ test a device does not authorize clearing its existing app data.
 ## Android push/media/view acceptance - 2026-10-03
 
 The coordinated implementation is documented in
-[PUSH_MEDIA_VIEW.md](../keramik_app_backend/PUSH_MEDIA_VIEW.md) and
+[PUSH_MEDIA_VIEW.md](../clay_dock_backend/PUSH_MEDIA_VIEW.md) and
 [PUSH_MEDIA_VIEW_STATUS.md](../PUSH_MEDIA_VIEW_STATUS.md). Final Flutter analysis
 passes with no issues; all 173 unit/widget tests pass. Backend test/build passes
 309 active tests, with 39 opt-in tests skipped. Separately, 13 disposable MariaDB
@@ -797,7 +800,7 @@ checks. Modified backend files: `controller/api/ChatController.java`,
 Existing unrelated push/media/view changes were preserved.
 
 Documentation reviewed and updated: both READMEs, this guide,
-`keramik_app_backend/API_FEATURES.md` and `../ARCHITECTURE_REVIEW.md`.
+`clay_dock_backend/API_FEATURES.md` and `../ARCHITECTURE_REVIEW.md`.
 `UI_CONVENTIONS.md`, both repository `AGENTS.md` files and the backend
 `OPERATIONS.md` were reviewed; their workflows remain applicable without edits
 for this additive change. No messaging dependency or migration was introduced.
@@ -1211,7 +1214,7 @@ session and fixture data.
 
 The existing backend acceptance task selected a packaged-media smoke main class
 and exited before serving requests. A temporary ignored Gradle init script sets
-only this isolated `bootTestRun` invocation to `nu.miguel.kemik_app.Main`; no
+only this isolated `bootTestRun` invocation to `nu.miguel.claydock.Main`; no
 backend source, configuration, credentials or API were changed. Native input
 automation also needed an explicit Back immediately after a known-open keyboard:
 the older helper's keyboard visibility probe could otherwise issue an extra Back

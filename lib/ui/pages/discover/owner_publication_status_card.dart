@@ -1,7 +1,7 @@
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/publication_dto.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
 import 'package:flutter/material.dart';
 
 class OwnerPublicationStatusCard extends StatelessWidget {

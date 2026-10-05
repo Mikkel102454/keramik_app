@@ -1,4 +1,4 @@
-import 'package:ceramic_app/objects/account_settings_dto.dart';
+import 'package:clay_dock/objects/account_settings_dto.dart';
 import 'package:intl/intl.dart';
 
 class Measurement {

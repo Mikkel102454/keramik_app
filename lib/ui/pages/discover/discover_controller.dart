@@ -1,7 +1,7 @@
-import 'package:ceramic_app/objects/publication_dto.dart';
-import 'package:ceramic_app/repositories/publication_repository.dart';
-import 'package:ceramic_app/utils/client_uuid.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
+import 'package:clay_dock/repositories/publication_repository.dart';
+import 'package:clay_dock/utils/client_uuid.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:flutter/foundation.dart';
 
 typedef DiscoverPageLoader =

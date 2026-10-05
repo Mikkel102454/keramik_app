@@ -1,4 +1,4 @@
-import 'package:ceramic_app/objects/material_inventory_dto.dart';
+import 'package:clay_dock/objects/material_inventory_dto.dart';
 
 class PracticeAnalyticsDto {
   const PracticeAnalyticsDto({

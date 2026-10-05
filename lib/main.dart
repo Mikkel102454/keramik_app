@@ -1,25 +1,27 @@
 import 'dart:async';
-import 'package:ceramic_app/ui/pages/notification/notification_controller_page.dart';
-import 'package:ceramic_app/app/chat_media_controller.dart';
-import 'package:ceramic_app/app/push_controller.dart';
-import 'package:ceramic_app/repositories/chat_repository.dart';
-import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
-import 'package:ceramic_app/ui/pages/notification/friend_requests_page.dart';
+import 'package:clay_dock/app/client_version_controller.dart';
+import 'package:clay_dock/ui/widgets/client_version_gate.dart';
+import 'package:clay_dock/ui/pages/notification/notification_controller_page.dart';
+import 'package:clay_dock/app/chat_media_controller.dart';
+import 'package:clay_dock/app/push_controller.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
+import 'package:clay_dock/ui/pages/notification/conversation_page.dart';
+import 'package:clay_dock/ui/pages/notification/friend_requests_page.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/theme/studio_theme.dart';
-import 'package:ceramic_app/app/entitlement_controller.dart';
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/ui/theme/studio_theme.dart';
+import 'package:clay_dock/app/entitlement_controller.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
-import 'package:ceramic_app/config/router/app_router.dart';
-import 'package:ceramic_app/ui/app_coordinator.dart';
+import 'package:clay_dock/cubits/authentication/authentication_cubit.dart';
+import 'package:clay_dock/config/router/app_router.dart';
+import 'package:clay_dock/ui/app_coordinator.dart';
 
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/api/chat_event_service.dart';
-import 'package:ceramic_app/ui/widgets/v2/navigation_badge_controller.dart';
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/l10n/app_localizations.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/api/chat_event_service.dart';
+import 'package:clay_dock/ui/widgets/v2/navigation_badge_controller.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +32,7 @@ void main() async {
   await ChatMediaDownload.clear();
   await PushController.instance.initialize();
   PushController.instance.onTap = (destination) async {
-    unawaited(appRouter.replace(const NotificationRoute()));
+    unawaited(appRouter.replace(NotificationRoute()));
     await WidgetsBinding.instance.endOfFrame;
     final context = appRouter.navigatorKey.currentContext;
     if (context == null || !context.mounted) return;
@@ -67,6 +69,13 @@ void main() async {
     }
   };
   final authenticationCubit = AuthenticationCubit();
+  final versions = ClientVersionController(
+    dio: ApiClient.dio,
+    versionCode: InstalledClient.versionCode ?? 0,
+  );
+  ApiClient.onVersionRejected = (outdated) =>
+      versions.requireVerification(outdated: outdated);
+  versions.start();
   ApiClient.onUnauthorized = authenticationCubit.sessionExpired;
   ApiClient.onSubscriptionError = (error) {
     EntitlementController.instance.refresh();
@@ -87,7 +96,7 @@ void main() async {
   runApp(
     BlocProvider(
       create: (_) => authenticationCubit,
-      child: MyApp(appRouter: appRouter),
+      child: MyApp(appRouter: appRouter, versions: versions),
     ),
   );
 
@@ -98,8 +107,9 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final AppRouter appRouter;
+  final ClientVersionController? versions;
 
-  const MyApp({required this.appRouter, super.key});
+  const MyApp({required this.appRouter, this.versions, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -138,6 +148,9 @@ class MyApp extends StatelessWidget {
         builder: (context, _) => AppCoordinator(
           appRouter: appRouter,
           child: MaterialApp.router(
+            builder: (context, child) => versions == null
+                ? child!
+                : ClientVersionGate(controller: versions!, child: child!),
             debugShowCheckedModeBanner: false,
             onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
             routerConfig: appRouter.config(),

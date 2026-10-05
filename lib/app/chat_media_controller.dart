@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:ceramic_app/utils/client_uuid.dart';
-import 'package:ceramic_app/repositories/chat_repository.dart';
+import 'package:clay_dock/utils/client_uuid.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
 
 class ChatMediaFiles {
   static Directory? _directory;

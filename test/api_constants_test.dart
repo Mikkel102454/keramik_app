@@ -1,4 +1,4 @@
-import 'package:ceramic_app/config/constants/app_constants.dart';
+import 'package:clay_dock/config/constants/app_constants.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

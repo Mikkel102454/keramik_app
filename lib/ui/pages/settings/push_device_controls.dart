@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/app/push_controller.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/app/push_controller.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class PushDeviceControls extends StatefulWidget {
   const PushDeviceControls({super.key});

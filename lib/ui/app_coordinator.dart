@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ceramic_app/config/router/app_router.dart';
-import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
+import 'package:clay_dock/config/router/app_router.dart';
+import 'package:clay_dock/cubits/authentication/authentication_cubit.dart';
 
 class AppCoordinator extends StatelessWidget {
   final AppRouter appRouter;

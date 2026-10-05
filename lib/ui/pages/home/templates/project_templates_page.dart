@@ -1,12 +1,12 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/ui/widgets/v2/entry_page_widgets.dart';
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/project_template_dto.dart';
-import 'package:ceramic_app/ui/pages/home/templates/project_template_editor_page.dart';
-import 'package:ceramic_app/ui/pages/home/templates/project_templates_controller.dart';
-import 'package:ceramic_app/ui/pages/home/templates/template_batch_create_page.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/ui/widgets/v2/entry_page_widgets.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/project_template_dto.dart';
+import 'package:clay_dock/ui/pages/home/templates/project_template_editor_page.dart';
+import 'package:clay_dock/ui/pages/home/templates/project_templates_controller.dart';
+import 'package:clay_dock/ui/pages/home/templates/template_batch_create_page.dart';
 import 'package:flutter/material.dart';
 
 class ProjectTemplatesPage extends StatefulWidget {

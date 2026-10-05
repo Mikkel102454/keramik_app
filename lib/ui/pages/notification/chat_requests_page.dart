@@ -1,11 +1,11 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
-import 'package:ceramic_app/ui/pages/notification/friend_requests_page.dart';
-import 'package:ceramic_app/ui/pages/notification/notification_controller_page.dart';
-import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/ui/pages/notification/conversation_page.dart';
+import 'package:clay_dock/ui/pages/notification/friend_requests_page.dart';
+import 'package:clay_dock/ui/pages/notification/notification_controller_page.dart';
+import 'package:clay_dock/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class ChatRequestsPage extends StatelessWidget {
   const ChatRequestsPage({required this.controller, super.key});

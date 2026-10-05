@@ -1,4 +1,4 @@
-import 'package:ceramic_app/ui/widgets/v2/divider_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/divider_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

@@ -1,4 +1,4 @@
-import 'package:ceramic_app/objects/image_dto.dart';
+import 'package:clay_dock/objects/image_dto.dart';
 
 class ClayDto {
   String title;

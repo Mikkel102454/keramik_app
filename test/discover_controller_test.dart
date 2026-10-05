@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:ceramic_app/objects/publication_dto.dart';
-import 'package:ceramic_app/ui/pages/discover/discover_controller.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
+import 'package:clay_dock/ui/pages/discover/discover_controller.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

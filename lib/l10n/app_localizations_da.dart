@@ -16,7 +16,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get languageName => 'Dansk';
 
   @override
-  String get appTitle => 'Keramik';
+  String get appTitle => 'ClayDock';
 
   @override
   String get cancel => 'Annuller';
@@ -203,7 +203,7 @@ class AppLocalizationsDa extends AppLocalizations {
   String get privacyInformation => 'Oplysninger om privatliv';
 
   @override
-  String get aboutKeramik => 'Om Keramik';
+  String get aboutClayDock => 'Om ClayDock';
 
   @override
   String get loginSection => 'Login';
@@ -389,7 +389,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get pushNotificationsComingLater =>
-      'Kommer senere. Keramik leverer ikke notifikationer, mens appen er sat på pause.';
+      'Kommer senere. ClayDock leverer ikke notifikationer, mens appen er sat på pause.';
 
   @override
   String get blockedAccountsLoadFailed =>
@@ -2121,7 +2121,7 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get usageIsNeverInferred =>
-      'Forbrug registreres kun efter din bekræftelse. Keramik udleder aldrig forbrug fra mål eller vægt.';
+      'Forbrug registreres kun efter din bekræftelse. ClayDock udleder aldrig forbrug fra mål eller vægt.';
 
   @override
   String get review => 'Gennemse';
@@ -2661,4 +2661,81 @@ class AppLocalizationsDa extends AppLocalizations {
 
   @override
   String get requestOutcomeUnconfirmed => 'Ubekræftet';
+
+  @override
+  String get purchaseUnavailable =>
+      'Købet kunne ikke bekræftes. Din eksisterende adgang er uændret. Gendan køb, eller prøv igen.';
+
+  @override
+  String get purchaseManageStripe =>
+      'Dit medlemskab administreres af Stripe. Log ind på ClayDock-webstedet for at administrere det.';
+
+  @override
+  String get purchaseWebsite => 'Fortsæt til webstedet gennem Google Play';
+
+  @override
+  String get purchaseBillingChoice =>
+      'Vælg Google Play eller betaling på webstedet';
+
+  @override
+  String get purchaseRestore => 'Gendan Google Play-køb';
+
+  @override
+  String get purchaseVerifiedAccess =>
+      'Adgang gives først, når betalingsudbyderen har bekræftet dit abonnement.';
+
+  @override
+  String purchaseBillingDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dage',
+      one: '1 dag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String purchaseBillingWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count uger',
+      one: '1 uge',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String purchaseBillingMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count måneder',
+      one: '1 måned',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String purchaseBillingYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count år',
+      one: '1 år',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String purchasePayments(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'for $count betalinger',
+      one: 'for 1 betaling',
+    );
+    return '$_temp0';
+  }
 }

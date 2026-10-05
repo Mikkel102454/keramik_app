@@ -6,7 +6,7 @@
   "@languageName": {
     "description": "Sprogets eget navn, som vises i sprogvælgeren."
   },
-  "appTitle": "Keramik",
+  "appTitle": "ClayDock",
   "cancel": "Annuller",
   "save": "Gem",
   "delete": "Slet",
@@ -74,7 +74,7 @@
   "supportAndAbout": "Hjælp og om",
   "websiteHelpCenter": "Hjælpecenter på webstedet",
   "privacyInformation": "Oplysninger om privatliv",
-  "aboutKeramik": "Om Keramik",
+  "aboutClayDock": "Om ClayDock",
   "loginSection": "Login",
   "loginThrottled": "For mange loginforsøg. Vent lidt, og prøv igen.",
   "loginThrottledRetry": "For mange loginforsøg. Prøv igen om {seconds, plural, =1{1 sekund} other{{seconds} sekunder}}.",
@@ -135,7 +135,7 @@
   "messageRequests": "Beskedanmodninger",
   "groupActivity": "Gruppeaktivitet",
   "pushNotifications": "Pushnotifikationer",
-  "pushNotificationsComingLater": "Kommer senere. Keramik leverer ikke notifikationer, mens appen er sat på pause.",
+  "pushNotificationsComingLater": "Kommer senere. ClayDock leverer ikke notifikationer, mens appen er sat på pause.",
   "blockedAccountsLoadFailed": "Blokerede konti kunne ikke indlæses.",
   "accountUnblockFailed": "{username} kunne ikke fjernes fra blokeringen.",
   "@accountUnblockFailed": {
@@ -820,7 +820,7 @@
   "costOptionsLoadFailed": "Købshistorikkens priser kunne ikke indlæses.",
   "manualCost": "Manuelt overslag",
   "estimatedUsageCost": "Anslået forbrugspris",
-  "usageIsNeverInferred": "Forbrug registreres kun efter din bekræftelse. Keramik udleder aldrig forbrug fra mål eller vægt.",
+  "usageIsNeverInferred": "Forbrug registreres kun efter din bekræftelse. ClayDock udleder aldrig forbrug fra mål eller vægt.",
   "review": "Gennemse",
   "confirm": "Bekræft",
   "confirmInventoryTransaction": "Bekræft lagertransaktion",
@@ -1025,5 +1025,21 @@
   "pieceSavedPublicationUnconfirmed": "Dit værk blev gemt. Udgivelsen kunne ikke bekræftes. Åbn værket for at tjekke eller prøve igen.",
   "requestTimedOut": "Anmodningen fik timeout. Hvis du var ved at gemme eller sende, kan handlingen stadig være gennemført. Kontrollér den seneste status, før du prøver igen.",
   "networkUnavailable": "Kunne ikke oprette forbindelse. Kontrollér din forbindelse, og prøv igen.",
-  "requestOutcomeUnconfirmed": "Ubekræftet"
+  "requestOutcomeUnconfirmed": "Ubekræftet",
+  "purchaseUnavailable": "Købet kunne ikke bekræftes. Din eksisterende adgang er uændret. Gendan køb, eller prøv igen.",
+  "purchaseManageStripe": "Dit medlemskab administreres af Stripe. Log ind på ClayDock-webstedet for at administrere det.",
+  "purchaseWebsite": "Fortsæt til webstedet gennem Google Play",
+  "purchaseBillingChoice": "Vælg Google Play eller betaling på webstedet",
+  "purchaseRestore": "Gendan Google Play-køb",
+  "purchaseVerifiedAccess": "Adgang gives først, når betalingsudbyderen har bekræftet dit abonnement.",
+  "purchaseBillingDays": "{count, plural, =1{1 dag} other{{count} dage}}",
+  "@purchaseBillingDays": {"placeholders": {"count": {"type": "int"}}},
+  "purchaseBillingWeeks": "{count, plural, =1{1 uge} other{{count} uger}}",
+  "@purchaseBillingWeeks": {"placeholders": {"count": {"type": "int"}}},
+  "purchaseBillingMonths": "{count, plural, =1{1 måned} other{{count} måneder}}",
+  "@purchaseBillingMonths": {"placeholders": {"count": {"type": "int"}}},
+  "purchaseBillingYears": "{count, plural, =1{1 år} other{{count} år}}",
+  "@purchaseBillingYears": {"placeholders": {"count": {"type": "int"}}},
+  "purchasePayments": "{count, plural, =1{for 1 betaling} other{for {count} betalinger}}",
+  "@purchasePayments": {"placeholders": {"count": {"type": "int"}}}
 }

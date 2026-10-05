@@ -1,12 +1,12 @@
-import 'package:ceramic_app/app/entitlement_controller.dart';
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/practice_analytics_dto.dart';
-import 'package:ceramic_app/ui/pages/analytics/practice_analytics_controller.dart';
+import 'package:clay_dock/app/entitlement_controller.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/practice_analytics_dto.dart';
+import 'package:clay_dock/ui/pages/analytics/practice_analytics_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/utils/measurement.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/utils/measurement.dart';
 import 'package:intl/intl.dart';
 
 class PracticeAnalyticsPage extends StatefulWidget {

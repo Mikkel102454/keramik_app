@@ -1,9 +1,9 @@
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/ceramic_tag_dto.dart';
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/ui/pages/home/ceramic_journal_query.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/ceramic_glaze_entry_dto.dart';
+import 'package:clay_dock/objects/ceramic_tag_dto.dart';
+import 'package:clay_dock/objects/clay_dto.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/ui/pages/home/ceramic_journal_query.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

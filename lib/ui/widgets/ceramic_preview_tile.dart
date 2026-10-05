@@ -1,5 +1,5 @@
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
 import 'package:flutter/material.dart';
 
 /// Shared photo proportions and gutters for journal and profile previews.

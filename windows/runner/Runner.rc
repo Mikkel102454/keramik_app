@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "nu.miguel" "\0"
-            VALUE "FileDescription", "kemik_app" "\0"
+            VALUE "FileDescription", "clay_dock" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "kemik_app" "\0"
+            VALUE "InternalName", "clay_dock" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 nu.miguel. All rights reserved." "\0"
-            VALUE "OriginalFilename", "kemik_app.exe" "\0"
-            VALUE "ProductName", "kemik_app" "\0"
+            VALUE "OriginalFilename", "clay_dock.exe" "\0"
+            VALUE "ProductName", "clay_dock" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

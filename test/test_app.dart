@@ -1,4 +1,4 @@
-import 'package:ceramic_app/l10n/app_localizations.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 Widget localizedTestApp({

@@ -1,7 +1,7 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:ceramic_app/config/router/app_router.dart';
-import 'package:ceramic_app/ui/widgets/v2/navigation_badge_controller.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/config/router/app_router.dart';
+import 'package:clay_dock/ui/widgets/v2/navigation_badge_controller.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
 
 enum NavigationPage { home, materials, discover, notifications, profile }
@@ -80,8 +80,8 @@ class _NavigationWidgetState extends State<NavigationWidget> {
     final route = switch (page) {
       NavigationPage.home => const HomeRoute(),
       NavigationPage.materials => const MaterialsRoute(),
-      NavigationPage.discover => const ShopRoute(),
-      NavigationPage.notifications => const NotificationRoute(),
+      NavigationPage.discover => ShopRoute(),
+      NavigationPage.notifications => NotificationRoute(),
       NavigationPage.profile => const ProfileRoute(),
     };
     context.router.replace(route, onFailure: (_) {});

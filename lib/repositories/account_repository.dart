@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/api/export_download.dart';
-import 'package:ceramic_app/objects/account_lifecycle_dto.dart';
-import 'package:ceramic_app/objects/account_settings_dto.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/api/export_download.dart';
+import 'package:clay_dock/objects/account_lifecycle_dto.dart';
+import 'package:clay_dock/objects/account_settings_dto.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:dio/dio.dart';
 
 class AccountRepository {

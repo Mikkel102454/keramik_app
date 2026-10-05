@@ -1,5 +1,5 @@
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 import 'package:flutter/material.dart';
 import 'ceramic_preview_tile.dart';
 

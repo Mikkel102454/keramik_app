@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/objects/chat_report_dto.dart';
-import 'package:ceramic_app/objects/shared_ceramic_dto.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/objects/chat_report_dto.dart';
+import 'package:clay_dock/objects/shared_ceramic_dto.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/utils/web.dart';
 
 class ChatRepository {
   static Future<DirectChatResolutionDto> resolveDirect(String userId) async {

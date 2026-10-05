@@ -30,7 +30,13 @@ class ApiConstants {
       'API_BASE_URL',
       defaultValue: 'http://10.0.2.2:8080',
     );
-    if (kReleaseMode && !value.startsWith('https://')) {
+    final uri = Uri.tryParse(value);
+    if (uri == null ||
+        !uri.hasAuthority ||
+        uri.userInfo.isNotEmpty ||
+        uri.hasQuery ||
+        uri.hasFragment ||
+        (uri.scheme != 'https' && (kReleaseMode || uri.scheme != 'http'))) {
       throw StateError('Release builds require an HTTPS API_BASE_URL');
     }
     return value;

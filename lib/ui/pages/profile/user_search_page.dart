@@ -1,11 +1,11 @@
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/repositories/social_repository.dart';
-import 'package:ceramic_app/ui/pages/profile/basic_profile_page.dart';
-import 'package:ceramic_app/ui/pages/profile/user_search_controller.dart';
-import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/repositories/social_repository.dart';
+import 'package:clay_dock/ui/pages/profile/basic_profile_page.dart';
+import 'package:clay_dock/ui/pages/profile/user_search_controller.dart';
+import 'package:clay_dock/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class UserSearchPage extends StatefulWidget {
   const UserSearchPage({super.key});

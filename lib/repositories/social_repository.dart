@@ -1,8 +1,8 @@
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/objects/public_ceramic_card_dto.dart';
-import 'package:ceramic_app/objects/publication_dto.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/objects/public_ceramic_card_dto.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 

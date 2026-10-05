@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:ceramic_app/utils/validation/validation_builder.dart';
+import 'package:clay_dock/utils/validation/validation_builder.dart';
 import 'form_field_style.dart';
 
 class TextFieldWidget extends StatefulWidget {

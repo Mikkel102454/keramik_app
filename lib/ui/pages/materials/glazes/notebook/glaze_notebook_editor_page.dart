@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/widgets/v2/ui_library.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
-import 'package:ceramic_app/ui/widgets/glaze_application_editor.dart';
-import 'package:ceramic_app/ui/widgets/firing_editor_dialog.dart';
+import 'package:clay_dock/ui/widgets/v2/ui_library.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/glaze_notebook_dto.dart';
+import 'package:clay_dock/ui/widgets/glaze_application_editor.dart';
+import 'package:clay_dock/ui/widgets/firing_editor_dialog.dart';
 import 'glaze_notebook_controller.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/ui/widgets/feature_gate.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/ui/widgets/feature_gate.dart';
 import 'notebook_labels.dart';
 
 class GlazeNotebookEditorPage extends StatefulWidget {

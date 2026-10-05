@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/ui/pages/notification/conversation_page.dart';
-import 'package:ceramic_app/ui/pages/notification/conversation_page_controller.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/ui/pages/notification/conversation_page.dart';
+import 'package:clay_dock/ui/pages/notification/conversation_page_controller.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

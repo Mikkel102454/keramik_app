@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/stage_dto.dart';
-import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page.dart';
-import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page_controller.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/stage_dto.dart';
+import 'package:clay_dock/ui/pages/home/ceramic_view/ceramic_view_page.dart';
+import 'package:clay_dock/ui/pages/home/ceramic_view/ceramic_view_page_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

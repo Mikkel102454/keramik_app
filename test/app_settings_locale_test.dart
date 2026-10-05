@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/l10n/app_localizations.dart';
-import 'package:ceramic_app/objects/account_settings_dto.dart';
-import 'package:ceramic_app/ui/pages/settings/account_settings_pages.dart';
-import 'package:ceramic_app/ui/pages/settings/settings_controller.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
+import 'package:clay_dock/objects/account_settings_dto.dart';
+import 'package:clay_dock/ui/pages/settings/account_settings_pages.dart';
+import 'package:clay_dock/ui/pages/settings/settings_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

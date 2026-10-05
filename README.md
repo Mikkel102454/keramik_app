@@ -1,4 +1,9 @@
-# Keramik Android client
+# ClayDock Android client
+
+Saved setup walkthrough: [staging, production Kubernetes and external services](../INFRASTRUCTURE_AND_SERVICES_GUIDE.md). It covers separate environment defines, provider setup and remaining tests; Kubernetes packaging is proposed rather than deployed.
+
+Production-readiness implementation (2026-10-05): canonical identity is `nu.miguel.claydock`. See [software evidence](../SOFTWARE_COMPLETION.md), [operator setup and acceptance](../OPERATOR_HANDOFF.md), [update policy](../UPDATE_POLICY.md), [MFA/retention](../clay_dock_backend/MFA_RETENTION.md), [billing](../clay_dock_backend/BILLING_POLICY.md) and [availability](../clay_dock_backend/AVAILABILITY.md). Existing local services and data have not been upgraded by this work.
+
 
 Local testing refresh (2026-10-04): the latest debug APK was rebuilt for
 `http://10.0.2.2:8080` and installed on `emulator-5554` with app data preserved.
@@ -129,7 +134,7 @@ releasing this client. No migration or dependency change is needed for messaging
 Validation: full Flutter analysis is clean and all 191 tests pass; the backend
 test/build passes 317 active tests with 39 opt-in skips and its packaged-media
 check. Manual Android/two-device acceptance remains pending.
-See [backend contracts](../keramik_app_backend/API_FEATURES.md#unified-direct-messaging)
+See [backend contracts](../clay_dock_backend/API_FEATURES.md#unified-direct-messaging)
 and [acceptance status](MOBILE_TESTING.md#unified-messaging-and-chat-profile-links-2026-10-03).
 
 ## Chat appearance
@@ -216,7 +221,7 @@ emoji picker, and private Recently viewed journal sorting/clearing. Pending mess
 requests stay text-only. Recently updated remains the default. Push and media
 writes default off; builds without Firebase configuration remain supported.
 
-See [configuration and contracts](../keramik_app_backend/PUSH_MEDIA_VIEW.md),
+See [configuration and contracts](../clay_dock_backend/PUSH_MEDIA_VIEW.md),
 [validation status](../PUSH_MEDIA_VIEW_STATUS.md) and
 [installed Android evidence](MOBILE_TESTING.md) and
 [manual test checklist](../MANUAL_TESTING.md). The local V22-V24 migration and
@@ -246,7 +251,7 @@ flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
 
 Debug builds use `http://10.0.2.2:8080` when `API_BASE_URL` is omitted. Always pass an explicit URL for a physical device, desktop/web debugging, staging, and release builds.
 
-For the existing local Android emulator, start the backend and its Docker services using the [backend setup guide](../keramik_app_backend/README.md), then run:
+For the existing local Android emulator, start the backend and its Docker services using the [backend setup guide](../clay_dock_backend/README.md), then run:
 
 ```powershell
 flutter emulators --launch Medium_Phone
@@ -261,7 +266,7 @@ Docker containers alone do not start Spring Boot. The existing development
 environment was recovered on 2026-10-04 with migrations disabled; host and
 emulator readiness are `UP`, image storage is reachable and the installed app
 matches the latest debug APK. Services are left running for user testing.
-See [backend recovery and safe restart](../keramik_app_backend/OPERATIONS.md#android-testing-environment-recovery---2026-10-04).
+See [backend recovery and safe restart](../clay_dock_backend/OPERATIONS.md#android-testing-environment-recovery---2026-10-04).
 
 ```powershell
 flutter build apk --release --dart-define=API_BASE_URL=https://api.example.com
@@ -295,7 +300,7 @@ preview and append glaze layers only, either to local creation drafts or through
 an atomic existing-piece operation with retry receipts and a subsequent refresh.
 Notebook editing is Free; existing Maker rules govern new/changed custom coat
 counts, including copied/applied counts. See
-[the shared contract and validation guide](../keramik_app_backend/GLAZE_NOTEBOOK.md).
+[the shared contract and validation guide](../clay_dock_backend/GLAZE_NOTEBOOK.md).
 The backend must have V21 before these flows are used. The local backend was
 subsequently migrated to V21 and restarted after approval, an encrypted backup
 and an isolated restore rehearsal; readiness passed. Uncertain application requests retain their UUID
@@ -324,7 +329,7 @@ Long-pressing another account's text bubble or ceramic card exposes **Report mes
 
 The client derives `ws://` or `wss://` from `API_BASE_URL` and reuses the persisted session cookie. Release builds therefore require HTTPS and connect with WSS. Android is the supported target; the web connector relies on browser-managed same-site cookies and has not been promoted to the supported MVP target.
 
-Browser/Web is explicitly unsupported for release. The cookie-authenticated API currently disables CSRF and relies on native-client isolation plus `SameSite=Strict`; browser support requires a CSRF-token contract first. See [../PRIVACY.md](../PRIVACY.md) and the backend [operations guide](../keramik_app_backend/OPERATIONS.md) for retention, deployment, backup, and key-management boundaries.
+Browser/Web is explicitly unsupported for release. The cookie-authenticated API currently disables CSRF and relies on native-client isolation plus `SameSite=Strict`; browser support requires a CSRF-token contract first. See [../PRIVACY.md](../PRIVACY.md) and the backend [operations guide](../clay_dock_backend/OPERATIONS.md) for retention, deployment, backup, and key-management boundaries.
 
 Profile uploads can use the device camera or gallery through the existing image picker. The backend is authoritative for type, size, signature, crop, metadata removal, and JPEG encoding. The public-avatar/cache warning is shown inline without an upload confirmation dialog.
 
@@ -341,7 +346,7 @@ if the header is absent or invalid. It never clears cookies or triggers session
 expiry for 429. Existing successful login/session rotation and ordinary failures
 remain compatible. Server settings are under `security.auth-rate-limits`, exposed
 through `AUTH_LOGIN_*`, `AUTH_SIGNUP_*`, `AUTH_FALLBACK_MAX_KEYS` and
-`AUTH_RATE_LIMITS_DISTRIBUTED`; see the [backend operations table](../keramik_app_backend/OPERATIONS.md#login-and-signup-submission-limits).
+`AUTH_RATE_LIMITS_DISTRIBUTED`; see the [backend operations table](../clay_dock_backend/OPERATIONS.md#login-and-signup-submission-limits).
 Redis uses atomic hashed rolling counters and trusted-container addresses.
 Outages use bounded expiring per-instance counters (10,000 keys by default),
 rejecting new keys at capacity without evicting active limits. Local budgets can
@@ -367,7 +372,7 @@ The same account works in both places. After registering or choosing a new
 password, return to the app and sign in normally. Recovery signs out existing
 sessions/devices. An enabled account awaiting deletion can recover its password;
 recovery does not cancel deletion or alter billing. Backend mail setup and rollout
-checks are documented in [PASSWORD_RECOVERY.md](../keramik_app_backend/PASSWORD_RECOVERY.md).
+checks are documented in [PASSWORD_RECOVERY.md](../clay_dock_backend/PASSWORD_RECOVERY.md).
 
 ## Localization
 
@@ -391,7 +396,7 @@ and the Android debug APK builds. The account-link tests also pass with a separa
 HTTPS website origin and discard base-path/query values. Backend disposable
 MariaDB and Mailpit HTTP/SMTP acceptance pass; installed Android/browser recovery
 UX acceptance remains open because Playwright MCP is unavailable in this session.
-See [the recovery report](../keramik_app_backend/PASSWORD_RECOVERY.md).
+See [the recovery report](../clay_dock_backend/PASSWORD_RECOVERY.md).
 
 ```powershell
 flutter analyze
@@ -481,7 +486,7 @@ that preview switch. Unknown feature keys parse safely, and missing known keys a
 unavailable. English/Danish ARBs and generated localizations include all membership
 copy. The already installed `url_launcher_platform_interface` 2.3.2 is now a direct
 dev dependency for the browser-launch test, with no package version upgrades.
-See the backend [policy and rollout guide](../keramik_app_backend/ENTITLEMENTS.md).
+See the backend [policy and rollout guide](../clay_dock_backend/ENTITLEMENTS.md).
 
 Subscription validation (2026-10-02): regenerated localizations and changed-file
 formatting passed. `flutter analyze --no-pub` passed with no issues and

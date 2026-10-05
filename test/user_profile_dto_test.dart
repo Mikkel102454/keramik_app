@@ -1,4 +1,4 @@
-import 'package:ceramic_app/objects/user_profile_dto.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

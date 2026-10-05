@@ -1,0 +1,19 @@
+# Review/approve before placing this file in .github/workflows.
+name: ClayDock Android verification
+on: [workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.6'
+          channel: stable
+      - run: timeout 120 flutter pub get
+      - run: timeout 300 flutter analyze
+      - run: timeout 300 flutter test
+      - run: timeout 600 flutter build apk --debug --dart-define=API_BASE_URL=http://10.0.2.2:8080
+# Signed releases use a trusted operator environment; no store publication here.

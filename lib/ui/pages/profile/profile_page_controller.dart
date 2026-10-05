@@ -1,13 +1,13 @@
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/repositories/social_repository.dart';
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/objects/stage_dto.dart';
-import 'package:ceramic_app/repositories/ceramic_repository.dart';
-import 'package:ceramic_app/repositories/clay_repository.dart';
-import 'package:ceramic_app/repositories/glaze_repository.dart';
-import 'package:ceramic_app/repositories/stage_repository.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/repositories/social_repository.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/clay_dto.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/objects/stage_dto.dart';
+import 'package:clay_dock/repositories/ceramic_repository.dart';
+import 'package:clay_dock/repositories/clay_repository.dart';
+import 'package:clay_dock/repositories/glaze_repository.dart';
+import 'package:clay_dock/repositories/stage_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 

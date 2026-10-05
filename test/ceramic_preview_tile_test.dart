@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:ceramic_app/l10n/app_localizations.dart';
-import 'package:ceramic_app/ui/theme/studio_theme.dart';
-import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
-import 'package:ceramic_app/ui/widgets/ceramic_preview_tile.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
+import 'package:clay_dock/ui/theme/studio_theme.dart';
+import 'package:clay_dock/ui/widgets/ceramic_journal_card.dart';
+import 'package:clay_dock/ui/widgets/ceramic_preview_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';

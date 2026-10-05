@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/repositories/entitlement_repository.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/repositories/entitlement_repository.dart';
 
 class EntitlementController extends ChangeNotifier with WidgetsBindingObserver {
   EntitlementController({Future<EntitlementDto> Function()? load})

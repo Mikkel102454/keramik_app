@@ -1,16 +1,16 @@
-import 'package:ceramic_app/ui/widgets/ceramic_journal_card.dart';
-import 'package:ceramic_app/ui/widgets/ceramic_preview_tile.dart';
-import 'package:ceramic_app/ui/pages/profile/friends_page.dart';
-import 'package:ceramic_app/ui/pages/profile/profile_edit_page.dart';
-import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
-import 'package:ceramic_app/ui/pages/analytics/practice_analytics_page.dart';
-import 'package:ceramic_app/ui/pages/settings/settings_page.dart';
-import 'package:ceramic_app/ui/pages/home/ceramic_view/ceramic_view_page.dart';
-import 'package:ceramic_app/ui/pages/profile/profile_widgets.dart';
-import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/ui/widgets/ceramic_journal_card.dart';
+import 'package:clay_dock/ui/widgets/ceramic_preview_tile.dart';
+import 'package:clay_dock/ui/pages/profile/friends_page.dart';
+import 'package:clay_dock/ui/pages/profile/profile_edit_page.dart';
+import 'package:clay_dock/ui/pages/profile/profile_page_controller.dart';
+import 'package:clay_dock/ui/pages/analytics/practice_analytics_page.dart';
+import 'package:clay_dock/ui/pages/settings/settings_page.dart';
+import 'package:clay_dock/ui/pages/home/ceramic_view/ceramic_view_page.dart';
+import 'package:clay_dock/ui/pages/profile/profile_widgets.dart';
+import 'package:clay_dock/ui/widgets/v2/navigation_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class ProfileFeaturePage extends StatefulWidget {
   const ProfileFeaturePage({super.key, this.controller});

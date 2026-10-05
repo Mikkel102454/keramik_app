@@ -1,4 +1,4 @@
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _Response {

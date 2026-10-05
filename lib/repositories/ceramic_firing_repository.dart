@@ -1,6 +1,6 @@
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/ceramic_firing_dto.dart';
+import 'package:clay_dock/utils/web.dart';
 
 class CeramicFiringRepository {
   static Future<List<CeramicFiringDto>> getFirings(int ceramicId) async {

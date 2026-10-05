@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
+import 'package:clay_dock/cubits/authentication/authentication_cubit.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';

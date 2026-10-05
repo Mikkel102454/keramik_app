@@ -1,7 +1,7 @@
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/objects/practice_analytics_dto.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/objects/practice_analytics_dto.dart';
+import 'package:clay_dock/utils/web.dart';
 
 class PracticeAnalyticsRepository {
   static Future<PracticeAnalyticsDto> get({

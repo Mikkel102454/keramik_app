@@ -1,19 +1,19 @@
-import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
+import 'package:clay_dock/objects/glaze_notebook_dto.dart';
 import 'dart:io';
 
-import 'package:ceramic_app/extensions/extensions.dart';
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/ceramic_tag_dto.dart';
-import 'package:ceramic_app/repositories/stage_repository.dart';
-import 'package:ceramic_app/utils/file.dart';
+import 'package:clay_dock/extensions/extensions.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/ceramic_glaze_entry_dto.dart';
+import 'package:clay_dock/objects/ceramic_tag_dto.dart';
+import 'package:clay_dock/repositories/stage_repository.dart';
+import 'package:clay_dock/utils/file.dart';
 import 'package:flutter/material.dart';
 
-import 'package:ceramic_app/objects/stage_dto.dart';
-import 'package:ceramic_app/repositories/ceramic_repository.dart';
+import 'package:clay_dock/objects/stage_dto.dart';
+import 'package:clay_dock/repositories/ceramic_repository.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/utils/measurement.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/utils/measurement.dart';
 
 class CeramicCreatePageController extends ChangeNotifier {
   List<StageDto> stages = [];

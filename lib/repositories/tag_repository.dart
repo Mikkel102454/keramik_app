@@ -1,6 +1,6 @@
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/ceramic_tag_dto.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/ceramic_tag_dto.dart';
+import 'package:clay_dock/utils/web.dart';
 
 class TagRepository {
   static Future<List<CeramicTagDto>> getTags(int id) async {

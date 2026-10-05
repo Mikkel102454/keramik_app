@@ -1,10 +1,10 @@
 # Flutter client instructions
 
-These instructions apply inside `keramik_app` and supplement the shared `../AGENTS.md`. The shared approval rules remain mandatory.
+These instructions apply inside `clay_dock` and supplement the shared `../AGENTS.md`. The shared approval rules remain mandatory.
 
 ## Project context
 
-This repository is the Flutter client for the Keramik system. Its main layers are:
+This repository is the Flutter client for the ClayDock system. Its main layers are:
 
 - `lib/ui`: pages and reusable widgets;
 - `lib/cubits`: authentication and Bloc/Cubit state;

@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 String notebookFiringType(BuildContext context, String type) => switch (type) {
   'BISQUE' => context.l10n.firingBisque,

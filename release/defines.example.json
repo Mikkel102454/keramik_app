@@ -1,0 +1,8 @@
+{
+  "API_BASE_URL": "https://api.REPLACE_DOMAIN.invalid",
+  "WEBSITE_BASE_URL": "https://REPLACE_DOMAIN.invalid",
+  "FCM_APP_ID": "",
+  "FCM_API_KEY": "",
+  "FCM_SENDER_ID": "",
+  "FCM_PROJECT_ID": ""
+}

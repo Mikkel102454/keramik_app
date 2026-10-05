@@ -23,14 +23,14 @@ import uuid
 import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
-BACKEND = ROOT.parent / 'keramik_app_backend'
+BACKEND = ROOT.parent / 'clay_dock_backend'
 OUT = ROOT / 'build' / 'notebook-mobile-acceptance'
 SDK = Path(os.environ['LOCALAPPDATA']) / 'Android' / 'Sdk'
 ADB = SDK / 'platform-tools' / 'adb.exe'
 SERIAL = 'emulator-5560'
 PORT = 18082
 BASE = f'http://127.0.0.1:{PORT}'
-PACKAGE = 'nu.miguel.kemik_app'
+PACKAGE = 'nu.miguel.claydock'
 LABEL = 'keramik.acceptance=notebook-android-disposable'
 
 

@@ -1,8 +1,8 @@
-import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
-import 'package:ceramic_app/ui/pages/profile/user_search_controller.dart';
-import 'package:ceramic_app/ui/pages/notification/notification_controller_page.dart';
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/stage_dto.dart';
+import 'package:clay_dock/ui/pages/profile/profile_page_controller.dart';
+import 'package:clay_dock/ui/pages/profile/user_search_controller.dart';
+import 'package:clay_dock/ui/pages/notification/notification_controller_page.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/stage_dto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

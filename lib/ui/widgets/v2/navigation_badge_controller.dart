@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:ceramic_app/repositories/chat_repository.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
 import 'package:flutter/foundation.dart';
 
 class NavigationBadgeController {

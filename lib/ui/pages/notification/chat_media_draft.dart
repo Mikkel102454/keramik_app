@@ -3,12 +3,12 @@ import 'dart:io';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ceramic_app/app/chat_image_preparation.dart';
-import 'package:ceramic_app/utils/client_uuid.dart';
-import 'package:ceramic_app/utils/network_timeout.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/repositories/chat_repository.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/app/chat_image_preparation.dart';
+import 'package:clay_dock/utils/client_uuid.dart';
+import 'package:clay_dock/utils/network_timeout.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/repositories/chat_repository.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class ChatImageDraft {
   const ChatImageDraft(this.file, this.clientId, this.attachment);

@@ -1,17 +1,18 @@
-import 'package:ceramic_app/repositories/ceramic_repository.dart';
-import 'package:ceramic_app/config/constants/app_constants.dart';
-import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/account_settings_dto.dart';
-import 'package:ceramic_app/ui/pages/profile/profile_edit_page.dart';
-import 'package:ceramic_app/ui/pages/profile/profile_page_controller.dart';
-import 'package:ceramic_app/ui/pages/settings/account_settings_pages.dart';
-import 'package:ceramic_app/ui/pages/settings/privacy_settings_pages.dart';
-import 'package:ceramic_app/ui/pages/settings/settings_controller.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/repositories/ceramic_repository.dart';
+import 'package:clay_dock/ui/pages/settings/mfa_settings_page.dart';
+import 'package:clay_dock/config/constants/app_constants.dart';
+import 'package:clay_dock/cubits/authentication/authentication_cubit.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/account_settings_dto.dart';
+import 'package:clay_dock/ui/pages/profile/profile_edit_page.dart';
+import 'package:clay_dock/ui/pages/profile/profile_page_controller.dart';
+import 'package:clay_dock/ui/pages/settings/account_settings_pages.dart';
+import 'package:clay_dock/ui/pages/settings/privacy_settings_pages.dart';
+import 'package:clay_dock/ui/pages/settings/settings_controller.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
-import 'package:ceramic_app/ui/pages/settings/membership_page.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/ui/pages/settings/membership_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -372,11 +373,18 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                   _SettingsRow(
                     icon: Icons.info_outline,
-                    label: context.l10n.aboutKeramik,
+                    label: context.l10n.aboutClayDock,
                     external: true,
                     onTap: () => _openLink('/about'),
                   ),
                   _Heading(context.l10n.loginSection),
+                  _SettingsRow(
+                    icon: Icons.security_outlined,
+                    label: Localizations.localeOf(context).languageCode == 'da'
+                        ? 'Totrinsbekræftelse'
+                        : 'Two-factor authentication',
+                    onTap: () => _open(const MfaSettingsPage()),
+                  ),
                   _SettingsRow(
                     icon: Icons.logout,
                     label: _loggingOut

@@ -1,9 +1,9 @@
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/objects/material_inventory_dto.dart';
-import 'package:ceramic_app/repositories/clay_repository.dart';
-import 'package:ceramic_app/repositories/glaze_repository.dart';
-import 'package:ceramic_app/repositories/material_inventory_repository.dart';
+import 'package:clay_dock/objects/clay_dto.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/objects/material_inventory_dto.dart';
+import 'package:clay_dock/repositories/clay_repository.dart';
+import 'package:clay_dock/repositories/glaze_repository.dart';
+import 'package:clay_dock/repositories/material_inventory_repository.dart';
 import 'package:flutter/foundation.dart';
 
 typedef InventoryAccountLoader =

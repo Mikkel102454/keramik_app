@@ -1,23 +1,23 @@
-import 'package:ceramic_app/app/combination_application_controller.dart';
+import 'package:clay_dock/app/combination_application_controller.dart';
 import 'dart:io';
 
-import 'package:ceramic_app/extensions/extensions.dart';
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/image_dto.dart';
-import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
-import 'package:ceramic_app/objects/ceramic_stage_history_dto.dart';
-import 'package:ceramic_app/repositories/ceramic_firing_repository.dart';
-import 'package:ceramic_app/repositories/ceramic_stage_history_repository.dart';
-import 'package:ceramic_app/repositories/glaze_entry_repository.dart';
-import 'package:ceramic_app/repositories/tag_repository.dart';
+import 'package:clay_dock/extensions/extensions.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/image_dto.dart';
+import 'package:clay_dock/objects/ceramic_firing_dto.dart';
+import 'package:clay_dock/objects/ceramic_stage_history_dto.dart';
+import 'package:clay_dock/repositories/ceramic_firing_repository.dart';
+import 'package:clay_dock/repositories/ceramic_stage_history_repository.dart';
+import 'package:clay_dock/repositories/glaze_entry_repository.dart';
+import 'package:clay_dock/repositories/tag_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/app/app_settings_controller.dart';
-import 'package:ceramic_app/utils/measurement.dart';
+import 'package:clay_dock/app/app_settings_controller.dart';
+import 'package:clay_dock/utils/measurement.dart';
 
-import 'package:ceramic_app/objects/stage_dto.dart';
-import 'package:ceramic_app/repositories/ceramic_repository.dart';
-import 'package:ceramic_app/repositories/publication_repository.dart';
-import 'package:ceramic_app/objects/publication_dto.dart';
+import 'package:clay_dock/objects/stage_dto.dart';
+import 'package:clay_dock/repositories/ceramic_repository.dart';
+import 'package:clay_dock/repositories/publication_repository.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
 
 class CeramicViewPageController extends ChangeNotifier {
   var combinationApplication = CombinationApplicationController();

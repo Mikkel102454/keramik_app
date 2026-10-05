@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 

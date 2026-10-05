@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/repositories/publication_repository.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/repositories/publication_repository.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 

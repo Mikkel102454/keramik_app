@@ -1,5 +1,5 @@
-import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/cubits/authentication/authentication_cubit.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -12,7 +12,7 @@ void main() {
 
     expect(
       authenticationErrorMessage(exception),
-      'Change your temporary password on the Keramik website before signing in.',
+      'Change your temporary password on the ClayDock website before signing in.',
     );
   });
 

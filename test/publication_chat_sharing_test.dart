@@ -1,6 +1,6 @@
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/ui/pages/notification/ceramic_sharing_pages.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/ui/pages/notification/ceramic_sharing_pages.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_app.dart';

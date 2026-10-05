@@ -1,10 +1,10 @@
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'dart:math';
 import 'package:dio/dio.dart';
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
-import 'package:ceramic_app/repositories/ceramic_repository.dart';
-import 'package:ceramic_app/repositories/glaze_notebook_repository.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/glaze_notebook_dto.dart';
+import 'package:clay_dock/repositories/ceramic_repository.dart';
+import 'package:clay_dock/repositories/glaze_notebook_repository.dart';
 
 /// One logical application retains its identity until a confirmed success.
 class CombinationApplicationController {

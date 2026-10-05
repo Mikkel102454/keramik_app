@@ -1,10 +1,10 @@
-import 'package:ceramic_app/ui/pages/materials/glazes/notebook/glaze_notebook_page.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/glazes_create/glazes_create_page.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/glazes_page_controller.dart';
-import 'package:ceramic_app/ui/pages/materials/glazes/glazes_view/glazes_view_page.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/notebook/glaze_notebook_page.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/glazes_create/glazes_create_page.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/glazes_page_controller.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/glazes_view/glazes_view_page.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class GlazesPage extends StatefulWidget {
   const GlazesPage({super.key});

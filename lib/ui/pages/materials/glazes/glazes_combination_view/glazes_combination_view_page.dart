@@ -1,4 +1,4 @@
-import 'package:ceramic_app/ui/pages/materials/glazes/notebook/glaze_notebook_detail_page.dart';
+import 'package:clay_dock/ui/pages/materials/glazes/notebook/glaze_notebook_detail_page.dart';
 
 class GlazesCombinationViewPage extends GlazeNotebookDetailPage {
   const GlazesCombinationViewPage({

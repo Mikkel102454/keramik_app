@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:ceramic_app/ui/widgets/v2/navigation_widget.dart';
-import 'package:ceramic_app/ui/pages/profile/profile_feature_page.dart';
-import 'package:ceramic_app/ui/pages/discover/discover_page.dart';
-import 'package:ceramic_app/ui/pages/discover/discover_controller.dart';
+import 'package:clay_dock/ui/widgets/v2/navigation_widget.dart';
+import 'package:clay_dock/ui/pages/profile/profile_feature_page.dart';
+import 'package:clay_dock/ui/pages/discover/discover_page.dart';
+import 'package:clay_dock/ui/pages/discover/discover_controller.dart';
 import 'package:flutter/material.dart';
 
 @RoutePage()

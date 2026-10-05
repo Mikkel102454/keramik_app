@@ -1,4 +1,4 @@
-import 'package:ceramic_app/ui/pages/discover/publication_report_dialog.dart';
+import 'package:clay_dock/ui/pages/discover/publication_report_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

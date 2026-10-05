@@ -1,4 +1,4 @@
-import 'package:ceramic_app/ui/widgets/profile_avatar.dart';
+import 'package:clay_dock/ui/widgets/profile_avatar.dart';
 import 'package:flutter/material.dart';
 
 /// Profile identity and counts share one compact layout on both profile pages.

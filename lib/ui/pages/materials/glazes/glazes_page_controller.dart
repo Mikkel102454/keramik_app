@@ -1,5 +1,5 @@
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/repositories/glaze_repository.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/repositories/glaze_repository.dart';
 import 'package:flutter/material.dart';
 
 class GlazesPageController extends ChangeNotifier{

@@ -1,8 +1,8 @@
-import 'package:ceramic_app/l10n/app_localizations.dart';
-import 'package:ceramic_app/objects/account_settings_dto.dart';
-import 'package:ceramic_app/objects/chat_report_dto.dart';
+import 'package:clay_dock/l10n/app_localizations.dart';
+import 'package:clay_dock/objects/account_settings_dto.dart';
+import 'package:clay_dock/objects/chat_report_dto.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ceramic_app/utils/network_timeout.dart';
+import 'package:clay_dock/utils/network_timeout.dart';
 
 extension AppLocalizationsContext on BuildContext {
   AppLocalizations get l10n => AppLocalizations.of(this);
@@ -579,8 +579,8 @@ extension PremiumFeatureAppLocalizations on AppLocalizations {
 
 String localizedCostEstimateExplanation(AppLocalizations l10n) =>
     l10n.localeName.toLowerCase().startsWith('da')
-    ? 'Oprindelige totaler forbliver grupperet efter deres registrerede ISO-valuta. Når det er muligt, viser Keramik også et omregnet overslag med de seneste gemte ECB-referencekurser.'
-    : 'Original totals remain grouped by their recorded ISO currency. When available, Keramik also shows a converted estimate using the latest cached ECB reference rates.';
+    ? 'Oprindelige totaler forbliver grupperet efter deres registrerede ISO-valuta. Når det er muligt, viser ClayDock også et omregnet overslag med de seneste gemte ECB-referencekurser.'
+    : 'Original totals remain grouped by their recorded ISO currency. When available, ClayDock also shows a converted estimate using the latest cached ECB reference rates.';
 
 String localizedInventoryAnalyticsExplanation(AppLocalizations l10n) =>
     l10n.localeName.toLowerCase().startsWith('da')

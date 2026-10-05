@@ -1,5 +1,5 @@
-import 'package:ceramic_app/objects/practice_analytics_dto.dart';
-import 'package:ceramic_app/repositories/practice_analytics_repository.dart';
+import 'package:clay_dock/objects/practice_analytics_dto.dart';
+import 'package:clay_dock/repositories/practice_analytics_repository.dart';
 import 'package:flutter/foundation.dart';
 
 enum AnalyticsRange { days90, year, all }

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:ceramic_app/app/chat_media_controller.dart';
+import 'package:clay_dock/app/chat_media_controller.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';

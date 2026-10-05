@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/objects/publication_dto.dart';
-import 'package:ceramic_app/ui/pages/discover/discover_controller.dart';
-import 'package:ceramic_app/ui/pages/discover/discover_page.dart';
-import 'package:ceramic_app/ui/pages/discover/publication_detail_page.dart';
-import 'package:ceramic_app/ui/pages/v2/pages.dart';
-import 'package:ceramic_app/ui/widgets/chat_publication_card.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
+import 'package:clay_dock/ui/pages/discover/discover_controller.dart';
+import 'package:clay_dock/ui/pages/discover/discover_page.dart';
+import 'package:clay_dock/ui/pages/discover/publication_detail_page.dart';
+import 'package:clay_dock/ui/pages/v2/pages.dart';
+import 'package:clay_dock/ui/widgets/chat_publication_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

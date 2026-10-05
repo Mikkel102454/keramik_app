@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/app/chat_media_controller.dart';
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
+import 'package:clay_dock/app/chat_media_controller.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
 
 class ChatAttachment extends StatefulWidget {
   const ChatAttachment({

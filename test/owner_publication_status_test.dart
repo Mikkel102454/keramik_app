@@ -1,5 +1,5 @@
-import 'package:ceramic_app/objects/publication_dto.dart';
-import 'package:ceramic_app/ui/pages/discover/owner_publication_status_card.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
+import 'package:clay_dock/ui/pages/discover/owner_publication_status_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

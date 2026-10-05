@@ -1,7 +1,7 @@
 /* ---------- Category Model ---------- */
-import 'package:ceramic_app/objects/ceramic_glaze_entry_dto.dart';
-import 'package:ceramic_app/objects/ceramic_tag_dto.dart';
-import 'package:ceramic_app/objects/image_dto.dart';
+import 'package:clay_dock/objects/ceramic_glaze_entry_dto.dart';
+import 'package:clay_dock/objects/ceramic_tag_dto.dart';
+import 'package:clay_dock/objects/image_dto.dart';
 
 class CeramicDto {
   int id;

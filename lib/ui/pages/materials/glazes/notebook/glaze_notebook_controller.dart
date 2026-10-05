@@ -1,13 +1,13 @@
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/utils/web.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:ceramic_app/objects/clay_dto.dart';
-import 'package:ceramic_app/objects/glaze_dto.dart';
-import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
-import 'package:ceramic_app/repositories/clay_repository.dart';
-import 'package:ceramic_app/repositories/glaze_repository.dart';
-import 'package:ceramic_app/repositories/glaze_notebook_repository.dart';
+import 'package:clay_dock/objects/clay_dto.dart';
+import 'package:clay_dock/objects/glaze_dto.dart';
+import 'package:clay_dock/objects/glaze_notebook_dto.dart';
+import 'package:clay_dock/repositories/clay_repository.dart';
+import 'package:clay_dock/repositories/glaze_repository.dart';
+import 'package:clay_dock/repositories/glaze_notebook_repository.dart';
 
 class GlazeNotebookController extends ChangeNotifier {
   GlazeNotebookController({required bool tiles})

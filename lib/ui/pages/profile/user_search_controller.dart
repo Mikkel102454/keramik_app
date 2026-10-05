@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/repositories/social_repository.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/repositories/social_repository.dart';
 import 'package:flutter/foundation.dart';
 
 class UserSearchController extends ChangeNotifier {

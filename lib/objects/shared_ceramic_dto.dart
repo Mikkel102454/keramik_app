@@ -1,6 +1,6 @@
-import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
-import 'package:ceramic_app/objects/ceramic_stage_history_dto.dart';
-import 'package:ceramic_app/objects/image_dto.dart';
+import 'package:clay_dock/objects/ceramic_firing_dto.dart';
+import 'package:clay_dock/objects/ceramic_stage_history_dto.dart';
+import 'package:clay_dock/objects/image_dto.dart';
 
 class SharedCeramicGlazeDto {
   const SharedCeramicGlazeDto({

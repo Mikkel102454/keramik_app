@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/ui/widgets/v2/ui_library.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
+import 'package:clay_dock/ui/widgets/v2/ui_library.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/objects/glaze_notebook_dto.dart';
 import 'glaze_notebook_controller.dart';
 import 'glaze_notebook_editor_page.dart';
 import 'glaze_notebook_detail_page.dart';

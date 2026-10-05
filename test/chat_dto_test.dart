@@ -1,6 +1,6 @@
-import 'package:ceramic_app/objects/chat_dto.dart';
-import 'package:ceramic_app/objects/chat_event_dto.dart';
-import 'package:ceramic_app/utils/client_uuid.dart';
+import 'package:clay_dock/objects/chat_dto.dart';
+import 'package:clay_dock/objects/chat_event_dto.dart';
+import 'package:clay_dock/utils/client_uuid.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:ceramic_app/api/api_client.dart';
-import 'package:ceramic_app/objects/glaze_notebook_dto.dart';
-import 'package:ceramic_app/objects/image_dto.dart';
-import 'package:ceramic_app/utils/file.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/api/api_client.dart';
+import 'package:clay_dock/objects/glaze_notebook_dto.dart';
+import 'package:clay_dock/objects/image_dto.dart';
+import 'package:clay_dock/utils/file.dart';
+import 'package:clay_dock/utils/web.dart';
 
 class GlazeNotebookRepository {
   GlazeNotebookRepository({required this.tiles});

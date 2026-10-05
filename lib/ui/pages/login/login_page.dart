@@ -1,13 +1,15 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:ceramic_app/ui/widgets/v2/text_field_widget.dart';
-import 'package:ceramic_app/ui/widgets/v2/studio_widgets.dart';
+import 'package:clay_dock/ui/widgets/v2/text_field_widget.dart';
+import 'package:clay_dock/ui/widgets/v2/studio_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:ceramic_app/cubits/authentication/authentication_cubit.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/config/constants/app_constants.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/cubits/authentication/authentication_cubit.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/config/constants/app_constants.dart';
+import 'package:clay_dock/utils/web.dart';
+import 'package:clay_dock/ui/pages/settings/mfa_settings_page.dart';
+import 'package:clay_dock/ui/pages/settings/mfa_labels.dart';
 
 @RoutePage()
 class LoginPage extends StatefulWidget {
@@ -19,6 +21,13 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _openingWebsite = false;
+  final _mfaCode = TextEditingController();
+
+  @override
+  void dispose() {
+    _mfaCode.dispose();
+    super.dispose();
+  }
 
   Future<void> _openAccountPage(String Function() url) async {
     if (_openingWebsite) return;
@@ -72,6 +81,98 @@ class _LoginPageState extends State<LoginPage> {
               orElse: () => false,
             );
             final authentication = context.read<AuthenticationCubit>();
+
+            if (authentication.mfaRequired) {
+              return Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 460),
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          mfaText(
+                            context,
+                            'Complete authenticator verification',
+                            'Fuldf?r authenticator-bekr?ftelse',
+                          ),
+                          style: theme.textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 16),
+                        if (authentication.mfaEnrollmentRequired)
+                          FilledButton(
+                            onPressed: isLoading
+                                ? null
+                                : () => Navigator.of(context).push(
+                                    MaterialPageRoute<void>(
+                                      builder: (_) => BlocProvider.value(
+                                        value: authentication,
+                                        child: const MfaSettingsPage(
+                                          pendingEnrollment: true,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            child: Text(
+                              mfaText(
+                                context,
+                                'Set up required MFA',
+                                'Ops?t p?kr?vet MFA',
+                              ),
+                            ),
+                          )
+                        else ...[
+                          TextFieldWidget(
+                            controller: _mfaCode,
+                            label: mfaText(
+                              context,
+                              'Six-digit authenticator code or one recovery code',
+                              'Seks-cifret authenticator-kode eller ?n gendannelseskode',
+                            ),
+                            maxLength: 24,
+                            maxLines: 1,
+                          ),
+                          const SizedBox(height: 16),
+                          FilledButton(
+                            onPressed: isLoading
+                                ? null
+                                : () async {
+                                    final code = _mfaCode.text;
+                                    _mfaCode.clear();
+                                    await authentication.verifyMfa(code);
+                                  },
+                            child: Text(
+                              mfaText(
+                                context,
+                                'Verify and sign in',
+                                'Bekr?ft og log ind',
+                              ),
+                            ),
+                          ),
+                        ],
+                        TextButton(
+                          onPressed: isLoading
+                              ? null
+                              : () {
+                                  _mfaCode.clear();
+                                  authentication.cancelMfa();
+                                },
+                          child: Text(
+                            mfaText(
+                              context,
+                              'Use another account',
+                              'Brug en anden konto',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
 
             return Center(
               child: SingleChildScrollView(

@@ -1,5 +1,5 @@
-import 'package:ceramic_app/objects/user_profile_dto.dart';
-import 'package:ceramic_app/objects/publication_dto.dart';
+import 'package:clay_dock/objects/user_profile_dto.dart';
+import 'package:clay_dock/objects/publication_dto.dart';
 
 class DirectConversationDto {
   const DirectConversationDto({

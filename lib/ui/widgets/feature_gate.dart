@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:ceramic_app/app/entitlement_controller.dart';
-import 'package:ceramic_app/objects/entitlement_dto.dart';
-import 'package:ceramic_app/l10n/l10n_extensions.dart';
-import 'package:ceramic_app/config/constants/app_constants.dart';
-import 'package:ceramic_app/utils/web.dart';
+import 'package:clay_dock/app/entitlement_controller.dart';
+import 'package:clay_dock/objects/entitlement_dto.dart';
+import 'package:clay_dock/l10n/l10n_extensions.dart';
+import 'package:clay_dock/app/purchase_coordinator.dart';
 
 String featureLabel(BuildContext context, String feature) => switch (feature) {
   Features.ceramicImages => context.l10n.membershipImages,
@@ -19,15 +18,7 @@ String featureLabel(BuildContext context, String feature) => switch (feature) {
 };
 
 Future<void> openMembershipWebsite(BuildContext context) async {
-  try {
-    await openWebPage(AppConstants.api.membershipUrl);
-  } catch (_) {
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.membershipOpenFailed)),
-      );
-    }
-  }
+  await PurchaseCoordinator.instance.open(context);
 }
 
 /// Unknown/loading membership is distinct from a confirmed Free account.

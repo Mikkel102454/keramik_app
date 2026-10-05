@@ -1,6 +1,6 @@
-import 'package:ceramic_app/objects/ceramic_dto.dart';
-import 'package:ceramic_app/objects/ceramic_firing_dto.dart';
-import 'package:ceramic_app/objects/ceramic_stage_history_dto.dart';
+import 'package:clay_dock/objects/ceramic_dto.dart';
+import 'package:clay_dock/objects/ceramic_firing_dto.dart';
+import 'package:clay_dock/objects/ceramic_stage_history_dto.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
